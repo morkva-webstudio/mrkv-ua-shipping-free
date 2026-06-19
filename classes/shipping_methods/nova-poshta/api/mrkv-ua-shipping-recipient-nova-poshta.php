@@ -35,7 +35,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	     * */
 	    public function get_recipient_ref($recipient_first_name, $recipient_middle_name, $recipient_last_name, $recipient_phone)
 	    {
-	    	$args = array(
+	    	$mrkv_ua_shipping_args = array(
 	            "apiKey" => $this->nova_poshta_api->get_api_key(),
 	            "modelName" => "Counterparty",
             	"calledMethod" => "save",
@@ -51,7 +51,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        );
 
 	        # Send request
-	        $obj = $this->nova_poshta_api->send_post_request( $args );
+	        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 	        if(isset($obj['data'][0]['ContactPerson']['data'][0]['Ref']))
 	        {
@@ -67,10 +67,10 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        {
 	        	if(isset($obj['errors'][0]))
 	        	{
-	        		$this->nova_poshta_api->debug_log->add_data($obj['errors'][0]);
+	        		$this->nova_poshta_api->debug_log->add_data_error($obj['errors'][0]);
 	        	}
 	        	else{
-	        		$this->nova_poshta_api->debug_log->add_data(__('Error with Recipient Ref','mrkv-ua-shipping'));
+	        		$this->nova_poshta_api->debug_log->add_data_error(__('Error with Recipient Ref','mrkv-ua-shipping'));
 	        	}
 	        	
 	        	return '';
@@ -85,7 +85,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	    		$flat_number = '';
 	    	}
 	    	
-	    	$args = array(
+	    	$mrkv_ua_shipping_args = array(
 	            "apiKey" => $this->nova_poshta_api->get_api_key(),
 	            "modelName" => "Address",
 	            "calledMethod" => "save",
@@ -99,7 +99,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        );
 
 	         # Send request
-	        $obj = $this->nova_poshta_api->send_post_request( $args );
+	        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 	        if(isset($obj['data'][0]['Ref']))
 	        {
@@ -110,10 +110,10 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        {
 	        	if(isset($obj['errors'][0]))
 	        	{
-	        		$this->nova_poshta_api->debug_log->add_data($obj['errors'][0]);
+	        		$this->nova_poshta_api->debug_log->add_data_error($obj['errors'][0]);
 	        	}
 	        	else{
-	        		$this->nova_poshta_api->debug_log->add_data(__('Error with Recipient Street Ref','mrkv-ua-shipping'));
+	        		$this->nova_poshta_api->debug_log->add_data_error(__('Error with Recipient Street Ref','mrkv-ua-shipping'));
 	        	}
 	        	
 	        	return '';
@@ -178,7 +178,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	    		return $order->get_meta('mrkv_ua_shipping_nova-poshta_address_street_ref');
 	    	}
 
-	        $args = array(
+	        $mrkv_ua_shipping_args = array(
 	            "apiKey" => $this->nova_poshta_api->get_api_key(),
 	            "modelName" => "Address",
 	            "calledMethod" => "getStreet",
@@ -189,7 +189,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        );
 	        
 	        # Send request
-	        $obj = $this->nova_poshta_api->send_post_request( $args );
+	        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 	        if(isset($obj['data'][0]['Ref']))
 	        {
@@ -200,10 +200,10 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        {
 	        	if(isset($obj['errors'][0]))
 	        	{
-	        		$this->nova_poshta_api->debug_log->add_data($obj['errors'][0]);
+	        		$this->nova_poshta_api->debug_log->add_data_error($obj['errors'][0]);
 	        	}
 	        	else{
-	        		$this->nova_poshta_api->debug_log->add_data(__('Error with Recipient Street Ref','mrkv-ua-shipping'));
+	        		$this->nova_poshta_api->debug_log->add_data_error(__('Error with Recipient Street Ref','mrkv-ua-shipping'));
 	        	}
 	        	
 	        	return '';
@@ -240,7 +240,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 
 	    public function get_recipient_warehouse_ref($warehouse_name, $city_ref)
 	    {
-	    	$args = array(
+	    	$mrkv_ua_shipping_args = array(
 	            "apiKey" => $this->nova_poshta_api->get_api_key(),
 	            "modelName" => "Address",
             	"calledMethod" => "getWarehouses",
@@ -251,7 +251,7 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        );
 
 	        # Send request
-	        $obj = $this->nova_poshta_api->send_post_request( $args );
+	        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 	        if(isset($obj['data'][0]['Ref']))
 	        {
@@ -262,10 +262,10 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 	        {
 	        	if(isset($obj['errors'][0]))
 	        	{
-	        		$this->nova_poshta_api->debug_log->add_data($obj['errors'][0]);
+	        		$this->nova_poshta_api->debug_log->add_data_error($obj['errors'][0]);
 	        	}
 	        	else{
-	        		$this->nova_poshta_api->debug_log->add_data(__('Error with Recipient Warehouse Ref','mrkv-ua-shipping'));
+	        		$this->nova_poshta_api->debug_log->add_data_error(__('Error with Recipient Warehouse Ref','mrkv-ua-shipping'));
 	        	}
 	        	
 	        	return '';

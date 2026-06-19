@@ -42,7 +42,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY'))
 		{
 			# Set data
 			$this->settings_method = $settings;
-			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->slug_method, $this->get_debug_enabled(), $this->get_debug_request_enabled());
+			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->get_debug_enabled());
 		}
 
 		/**
@@ -67,22 +67,6 @@ if (!class_exists('MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY'))
 	    }
 
 	    /**
-	     * Get Debug request enabled
-	     * @return boolean Debug
-	     * */
-	    public function get_debug_request_enabled()
-	    {
-	    	if(isset($this->settings_method['debug']['query']) && $this->settings_method['debug']['query'] == 'on')
-	    	{
-	    		return true;	
-	    	}
-	    	else
-	    	{
-	    		return false;	
-	    	}
-	    }
-
-	    /**
 		 * Send general request
 		 * @param array Params query
 		 * 
@@ -93,7 +77,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY'))
 	    	# Get required URL
 	        $url = $this->api_url . $model . $add;
 
-	        $args = array(
+	        $mrkv_ua_shipping_args = array(
 	        	'timeout' => 30,
 				'redirection' => 10,
 				'httpversion' => '1.0',
@@ -108,7 +92,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY'))
 
 	        if(!empty($params))
 	        {
-	        	$args['body'] = \wp_json_encode( $params );
+	        	$mrkv_ua_shipping_args['body'] = \wp_json_encode( $params );
 	        	
 	        	# Save to log
 				$this->debug_log->add_data_request(\wp_json_encode( $params ));
@@ -117,12 +101,12 @@ if (!class_exists('MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY'))
 	        if($method == 'POST')
 	        {
 	        	# Send request
-				$response = wp_remote_post( $url, $args );
+				$response = wp_remote_post( $url, $mrkv_ua_shipping_args );
 	        }
 	        else
 	        {
 	        	# Send request
-				$response = wp_remote_get( $url, $args );
+				$response = wp_remote_get( $url, $mrkv_ua_shipping_args );
 	        }
 
 			# Check answer
@@ -132,7 +116,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY'))
 				$error_message = $response->get_error_message();
 
 				# Save to log
-				$this->debug_log->add_data($error_message);
+				$this->debug_log->add_data_error($error_message);
 
 				# Return error string
 				return $error_message;

@@ -1,5 +1,17 @@
 jQuery(window).on('load', function() 
 {
+	jQuery('#nova-poshta_m_ua_settings_api_key').on('keyup change', function() {
+		jQuery('#nova-poshta_m_ua_settings_sender_list').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_counterparty_ref').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_middlename').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_firstname').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_lastname').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_email').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_phones').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_description').val('');
+		jQuery('#nova-poshta_m_ua_settings_sender_ref').val('');
+	});
+
  	jQuery('#nova-poshta_m_ua_settings_sender_ref').change(function()
 	{
 		var option_selected = jQuery(this).find('option:selected');
@@ -127,10 +139,12 @@ jQuery(window).on('load', function()
 	        })
 	    },
 	    focus: function (event, ui) {
+			validateSettings();
 	        return false;
 	    },
 	    unfocus: function (event, ui) {
 	    	jQuery(this).removeClass('ui-autocomplete-loading');
+			validateSettings();
 	        return false;
 	    },
 	    select: function (event, ui) {
@@ -140,6 +154,7 @@ jQuery(window).on('load', function()
 		    	jQuery('#nova-poshta_m_ua_settings_sender_warehouse_ref').val(ui.item.value);
 		    	jQuery('#nova-poshta_m_ua_settings_sender_warehouse_number').val(ui.item.number);
 		    	jQuery(this).removeClass('ui-autocomplete-loading');
+				validateSettings();
 	    	}
 
 	        return false;
@@ -178,6 +193,7 @@ jQuery(window).on('load', function()
 		    	jQuery('#nova-poshta_m_ua_settings_sender_street_house').val('');
 		    	jQuery('#nova-poshta_m_ua_settings_sender_street_flat').val('');
 		    	jQuery(this).removeClass('ui-autocomplete-loading');
+				validateSettings();
 	    	}
 
 	        return false;
@@ -211,21 +227,6 @@ jQuery(window).on('load', function()
 
     jQuery('.admin_ua_ship_morkva_settings_line select').select2({
         width: '100%',
-    });
-
-    jQuery('.mrkv_btn_log_clean').click(function(){
-        jQuery.ajax({
-            url: mrkv_ua_ship_helper.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'mrkv_ua_ship_clear_log',
-                shipping: 'nova-poshta',
-                nonce: mrkv_ua_ship_helper.nonce,
-            }, 
-            success: function( data ) {
-                jQuery('.mrkv_log_file_content').text('');
-            }
-        });
     });
 
     var mrkv_typing_timer;
@@ -264,11 +265,68 @@ jQuery(window).on('load', function()
 	                if(data)
 	                {
                 		jQuery('#nova-poshta_m_ua_settings_sender_address_ref').val(data.replace(/['"]+/g, ''));
+						validateSettings();
 	                }	                
 	            }
 	        });
 		}
 	}
+
+	const submitBtn = jQuery('#submit');
+
+    function validateSettings() {
+        const apiKey = jQuery('#nova-poshta_m_ua_settings_api_key');
+        const counterpartyRef = jQuery('#nova-poshta_m_ua_settings_sender_counterparty_ref');
+        
+        const isCredentialsEntered = jQuery.trim(apiKey.val()) !== '' && jQuery.trim(counterpartyRef.val()) !== '';
+
+        const addressType = jQuery('input[name="nova-poshta_m_ua_settings[sender][address_type]"]:checked').val();
+        
+        let isAddressValid = false;
+
+        if (addressType === 'W') {
+            const warehouseRef = jQuery('input[name="nova-poshta_m_ua_settings[sender][warehouse][ref]"]').val();
+            isAddressValid = jQuery.trim(warehouseRef) !== '';
+        } else {
+            const streetRef = jQuery('input[name="nova-poshta_m_ua_settings[sender][street][ref]"]').val();
+            const houseNum = jQuery('input[name="nova-poshta_m_ua_settings[sender][street][house]"]').val();
+            isAddressValid = jQuery.trim(streetRef) !== '' && jQuery.trim(houseNum) !== '';
+        }
+
+        if (isCredentialsEntered && !isAddressValid) {
+            submitBtn.addClass('custom-disabled').css({
+                'opacity': '0.5',
+                'cursor': 'not-allowed'
+            });
+        } else {
+            submitBtn.removeClass('custom-disabled').css({
+                'opacity': '1',
+                'cursor': 'pointer'
+            });
+        }
+    }
+
+    validateSettings();
+
+    jQuery(document).on('input change', 
+        '#nova-poshta_m_ua_settings_api_key, ' +
+        '#nova-poshta_m_ua_settings_sender_counterparty_ref, ' +
+        'input[name="nova-poshta_m_ua_settings[sender][address_type]"], ' +
+        'input[name="nova-poshta_m_ua_settings[sender][warehouse][ref]"], ' +
+        'input[name="nova-poshta_m_ua_settings[sender][street][ref]"], ' +
+        'input[name="nova-poshta_m_ua_settings[sender][street][house]"]', 
+        validateSettings
+    );
+
+    submitBtn.on('click', function(e) {
+        if (jQuery(this).hasClass('custom-disabled')) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            
+            alert('Виберіть місто та відділення відправки, та натисніть “додати”. Після цього можете зберегти налаштування.');
+            return false;
+        }
+    });
 
 	let autoSelectCityPo = function() 
 	{

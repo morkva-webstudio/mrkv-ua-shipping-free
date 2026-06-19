@@ -112,9 +112,9 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 		    	$days_limit = $settings['automation']['cron']['days'];
 		    }
 
-		    $message = "Offset: " . print_r($offset, 1) . "\r\n";
-			$message .= "Max_ttn: " . print_r($max_ttn, 1) . "\r\n";
-			$message .= "Date: " . print_r(date('Y-m-d H:i:s'), 1) . "\r\n";
+		    $message = "Offset: " . wp_json_encode( $offset, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\r\n";
+			$message .= "Max_ttn: " . wp_json_encode( $max_ttn, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\r\n";
+			$message .= "Date: " . wp_json_encode( gmdate('Y-m-d H:i:s'), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\r\n";
 
 			if($offset >= $max_ttn)
 			{
@@ -125,59 +125,88 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 
 			if(!get_option('woocommerce_custom_orders_table_enabled') || get_option('woocommerce_custom_orders_table_enabled') == 'no')
 			{
-				$orders = $wpdb->get_results("
-				    SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
-				    FROM {$wpdb->prefix}postmeta as ordermeta
-				    INNER JOIN (SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
-				        FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
-				        INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem ON orderitemmeta.order_item_id = orderitem.order_item_id
-				        WHERE orderitem.order_item_type LIKE 'shipping'
-				        AND orderitemmeta.meta_key LIKE 'method_id'
-				        AND (orderitemmeta.meta_value LIKE 'mrkv_ua_shipping_nova-poshta%' OR orderitemmeta.meta_value LIKE 'nova_poshta_shipping_method%' OR orderitemmeta.meta_value LIKE 'npttn_address_shipping_method')) as meta ON meta.order_id = ordermeta.post_id
-				    INNER JOIN {$wpdb->prefix}posts as posts ON posts.ID = ordermeta.post_id
-				    WHERE (ordermeta.meta_key LIKE 'mrkv_ua_ship_invoice_number' OR ordermeta.meta_key LIKE 'novaposhta_ttn')
-				    AND posts.post_status = '{$order_status}'
-				    GROUP BY ordermeta.post_id
-				    ORDER BY ordermeta.post_id ASC
-				    LIMIT {$post_per_page} OFFSET 0
-				", OBJECT_K);
-
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+				$orders = $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
+						FROM {$wpdb->prefix}postmeta as ordermeta
+						INNER JOIN (
+							SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
+							FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
+							INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem 
+								ON orderitemmeta.order_item_id = orderitem.order_item_id
+							WHERE orderitem.order_item_type = 'shipping'
+							AND orderitemmeta.meta_key = 'method_id'
+							AND (
+								orderitemmeta.meta_value LIKE %s
+								OR orderitemmeta.meta_value LIKE %s
+								OR orderitemmeta.meta_value LIKE %s
+							)
+						) as meta ON meta.order_id = ordermeta.post_id
+						INNER JOIN {$wpdb->prefix}posts as posts ON posts.ID = ordermeta.post_id
+						WHERE (
+							ordermeta.meta_key = 'mrkv_ua_ship_invoice_number' 
+							OR ordermeta.meta_key = 'novaposhta_ttn'
+						)
+						AND posts.post_status = %s
+						GROUP BY ordermeta.post_id
+						ORDER BY ordermeta.post_id ASC
+						LIMIT %d OFFSET 0",
+						'mrkv_ua_shipping_nova-poshta%', 
+						'nova_poshta_shipping_method%',  
+						'npttn_address_shipping_method%',
+						$order_status,                   
+						$post_per_page                   
+					),
+					OBJECT_K
+				);
 			}
 			else
 			{
-				$orders = $wpdb->get_results("
-			    SELECT ordermeta.meta_value as invoice, ordermeta.order_id
-			    FROM {$wpdb->prefix}wc_orders_meta as ordermeta
-			    INNER JOIN (
-			        SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
-			        FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
-			        INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem ON orderitemmeta.order_item_id = orderitem.order_item_id
-			        WHERE orderitem.order_item_type = 'shipping'
-			        AND orderitemmeta.meta_key = 'method_id'
-			        AND (
-			            orderitemmeta.meta_value LIKE 'mrkv_ua_shipping_nova-poshta%'
-			            OR orderitemmeta.meta_value LIKE 'nova_poshta_shipping_method%'
-			            OR orderitemmeta.meta_value LIKE 'npttn_address_shipping_method%'
-			        )
-			    ) as meta ON meta.order_id = ordermeta.order_id
-			    INNER JOIN {$wpdb->prefix}wc_orders as orders ON orders.id = ordermeta.order_id
-			    WHERE (
-			        ordermeta.meta_key = 'mrkv_ua_ship_invoice_number'
-			        OR ordermeta.meta_key = 'novaposhta_ttn'
-			    )
-			    AND orders.status = '{$order_status}'
-			    AND orders.date_created_gmt >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL {$days_limit} DAY)
-			    GROUP BY ordermeta.order_id
-			    ORDER BY orders.date_created_gmt ASC
-			    LIMIT {$post_per_page} OFFSET 0
-			", OBJECT_K);
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+				$orders = $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT ordermeta.meta_value as invoice, ordermeta.order_id
+						FROM {$wpdb->prefix}wc_orders_meta as ordermeta
+						INNER JOIN (
+							SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
+							FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
+							INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem 
+								ON orderitemmeta.order_item_id = orderitem.order_item_id
+							WHERE orderitem.order_item_type = 'shipping'
+							AND orderitemmeta.meta_key = 'method_id'
+							AND (
+								orderitemmeta.meta_value LIKE %s
+								OR orderitemmeta.meta_value LIKE %s
+								OR orderitemmeta.meta_value LIKE %s
+							)
+						) as meta ON meta.order_id = ordermeta.order_id
+						INNER JOIN {$wpdb->prefix}wc_orders as orders ON orders.id = ordermeta.order_id
+						WHERE (
+							ordermeta.meta_key = 'mrkv_ua_ship_invoice_number'
+							OR ordermeta.meta_key = 'novaposhta_ttn'
+						)
+						AND orders.status = %s
+						AND orders.date_created_gmt >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL %d DAY)
+						GROUP BY ordermeta.order_id
+						ORDER BY orders.date_created_gmt ASC
+						LIMIT %d OFFSET 0",
+						'mrkv_ua_shipping_nova-poshta%', 
+						'nova_poshta_shipping_method%',  
+						'npttn_address_shipping_method%',
+						$order_status,                   
+						$days_limit,                     
+						$post_per_page                   
+					),
+					OBJECT_K
+				);
 			}
 
 			$offset += $post_per_page;
 			file_put_contents($log_file_offset, '');
 			file_put_contents($log_file_offset, $offset);
 
-			$message .= "Orders: " . print_r($orders, 1) . "\r\n";
+			$message .= "Orders: " . wp_json_encode( $orders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\r\n";
 
 			
 
@@ -218,7 +247,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 			$updated_status_canceled = (isset($settings['automation']['status']['canceled']) && $settings['automation']['status']['canceled']) ? $settings['automation']['status']['canceled'] : false;
 			$updated_status_shipping = (isset($settings['automation']['status']['shipping']) && $settings['automation']['status']['shipping']) ? $settings['automation']['status']['shipping'] : false;
 
-			$message .= "Orders with status: " . print_r($orders, 1) . "\r\n";
+			$message .= "Orders with status: " . wp_json_encode( $orders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\r\n";
 			do_action('mrkv_ua_shipping_log_cron', $message);
 
 			if(is_array($orders) && !empty($orders))
@@ -342,70 +371,115 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 
 				if(!get_option('woocommerce_custom_orders_table_enabled') || get_option('woocommerce_custom_orders_table_enabled') == 'no')
 				{
-					$orders = $wpdb->get_results("
-					    SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
-					    FROM {$wpdb->prefix}postmeta as ordermeta
-					    INNER JOIN (SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
-					        FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
-					        INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem ON orderitemmeta.order_item_id = orderitem.order_item_id
-					        WHERE orderitem.order_item_type LIKE 'shipping'
-					        AND orderitemmeta.meta_key LIKE 'method_id'
-					        AND (orderitemmeta.meta_value LIKE 'mrkv_ua_shipping_{$key_ship}%' OR orderitemmeta.meta_value LIKE 'nova_poshta_shipping_method%' OR orderitemmeta.meta_value LIKE 'npttn_address_shipping_method')) as meta ON meta.order_id = ordermeta.post_id
-					    INNER JOIN {$wpdb->prefix}posts as posts ON posts.ID = ordermeta.post_id
-					    WHERE (ordermeta.meta_key LIKE 'mrkv_ua_ship_invoice_number' OR ordermeta.meta_key LIKE 'novaposhta_ttn')
-					    AND posts.post_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-					    GROUP BY ordermeta.post_id
-					    ORDER BY ordermeta.post_id DESC
-					    LIMIT {$post_per_page}
-					", OBJECT_K);
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+					$orders = $wpdb->get_results(
+						$wpdb->prepare(
+							"SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
+							FROM {$wpdb->prefix}postmeta as ordermeta
+							INNER JOIN (
+								SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
+								FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
+								INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem 
+									ON orderitemmeta.order_item_id = orderitem.order_item_id
+								WHERE orderitem.order_item_type = 'shipping'
+								AND orderitemmeta.meta_key = 'method_id'
+								AND (
+									orderitemmeta.meta_value LIKE %s
+									OR orderitemmeta.meta_value LIKE %s
+									OR orderitemmeta.meta_value LIKE %s
+								)
+							) as meta ON meta.order_id = ordermeta.post_id
+							INNER JOIN {$wpdb->prefix}posts as posts ON posts.ID = ordermeta.post_id
+							WHERE (
+								ordermeta.meta_key = 'mrkv_ua_ship_invoice_number' 
+								OR ordermeta.meta_key = 'novaposhta_ttn'
+							)
+							AND posts.post_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+							GROUP BY ordermeta.post_id
+							ORDER BY ordermeta.post_id DESC
+							LIMIT %d",
+							'mrkv_ua_shipping_' . $key_ship . '%',
+							'nova_poshta_shipping_method%',       
+							'npttn_address_shipping_method%',     
+							$post_per_page                        
+						),
+						OBJECT_K
+					);
 				}
 				else
 				{
-					$orders = $wpdb->get_results("
-					    SELECT ordermeta.meta_value as invoice, ordermeta.order_id
-					    FROM {$wpdb->prefix}wc_orders_meta as ordermeta
-					    INNER JOIN (
-					        SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
-					        FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
-					        INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem ON orderitemmeta.order_item_id = orderitem.order_item_id
-					        WHERE orderitem.order_item_type LIKE 'shipping'
-					        AND orderitemmeta.meta_key LIKE 'method_id'
-					        AND (
-					            orderitemmeta.meta_value LIKE 'mrkv_ua_shipping_{$key_ship}%'
-					            OR orderitemmeta.meta_value LIKE 'nova_poshta_shipping_method%'
-					            OR orderitemmeta.meta_value LIKE 'npttn_address_shipping_method%'
-					        )
-					    ) as meta ON meta.order_id = ordermeta.order_id
-					    INNER JOIN {$wpdb->prefix}wc_orders as orders ON orders.id = ordermeta.order_id
-					    WHERE (
-					        ordermeta.meta_key LIKE 'mrkv_ua_ship_invoice_number'
-					        OR ordermeta.meta_key LIKE 'novaposhta_ttn'
-					    )
-					    AND COALESCE(orders.date_created_gmt, orders.date_created_gmt) >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-					    GROUP BY ordermeta.order_id
-					    ORDER BY ordermeta.order_id DESC
-					    LIMIT {$post_per_page}
-					", OBJECT_K);
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+					$orders = $wpdb->get_results(
+						$wpdb->prepare(
+							"SELECT ordermeta.meta_value as invoice, ordermeta.order_id
+							FROM {$wpdb->prefix}wc_orders_meta as ordermeta
+							INNER JOIN (
+								SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
+								FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
+								INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem 
+									ON orderitemmeta.order_item_id = orderitem.order_item_id
+								WHERE orderitem.order_item_type = 'shipping'
+								AND orderitemmeta.meta_key = 'method_id'
+								AND (
+									orderitemmeta.meta_value LIKE %s
+									OR orderitemmeta.meta_value LIKE %s
+									OR orderitemmeta.meta_value LIKE %s
+								)
+							) as meta ON meta.order_id = ordermeta.order_id
+							INNER JOIN {$wpdb->prefix}wc_orders as orders ON orders.id = ordermeta.order_id
+							WHERE (
+								ordermeta.meta_key = 'mrkv_ua_ship_invoice_number'
+								OR ordermeta.meta_key = 'novaposhta_ttn'
+							)
+							AND orders.date_created_gmt >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+							GROUP BY ordermeta.order_id
+							ORDER BY ordermeta.order_id DESC
+							LIMIT %d",
+							'mrkv_ua_shipping_' . $key_ship . '%',
+							'nova_poshta_shipping_method%',       
+							'npttn_address_shipping_method%',     
+							$post_per_page                        
+						),
+						OBJECT_K
+					);
 				}
 
 				if(empty($orders))
 				{
-					$orders = $wpdb->get_results("
-					    SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
-					    FROM {$wpdb->prefix}postmeta as ordermeta
-					    INNER JOIN (SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
-					        FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
-					        INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem ON orderitemmeta.order_item_id = orderitem.order_item_id
-					        WHERE orderitem.order_item_type LIKE 'shipping'
-					        AND orderitemmeta.meta_key LIKE 'method_id'
-					        AND (orderitemmeta.meta_value LIKE 'mrkv_ua_shipping_{$key_ship}%' OR orderitemmeta.meta_value LIKE 'nova_poshta_shipping_method%' OR orderitemmeta.meta_value LIKE 'npttn_address_shipping_method')) as meta ON meta.order_id = ordermeta.post_id
-					    INNER JOIN {$wpdb->prefix}posts as posts ON posts.ID = ordermeta.post_id
-					    WHERE (ordermeta.meta_key LIKE 'mrkv_ua_ship_invoice_number' OR ordermeta.meta_key LIKE 'novaposhta_ttn')
-					    AND posts.post_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-					    GROUP BY ordermeta.post_id
-					    ORDER BY ordermeta.post_id DESC
-					    LIMIT {$post_per_page}
-					", OBJECT_K);
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+					$orders = $wpdb->get_results(
+						$wpdb->prepare(
+							"SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
+							FROM {$wpdb->prefix}postmeta as ordermeta
+							INNER JOIN (
+								SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
+								FROM {$wpdb->prefix}woocommerce_order_itemmeta as orderitemmeta
+								INNER JOIN {$wpdb->prefix}woocommerce_order_items as orderitem 
+									ON orderitemmeta.order_item_id = orderitem.order_item_id
+								WHERE orderitem.order_item_type = 'shipping'
+								AND orderitemmeta.meta_key = 'method_id'
+								AND (
+									orderitemmeta.meta_value LIKE %s
+									OR orderitemmeta.meta_value LIKE %s
+									OR orderitemmeta.meta_value LIKE %s
+								)
+							) as meta ON meta.order_id = ordermeta.post_id
+							INNER JOIN {$wpdb->prefix}posts as posts ON posts.ID = ordermeta.post_id
+							WHERE (
+								ordermeta.meta_key = 'mrkv_ua_ship_invoice_number' 
+								OR ordermeta.meta_key = 'novaposhta_ttn'
+							)
+							AND posts.post_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+							GROUP BY ordermeta.post_id
+							ORDER BY ordermeta.post_id DESC
+							LIMIT %d",
+							'mrkv_ua_shipping_' . $key_ship . '%',
+							'nova_poshta_shipping_method%',       
+							'npttn_address_shipping_method%',     
+							$post_per_page                        
+						),
+						OBJECT_K
+					);
 				}
 
 				require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-poshta.php';				

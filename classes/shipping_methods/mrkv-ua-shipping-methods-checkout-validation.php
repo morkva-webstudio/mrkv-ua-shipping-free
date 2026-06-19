@@ -51,15 +51,22 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 		 * */
 		private function mrkv_ua_ship_maybe_disable_default_fields()
 		{
-			$this->type_shipping = (isset($_POST['ship_to_different_address']) && $_POST['ship_to_different_address']) ? 'shipping' : 'billing';
+			$nonce_value = isset($_POST['woocommerce-process-checkout-nonce']) ? sanitize_text_field(wp_unslash($_POST['woocommerce-process-checkout-nonce'])) : '';
+            
+            if ( empty($nonce_value) || ! wp_verify_nonce( $nonce_value, 'woocommerce-process_checkout' ) ) {
+                return;
+            }
+
+			$this->type_shipping = (isset($_POST['ship_to_different_address']) && sanitize_text_field(wp_unslash($_POST['ship_to_different_address']))) ? 'shipping' : 'billing';
 
 			if(isset($_POST['shipping_method'][0]))
 			{
+				$mrv_ua_shipping_current_method = sanitize_text_field(wp_unslash($_POST['shipping_method'][0]));
 				$keys = array_keys(MRKV_UA_SHIPPING_LIST);
 
 				foreach($keys as $key)
 				{
-					if(str_contains($_POST['shipping_method'][0], $key))
+					if(str_contains($mrv_ua_shipping_current_method, $key))
 					{
 						$this->current_shipping_global = $key;
 					}
@@ -68,7 +75,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 				if($this->current_shipping_global){
 					foreach(MRKV_UA_SHIPPING_LIST[$this->current_shipping_global]['method'] as $method_slug => $method_data)
 					{
-						$clean_shipping_method = preg_replace('/_\d+$/', '', $_POST['shipping_method'][0]);
+						$clean_shipping_method = preg_replace('/_\d+$/', '', $mrv_ua_shipping_current_method);
 						
 						if($clean_shipping_method == $method_slug)
 						{
@@ -83,6 +90,12 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 
 		public function mrkv_ua_ship_validate_fields()
 		{
+			$nonce_value = isset($_POST['woocommerce-process-checkout-nonce']) ? sanitize_text_field(wp_unslash($_POST['woocommerce-process-checkout-nonce'])) : '';
+            
+            if ( empty($nonce_value) || ! wp_verify_nonce( $nonce_value, 'woocommerce-process_checkout' ) ) {
+                return;
+            }
+
 			$this->mrkv_ua_ship_maybe_disable_default_fields();
 
 			# Check current shipping
@@ -97,6 +110,8 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 		      	return;
 		    }
 
+			$mrkv_ua_shipping_payment_method = isset($_POST['payment_method']) ? sanitize_text_field(wp_unslash($_POST['payment_method'])) : '';
+
 		    # Include settings checkout by shipping
 			include 'mrkv_ua_shipping_translate.php';
 
@@ -108,12 +123,12 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 
 		    	if(isset($field_val['options']))
 		    	{
-		    		$options_data_loader = $translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['options'][''];
+		    		$options_data_loader = $mrkv_ua_shipping_translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['options'][''];
 		    	}
 
-		    	if ( isset($_POST['payment_method']) && sanitize_text_field( $_POST['payment_method'] ) == 'cod' && '_patronymic' == $field_id && isset($field_val['cod_validation']) && (!isset($_POST[$this->current_shipping . $field_id]) || $_POST[$this->current_shipping . $field_id] == '')) 
+		    	if ( $mrkv_ua_shipping_payment_method && $mrkv_ua_shipping_payment_method == 'cod' && '_patronymic' == $field_id && isset($field_val['cod_validation']) && (!isset($_POST[$this->current_shipping . $field_id]) || $_POST[$this->current_shipping . $field_id] == '')) 
 				{
-					$translated_field_val = $translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['label'];
+					$translated_field_val = $mrkv_ua_shipping_translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['label'];
 					wc_add_notice(__('Field', 'mrkv-ua-shipping') . ' ' . $translated_field_val . ' ' . __('is required', 'mrkv-ua-shipping'), 'error');
 
 		    			return;	
@@ -124,14 +139,14 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 		    	{
 		    		if(isset($settings['checkout']['middlename']['required']) && $settings['checkout']['middlename']['required'] == 'on' && '_patronymic' == $field_id)
 					{
-						$translated_field_val = $translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['label'];
+						$translated_field_val = $mrkv_ua_shipping_translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['label'];
 
 		    			wc_add_notice(__('Field', 'mrkv-ua-shipping') . ' ' . $translated_field_val . ' ' . __('is required', 'mrkv-ua-shipping'), 'error');
 
 		    			return;	
 
 					}
-					
+
 		    		if(isset($field_val['exclude']) && $field_val['exclude'] && isset($_POST[$this->current_shipping . $field_id . '_enabled']) && $_POST[$this->current_shipping . $field_id . '_enabled'] == 'off')
 		    		{
 		    			continue;
@@ -144,7 +159,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 
 		    		if(isset($field_val['label']))
 		    		{
-		    			$translated_field_val = $translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['label'];
+		    			$translated_field_val = $mrkv_ua_shipping_translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['label'];
 		    			wc_add_notice(__('Field', 'mrkv-ua-shipping') . ' ' . $translated_field_val . ' ' . __('is required', 'mrkv-ua-shipping'), 'error');
 		    			return;
 		    		}

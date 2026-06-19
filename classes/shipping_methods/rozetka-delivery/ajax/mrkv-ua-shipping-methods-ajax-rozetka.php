@@ -86,7 +86,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_RZTK'))
 			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/rozetka-delivery/api/mrkv-ua-shipping-api-rozetka-delivery.php';
 			$mrkv_object_rztk_delivery = new MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY(get_option('rozetka-delivery_m_ua_settings'));
 
-			$city_ref = isset($_POST['ref']) ? sanitize_text_field($_POST['ref']) : '';
+			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
 
 			$all_departments = [];
 			$page = 1;

@@ -184,6 +184,7 @@ let latinRegex = /[A-Za-z]/;
 		{
 			jQuery('form[data-ship="' + current_ship_key + '"] textarea[name="mrkv_ua_ship_invoice_shipment_description"]').css('border-color', 'red').focus();
 			jQuery(loading_create).hide();
+			isProcessingCreateInvoice = false;
 		}
 		else
 		{
@@ -371,6 +372,22 @@ let latinRegex = /[A-Za-z]/;
 			}	
 		});
 	});	
+
+	if(jQuery('.mrkv-col-added-link.mrkv_ua_ship_print_inv_ukr').length != 0)
+ 	{
+		jQuery('.mrkv-col-added-link.mrkv_ua_ship_print_inv_ukr').click(function()
+ 		{
+			let invoice_id = jQuery(this).closest('.column-mrkv_ua_invoice').find('.mrkv_ua_ship_global__invoice').attr('data-ttn');
+			let form_name = jQuery(this).attr('data-form');
+
+
+			if(invoice_id)
+			{
+				jQuery('.' + form_name + '.form-ukr-poshta-ttn-orders input[name="invoice_number"]').val(invoice_id);
+				jQuery('.' + form_name + '.form-ukr-poshta-ttn-orders').submit();
+			}
+ 		});
+	}
 
 	jQuery('input[name="mrkv_ua_ship_invoice_shipment_weight"], input[name="mrkv_ua_ship_invoice_shipment_length"], input[name="mrkv_ua_ship_invoice_shipment_width"], input[name="mrkv_ua_ship_invoice_shipment_height"]')
         .on('keyup', function() {

@@ -1,6 +1,6 @@
 <?php
 
-$translate_labels = array(
+$mrkv_ua_shipping_translate_labels = array(
 	'nova-poshta' => array(
 		'name' => __('Nova Poshta', 'mrkv-ua-shipping'),
 		'description' => __('Add shipping method, calculate shipping costs, create and manage shipments, both manually and automatically. Using API 2.0 and connects directly to the Nova Poshta server for fast and secure user experience.', 'mrkv-ua-shipping'),
@@ -137,6 +137,7 @@ $translate_labels = array(
 						'label' => __('Patronymic', 'mrkv-ua-shipping'),
 						'placeholder' => __('Enter the patronymic', 'mrkv-ua-shipping'),
 						'replace' => '_patronymic',
+						// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 						'exclude' => true,
 						'order_edit' => true,
 						'autocomplete' => 'off',
@@ -326,6 +327,7 @@ $translate_labels = array(
 						'placeholder' => __('Enter the patronymic', 'mrkv-ua-shipping'),
 						'replace' => '_patronymic',
 						'order_edit' => true,
+						// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 						'exclude' => true,
 						'autocomplete' => 'off',
 					),

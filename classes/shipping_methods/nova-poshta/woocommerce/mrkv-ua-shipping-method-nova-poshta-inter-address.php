@@ -13,10 +13,10 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
         /**
          * Constructor new shipping method
          * */
-        public function __construct($instance_id = 0) 
+        public function __construct($mrkv_ua_shipping_instance_id = 0) 
         {
-            $this->instance_id = absint( $instance_id );
-            parent::__construct( $instance_id );
+            $this->instance_id = absint( $mrkv_ua_shipping_instance_id );
+            parent::__construct( $mrkv_ua_shipping_instance_id );
 
             # These title description are display on the configuration page
             $this->id = 'mrkv_ua_shipping_nova-poshta_inter_address';
@@ -128,44 +128,92 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
                 'cost' => 0.00,
                 'calc_tax' => 'per_item'
             );
+
+            $should_calculate = true;
+    
+            if (WC()->session) {
+                $is_on_product_page = WC()->session->get('mrkv_is_on_product_page');
+                
+                if ($is_on_product_page === true) {
+                    $should_calculate = false;
+                }
+            }
+
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
+
+            if ( 'woocommerce_update_order_review' === $action ) {
+                $should_calculate = true;
+            }
+
+            $should_calculate = apply_filters('mrkv_ua_shipping_calculation_condtion', $should_calculate, $package);
+
+            if (!$should_calculate) {
+                $this->add_rate($rate);
+                return;
+            }
+            
             if($this->get_option('enable_cost') && $this->get_option('enable_cost') == 'yes' && $this->get_option('enable_fix_cost') != 'yes')
             {
+                $country = '';
+                $recipient_postcode = '';
+
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                if(isset( $_POST['post_data'] ))
+                {
+                    // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                    $raw_post_data = sanitize_text_field( wp_unslash( $_POST['post_data'] ) );
+                    $post_data = array();
+                    parse_str( $raw_post_data, $post_data );
+                    
+                    if(isset($post_data['billing_country']) && $post_data['billing_country'])
+                    {
+                        $country = sanitize_text_field( $post_data['billing_country'] );
+                    }
+                    if(isset($post_data[$this->id . '_postcode']) && $post_data[$this->id . '_postcode'])
+                    {
+                        $recipient_postcode = sanitize_text_field($post_data[$this->id . '_postcode']);
+                    }
+                }
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                if(!$recipient_postcode && isset($_POST[$this->id . '_postcode']))
+                {
+                    // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                    $recipient_postcode = sanitize_text_field(wp_unslash($_POST[$this->id . '_postcode']));
+                }
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                if(!$country && isset($_POST['billing_country']))
+                {
+                    // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                    $country = sanitize_text_field(wp_unslash($_POST['billing_country']));
+                }
+
+                $cart_hash = md5(json_encode([
+                    'country'     => $country,
+                    'recipient_postcode'     => $recipient_postcode,
+                    'contents' => WC()->cart->get_cart_for_session(),
+                    'weight'   => WC()->cart->cart_contents_weight,
+                    'instance' => $this->instance_id
+                ]));
+
+                $cache_key = $this->id . '_cache_' . $cart_hash;
+                $cached_rate = WC()->session->get($cache_key);
+
+                if (null !== $cached_rate && false !== $cached_rate) {
+                    $rate['cost'] = $cached_rate;
+                    $this->add_rate($rate);
+                    return; 
+                }
+
                 $settings_method = get_option('nova-poshta_m_ua_settings');
 
                 $payer_type = isset($settings_method['inter']['payer']) ? $settings_method['inter']['payer'] : 'Recipient';
                 $sender_division_id = isset($settings_method['inter']['division_id']) ? $settings_method['inter']['division_id'] : '';
-                $country = '';
-                $recipient_postcode = '';
                 $weight = 0.00;
                 $length = 0.00;
                 $cost = WC()->cart->get_subtotal();
                 $cargo = isset($settings_method['inter']['shipment_type']) ? $settings_method['inter']['shipment_type'] : 'Parcel';
                 $sender_country = 'UA';
-
-                if(isset( $_POST['post_data'] ))
-                {
-                    parse_str( $_POST['post_data'], $post_data );
-                    
-                    if(isset($post_data['billing_country']) && $post_data['billing_country'])
-                    {
-                        $country = $post_data['billing_country'];
-                    }
-
-                    if(isset($post_data[$this->id . '_postcode']) && $post_data[$this->id . '_postcode'])
-                    {
-                        $recipient_postcode = $post_data[$this->id . '_postcode'];
-                    }
-                }
-
-                if(!$recipient_postcode && isset($_POST[$this->id . '_postcode']))
-                {
-                    $recipient_postcode = $_POST[$this->id . '_postcode'];
-                }
-
-                if(!$country && isset($_POST['billing_country']))
-                {
-                    $country = $_POST['billing_country'];
-                }
 
                 if($country && $recipient_postcode)
                 {
@@ -204,7 +252,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
                         $actual_weight = floatval($settings_method['inter']['weight']);
                     }
 
-                    $args = [
+                    $mrkv_ua_shipping_args = [
                         "payerType" => $payer_type,
                         "parcels" => [
                             [ 
@@ -234,7 +282,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
                     require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-post.php';
                     $api_internal = new MRKV_UA_SHIPPING_API_NOVA_POST($settings_method);
 
-                    $data = $api_internal->send_post_request($args, 'shipments/calculations', 'POST');
+                    $data = $api_internal->send_post_request($mrkv_ua_shipping_args, 'shipments/calculations', 'POST');
 
                     if(isset($data['services'][0]['price']))
                     {

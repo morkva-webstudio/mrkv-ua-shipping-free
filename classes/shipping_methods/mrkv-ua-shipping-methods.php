@@ -29,6 +29,94 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS'))
 
 			# Load settings page constants
 			add_action( 'wp_loaded', array($this, 'get_shipping_admin_settings'));
+			add_action( 'admin_init', array($this, 'get_shipping_admin_settings_admin'));
+			add_filter('template_redirect', array($this, 'mrkv_save_page_context_to_session'), 10, 2);
+		}
+
+		public function mrkv_save_page_context_to_session() {
+
+			if (is_admin() || !WC()->session) return;
+
+			$url = '';
+			if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+				$url = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+			}
+
+			if ( empty( $url ) ) {
+				return;
+			}
+
+			$shop_id     = wc_get_page_id( 'shop' );
+            $shop_slug     = $shop_id > 0 ? wp_make_link_relative( get_permalink( $shop_id ) ) : '/shop';
+			$is_forbidden = ( strpos( $url, 'product' ) !== false || strpos( $url, $shop_slug ) !== false );
+
+			if ($is_forbidden) {
+				WC()->session->set('mrkv_is_on_product_page', true);
+			} else {
+				WC()->session->set('mrkv_is_on_product_page', false);
+			}
+
+			WC()->session->save_data();
+
+		}
+
+		/**
+		 * Add shippings settings admin page
+		 * **/
+		public function get_shipping_admin_settings_admin()
+		{
+			global $plugin_page;
+
+			# Check page data
+			if(isset( $plugin_page ))
+			{
+				# Loop all shipping
+				foreach(MRKV_UA_SHIPPING_LIST as $slug => $shipping)
+				{
+					# Check if settings shipping page
+					if($plugin_page == 'mrkv_ua_shipping_' . $slug)
+					{
+						define('MRKV_UA_SHIPPING_SETTINGS_SLUG', $slug);
+
+						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/settings/global/mrkv-ua-shipping-option-fields.php';
+						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . MRKV_UA_SHIPPING_SETTINGS_SLUG 
+							. '/api/mrkv-ua-shipping-api-' . MRKV_UA_SHIPPING_SETTINGS_SLUG . '.php';
+
+						global $mrkv_global_option_generator;
+						$mrkv_global_option_generator = new MRKV_UA_SHIPPING_OPTION_FIELDS();
+						define('MRKV_OPTION_OBJECT_NAME', MRKV_UA_SHIPPING_SETTINGS_SLUG . '_m_ua_settings');
+						define('MRKV_SHIPPING_SETTINGS', get_option(MRKV_OPTION_OBJECT_NAME));
+						
+						$api_class = MRKV_UA_SHIPPING_LIST[MRKV_UA_SHIPPING_SETTINGS_SLUG]['api_class'];
+						global $mrkv_global_shipping_object;
+						$mrkv_global_shipping_object = new $api_class(MRKV_SHIPPING_SETTINGS);
+
+						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . $slug . '/settings/mrkv-ua-shipping-settings-' . $slug . '.php';
+
+						$shipping_setting_class = MRKV_UA_SHIPPING_LIST[$slug]['settings_class'];
+
+						new $shipping_setting_class();
+					}
+					elseif(str_contains($plugin_page, 'mrkv_ua_shipping_' . $slug))
+					{
+						define('MRKV_UA_SHIPPING_SETTINGS_SLUG', $slug);
+						define('MRKV_UA_SHIPPING_SETTINGS_PAGE_SLUG', str_replace('mrkv_ua_shipping_' . $slug . '_', "", $plugin_page));
+
+						if(MRKV_UA_SHIPPING_SETTINGS_PAGE_SLUG == 'invoices')
+						{
+							require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . MRKV_UA_SHIPPING_SETTINGS_SLUG 
+							. '/api/mrkv-ua-shipping-api-' . MRKV_UA_SHIPPING_SETTINGS_SLUG . '.php';
+
+							define('MRKV_OPTION_OBJECT_NAME', MRKV_UA_SHIPPING_SETTINGS_SLUG . '_m_ua_settings');
+							define('MRKV_SHIPPING_SETTINGS', get_option(MRKV_OPTION_OBJECT_NAME));
+						
+							$api_class = MRKV_UA_SHIPPING_LIST[MRKV_UA_SHIPPING_SETTINGS_SLUG]['api_class'];
+							global $mrkv_global_shipping_object;
+							$mrkv_global_shipping_object = new $api_class(MRKV_SHIPPING_SETTINGS);
+						}
+					}
+				}
+			}
 		}
 
 		/**
@@ -52,57 +140,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS'))
 					new MRKV_UA_SHIPPING_METHODS_CRON();
 
 					break;
-				}
-			}
-			
-			# Check page data
-			if(isset($_GET['page']))
-			{
-				# Loop all shipping
-				foreach(MRKV_UA_SHIPPING_LIST as $slug => $shipping)
-				{
-					# Check if settings shipping page
-					if($_GET['page'] == 'mrkv_ua_shipping_' . $slug)
-					{
-						define('SETTINGS_MRKV_UA_SHIPPING_SLUG', $slug);
-
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/settings/global/mrkv-ua-shipping-option-fields.php';
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . SETTINGS_MRKV_UA_SHIPPING_SLUG 
-							. '/api/mrkv-ua-shipping-api-' . SETTINGS_MRKV_UA_SHIPPING_SLUG . '.php';
-
-						global $mrkv_global_option_generator;
-						$mrkv_global_option_generator = new MRKV_UA_SHIPPING_OPTION_FIELDS();
-						define('MRKV_OPTION_OBJECT_NAME', SETTINGS_MRKV_UA_SHIPPING_SLUG . '_m_ua_settings');
-						define('MRKV_SHIPPING_SETTINGS', get_option(MRKV_OPTION_OBJECT_NAME));
-						
-						$api_class = MRKV_UA_SHIPPING_LIST[SETTINGS_MRKV_UA_SHIPPING_SLUG]['api_class'];
-						global $mrkv_global_shipping_object;
-						$mrkv_global_shipping_object = new $api_class(MRKV_SHIPPING_SETTINGS);
-
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . $slug . '/settings/mrkv-ua-shipping-settings-' . $slug . '.php';
-
-						$shipping_setting_class = MRKV_UA_SHIPPING_LIST[$slug]['settings_class'];
-
-						new $shipping_setting_class();
-					}
-					elseif(str_contains($_GET['page'], 'mrkv_ua_shipping_' . $slug))
-					{
-						define('SETTINGS_MRKV_UA_SHIPPING_SLUG', $slug);
-						define('SETTINGS_MRKV_UA_PAGE_SLUG', str_replace('mrkv_ua_shipping_' . $slug . '_', "", $_GET['page']));
-
-						if(SETTINGS_MRKV_UA_PAGE_SLUG == 'invoices')
-						{
-							require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . SETTINGS_MRKV_UA_SHIPPING_SLUG 
-							. '/api/mrkv-ua-shipping-api-' . SETTINGS_MRKV_UA_SHIPPING_SLUG . '.php';
-
-							define('MRKV_OPTION_OBJECT_NAME', SETTINGS_MRKV_UA_SHIPPING_SLUG . '_m_ua_settings');
-							define('MRKV_SHIPPING_SETTINGS', get_option(MRKV_OPTION_OBJECT_NAME));
-						
-							$api_class = MRKV_UA_SHIPPING_LIST[SETTINGS_MRKV_UA_SHIPPING_SLUG]['api_class'];
-							global $mrkv_global_shipping_object;
-							$mrkv_global_shipping_object = new $api_class(MRKV_SHIPPING_SETTINGS);
-						}
-					}
 				}
 			}
 		}

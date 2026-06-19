@@ -1,5 +1,6 @@
 <?php
-$args['rozetka_city_area'] = array(
+if ( ! defined( 'ABSPATH' ) ) exit;
+$mrkv_ua_shipping_args['rozetka_city_area'] = array(
     array('label' => __('Vinnytsia', 'mrkv-ua-shipping'), 'value' => '6dc9024c-84fa-42d6-bb6d-cfeb08f9ca1d'),
     array('label' => __('Dnipro', 'mrkv-ua-shipping'), 'value' => '45e6986c-06d0-45d0-9240-49f5b4b4f8a5'),
     array('label' => __('Zhytomyr', 'mrkv-ua-shipping'), 'value' => 'c8eb2d3a-5841-4726-9c53-ef39439f4b97'),

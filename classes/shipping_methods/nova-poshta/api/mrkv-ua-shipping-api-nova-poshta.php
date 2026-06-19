@@ -42,7 +42,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 		{
 			# Set data
 			$this->settings_method = $settings;
-			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->slug_method, $this->get_debug_enabled(), $this->get_debug_request_enabled());
+			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->get_debug_enabled());
 			$this->active_api = $this->get_api_key_active();
 		}
 
@@ -55,7 +55,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 		public function send_post_request($params) 
 	    {
 	    	# Create arguments
-			$args = array(
+			$mrkv_ua_shipping_args = array(
 				'timeout' => 30,
 				'redirection' => 10,
 				'httpversion' => '1.0',
@@ -72,7 +72,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 			$this->debug_log->add_data_request(\wp_json_encode( $params ));
 
 			# Send request
-			$response = wp_remote_post( $this->api_url, $args );
+			$response = wp_remote_post( $this->api_url, $mrkv_ua_shipping_args );
 
 			# Check answer
 			if ( is_wp_error( $response ) ) 
@@ -92,7 +92,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 				}
 
 				# Save to log
-				$this->debug_log->add_data($order_id . $error_message);
+				$this->debug_log->add_data_error($order_id . $error_message);
 
 				# Return error string
 				return $error_message;
@@ -119,14 +119,14 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    	if(isset($this->settings_method['api_key']) && $this->settings_method['api_key'])
 	    	{
 	    		# Set arguments
-	    		$args = array(
+	    		$mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->settings_method['api_key'],
 		            "modelName" => "AddressGeneral",
 		            "calledMethod" => "getAreas",
 		        );
 
 	    		# Send request
-	    		$obj = $this->send_post_request( $args );
+	    		$obj = $this->send_post_request( $mrkv_ua_shipping_args );
 
 	    		if(is_array($obj) && isset($obj['success']) && $obj['success'] == true)
 	    		{
@@ -167,7 +167,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    		if(is_array($invoices_ref) && !empty($invoices_ref))
 	    		{
 	    			# Set arguments
-		    		$args = array(
+		    		$mrkv_ua_shipping_args = array(
 			            "apiKey" => $this->settings_method['api_key'],
 			            "modelName" => "InternetDocument",
 			            "calledMethod" => "delete",
@@ -177,7 +177,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 			        );
 
 			        # Send request
-	    			$obj = $this->send_post_request( $args );
+	    			$obj = $this->send_post_request( $mrkv_ua_shipping_args );
 	    		}
 	    	}
 
@@ -216,22 +216,6 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    	}
 	    }
 
-	    /**
-	     * Get Debug request enabled
-	     * @return boolean Debug
-	     * */
-	    public function get_debug_request_enabled()
-	    {
-	    	if(isset($this->settings_method['debug']['query']) && $this->settings_method['debug']['query'] == 'on')
-	    	{
-	    		return true;	
-	    	}
-	    	else
-	    	{
-	    		return false;	
-	    	}
-	    }
-
 	    public function get_status_documents($invoices_data)
 	    {
 	    	if(isset($this->settings_method['api_key']) && $this->settings_method['api_key'])
@@ -249,7 +233,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    		}
 
 	    		# Set arguments
-	    		$args = array(
+	    		$mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->settings_method['api_key'],
 		            "modelName" => "TrackingDocumentGeneral",
 		            "calledMethod" => "getStatusDocuments",
@@ -259,7 +243,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 		        );
 
 	    		# Send request
-	    		$obj = $this->send_post_request( $args );
+	    		$obj = $this->send_post_request( $mrkv_ua_shipping_args );
 
 	    		if(isset($obj['success']) && $obj['success'] == true)
 	    		{

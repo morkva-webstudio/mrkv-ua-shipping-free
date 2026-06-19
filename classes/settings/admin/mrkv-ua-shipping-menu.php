@@ -31,7 +31,11 @@ if (!class_exists('MRKV_UA_SHIPPING_MENU'))
 		public function mrkv_ua_shipping_register_plugin_page()
 		{
 			# Add menu to WP
-	        add_menu_page(__('MRKV UA Shipping', 'mrkv-ua-shipping'), __('MRKV UA Shipping', 'mrkv-ua-shipping'), 'manage_options', $this->slug, array($this, 'mrkv_ua_shipping_get_plugin_settings_content'), MRKV_UA_SHIPPING_IMG_URL . '/global/morkva-icon-20x20.svg');
+	        add_menu_page(__('morkva UA Shipping', 'mrkv-ua-shipping'), __('morkva UA Shipping', 'mrkv-ua-shipping'), 'manage_options', $this->slug, array($this, 'mrkv_ua_shipping_get_plugin_settings_content'), MRKV_UA_SHIPPING_IMG_URL . '/global/morkva-icon-20x20.svg');
+
+			add_submenu_page($this->slug, __('Global Settings', 'mrkv-ua-shipping'), __('Global Settings', 'mrkv-ua-shipping'), 'manage_options', $this->slug, array($this, 'mrkv_ua_shipping_get_plugin_settings_content'));
+
+	        $m_ua_active_plugins = get_option('m_ua_active_plugins');
 
 	        foreach(MRKV_UA_SHIPPING_LIST as $slug => $shipping)
 			{
@@ -47,8 +51,11 @@ if (!class_exists('MRKV_UA_SHIPPING_MENU'))
 
 		        		if($page_slug == 'invoices')
 		        		{
-		        			# Add submenu page
-		        			add_submenu_page('woocommerce', $page_name . ' ' . $shipping['name'], $page_name  . ' ' . $shipping['name'], 'manage_options', 'admin.php?page=' . 'mrkv_ua_shipping_' . $slug . '_' . $page_slug);
+		        			if(isset($m_ua_active_plugins[$slug]['enabled']) && $m_ua_active_plugins[$slug]['enabled'] == 'on')
+							{
+								# Add submenu page
+		        				add_submenu_page('woocommerce', $page_name . ' ' . $shipping['name'], $page_name  . ' ' . $shipping['name'], 'manage_options', 'admin.php?page=' . 'mrkv_ua_shipping_' . $slug . '_' . $page_slug);
+							}
 		        		}
 		        	}
 	        	}

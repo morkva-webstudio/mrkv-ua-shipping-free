@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 define('MRKV_UA_SHIPPING_LIST', array(
 	'nova-poshta' => array(
 		'name' => __('Nova Poshta', 'mrkv-ua-shipping'),
@@ -154,6 +155,7 @@ define('MRKV_UA_SHIPPING_LIST', array(
 						'label' => __('Patronymic', 'mrkv-ua-shipping'),
 						'placeholder' => __('Enter the patronymic', 'mrkv-ua-shipping'),
 						'replace' => '_patronymic',
+						// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 						'exclude' => true,
 						'order_edit' => true,
 						'autocomplete' => 'off',
@@ -351,6 +353,7 @@ define('MRKV_UA_SHIPPING_LIST', array(
 						'placeholder' => __('Enter the patronymic', 'mrkv-ua-shipping'),
 						'replace' => '_patronymic',
 						'order_edit' => true,
+						// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 						'exclude' => true,
 						'autocomplete' => 'off',
 						'cod_validation' => true

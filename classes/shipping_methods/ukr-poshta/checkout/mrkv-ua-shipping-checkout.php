@@ -1,6 +1,7 @@
 <?php
-$up_warehouse_middlename_exclude = 'no';
-$up_warehouse_middlename_required = 'no';
+if ( ! defined( 'ABSPATH' ) ) exit;
+$mrkv_ua_shipping_up_warehouse_middlename_exclude = 'no';
+$mrkv_ua_shipping_up_warehouse_middlename_required = 'no';
 
 if(isset($this->active_shipping['ukr-poshta']['methods']['mrkv_ua_shipping_ukr-poshta']))
 {
@@ -8,21 +9,21 @@ if(isset($this->active_shipping['ukr-poshta']['methods']['mrkv_ua_shipping_ukr-p
 	{
 		if(!isset($this->active_shipping['ukr-poshta']['settings']['checkout']['middlename']['enabled']) || $this->active_shipping['ukr-poshta']['settings']['checkout']['middlename']['enabled'] != 'on')
 		{
-			$up_warehouse_middlename_exclude = 'yes';
+			$mrkv_ua_shipping_up_warehouse_middlename_exclude = 'yes';
 		}
 		else{
 			if(isset($this->active_shipping['ukr-poshta']['settings']['checkout']['middlename']['required']) && $this->active_shipping['ukr-poshta']['settings']['checkout']['middlename']['required'] == 'on')
 			{
-				$up_warehouse_middlename_required = 'yes';
+				$mrkv_ua_shipping_up_warehouse_middlename_required = 'yes';
 			}
 		}
 	}
 }
 
-$args['up_middlename_exclude'] = $up_warehouse_middlename_exclude;
-$args['up_middlename_required'] = $up_warehouse_middlename_required;
+$mrkv_ua_shipping_args['up_middlename_exclude'] = $mrkv_ua_shipping_up_warehouse_middlename_exclude;
+$mrkv_ua_shipping_args['up_middlename_required'] = $mrkv_ua_shipping_up_warehouse_middlename_required;
 
-$args['ukr_city_area'] = array(
+$mrkv_ua_shipping_args['ukr_city_area'] = array(
 	array('label' => __('Vinnytsia, Vinnytsia district', 'mrkv-ua-shipping'), 'value' => '1057'),
 	array('label' => __('Dnipro, Dniprovskyi district', 'mrkv-ua-shipping'), 'value' => '3641'),
 	array('label' => __('Zhytomyr, Zhytomyr district', 'mrkv-ua-shipping'), 'value' => '6708'),
@@ -46,4 +47,4 @@ $args['ukr_city_area'] = array(
 	array('label' => __('Chernivtsi, Chernivtsi district', 'mrkv-ua-shipping'), 'value' => '28188'),
 	array('label' => __('Chernihiv, Chernihiv district', 'mrkv-ua-shipping'), 'value' => '29712'),
 );
-$args['city_placeholder'] = __('Enter the first 3 letters', 'mrkv-ua-shipping');
+$mrkv_ua_shipping_args['city_placeholder'] = __('Enter the first 3 letters', 'mrkv-ua-shipping');

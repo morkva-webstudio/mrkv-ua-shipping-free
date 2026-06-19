@@ -1,6 +1,50 @@
 /** ADMIN STYLES **/
 
 /** GLOBAL **/
+.mrkv-btn-sidebar-main.button.button-primary{
+    background-color: #ed6230;
+    border: 1px solid #ed6230;
+    color: #fff;
+    font-size: 14px;
+    padding: 2px 12px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+.mrkv-btn-sidebar-main img{
+    filter: brightness(100);
+}
+.mrkv-btn-sidebar-black.button{
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #fff !important;
+    border-radius: 10px !important;
+    border: 1px solid #ed6230;
+    color: #000 !important;
+    border-color: #ed6230 !important;
+    width: fit-content;
+    padding: 2px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+.mrkv-btn-sidebar-main.button.button-primary:hover{
+    color: #000 !important;
+    border:1px solid #ed6230 !important;
+    background-color: #fff !important;
+    opacity: 1 !important;
+}
+.mrkv-btn-sidebar-main.button.button-primary:hover img{
+    filter: brightness(0);
+}
+
+.mrkv-btn-sidebar-black.button:hover{
+    color:#fff !important;
+    background-color: #ed6230 !important;
+    border-color: #ed6230 !important;
+    opacity: 1 !important;
+}
 .admin_ua_ship_morkva_settings_line .select2-container .select2-selection--multiple .select2-selection__rendered{
  display: inline-block;
 }
@@ -352,7 +396,7 @@
 }
 .mrkv_up_ship_tab_btn:hover,
 .mrkv_up_ship_tab_btn.active{
-	background: #ed6230;
+	background: #ed6230;border-radius: 10px;
 	color: #fff !important;
 	opacity: 1 !important;
 }

@@ -2,8 +2,8 @@
 # Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit; 
 
-require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . SETTINGS_MRKV_UA_SHIPPING_SLUG 
-	. '/api/mrkv-ua-shipping-sender-' . SETTINGS_MRKV_UA_SHIPPING_SLUG . '.php';
+require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . MRKV_UA_SHIPPING_SETTINGS_SLUG 
+	. '/api/mrkv-ua-shipping-sender-' . MRKV_UA_SHIPPING_SETTINGS_SLUG . '.php';
 
 # Check if class exist
 if (!class_exists('MRKV_UA_SHIPPING_SETTINGS_NOVA_POSHTA'))

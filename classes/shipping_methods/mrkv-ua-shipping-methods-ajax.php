@@ -32,30 +32,14 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 			new MRKV_UA_SHIPPING_AJAX_UKR();
 			# Call ajax rozetka
 			new MRKV_UA_SHIPPING_AJAX_RZTK();
-			
-			add_action( 'wp_ajax_mrkv_ua_ship_clear_log', array($this, 'mrkv_ua_ship_clear_log_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_clear_log', array($this, 'mrkv_ua_ship_clear_log_func') );
 
 			add_action( 'wp_ajax_mrkv_ua_ship_get_order_data', array($this, 'mrkv_ua_ship_get_order_data_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_get_order_data', array($this, 'mrkv_ua_ship_get_order_data_func') );
-
 			add_action( 'wp_ajax_mrkv_ua_ship_create_invoice', array($this, 'mrkv_ua_ship_create_invoice_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_create_invoice', array($this, 'mrkv_ua_ship_create_invoice_func') );
-
 			add_action( 'wp_ajax_mrkv_ua_ship_update_order_data', array($this, 'mrkv_ua_ship_update_order_data_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_update_order_data', array($this, 'mrkv_ua_ship_update_order_data_func') );
-
 			add_action( 'wp_ajax_mrkv_ua_ship_update_invoice_data', array($this, 'mrkv_ua_ship_update_invoice_data_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_update_invoice_data', array($this, 'mrkv_ua_ship_update_invoice_data_func') );
-
 			add_action( 'wp_ajax_mrkv_ua_ship_remove_invoice_data', array($this, 'mrkv_ua_ship_remove_invoice_data_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_remove_invoice_data', array($this, 'mrkv_ua_ship_remove_invoice_data_func') );
-
 			add_action( 'wp_ajax_mrkv_ua_ship_remove_all_invoices', array($this, 'mrkv_ua_ship_remove_all_invoices_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_remove_all_invoices', array($this, 'mrkv_ua_ship_remove_all_invoices_func') );
-
 			add_action( 'wp_ajax_mrkv_update_shipping_method', array($this, 'mrkv_update_shipping_method_func') );
-			add_action( 'wp_ajax_nopriv_mrkv_update_shipping_method', array($this, 'mrkv_update_shipping_method_func') );
 		}
 
 		/**
@@ -68,9 +52,13 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		        wp_die();
 		    }
 
-		    $order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : '';
-		    $shipping_method = isset($_POST['shipping_method']) ? sanitize_text_field($_POST['shipping_method']) : '';
-		    $shipping_method_name = isset($_POST['shipping_method_name']) ? sanitize_text_field($_POST['shipping_method_name']) : '';
+			if (!current_user_can('edit_shop_orders')) {
+				wp_send_json_error(__('You do not have permission to edit orders.', 'mrkv-ua-shipping'), 403);
+			}
+
+		    $order_id = isset($_POST['order_id']) ? absint(wp_unslash($_POST['order_id'])) : '';
+		    $shipping_method = isset($_POST['shipping_method']) ? sanitize_text_field(wp_unslash($_POST['shipping_method'])) : '';
+		    $shipping_method_name = isset($_POST['shipping_method_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_method_name'])) : '';
 
 			if ($order_id && $shipping_method && $shipping_method_name) 
 			{
@@ -117,31 +105,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		}
 
 		/**
-		 * Clear main log
-		 * */
-		public function mrkv_ua_ship_clear_log_func()
-		{
-			if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'mrkv_ua_ship_nonce')) {
-		        wp_send_json_error(__('Invalid nonce.', 'mrkv-ua-shipping'), 403);
-		        wp_die();
-		    }
-
-		    $current_ship_key = isset($_POST['shipping']) ? sanitize_text_field($_POST['shipping']) : '';
-
-			if($current_ship_key)
-			{
-				# Validate shipping key
-        		$allowed_keys = array_keys(MRKV_UA_SHIPPING_LIST);
-
-        		if (in_array($current_ship_key, $allowed_keys, true)) {
-		            file_put_contents(MRKV_UA_SHIPPING_PLUGIN_PATH . 'logs/' . $current_ship_key . '/debug-' . $current_ship_key . '.log', '');
-		        }
-			}
-
-			wp_die();
-		}
-
-		/**
 		 * Get order data AJAX
 		 * */
 		public function mrkv_ua_ship_get_order_data_func()
@@ -151,8 +114,12 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		        wp_die();
 		    }
 
+			if (!current_user_can('edit_shop_orders')) {
+				wp_send_json_error(__('You do not have permission to edit orders.', 'mrkv-ua-shipping'), 403);
+			}
+
 		    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : '';
-		    $description_checked = isset($_POST['description']) ? sanitize_text_field($_POST['description']) : '';
+		    $description_checked = isset($_POST['description']) ? sanitize_text_field(wp_unslash($_POST['description'])) : '';
 
 			if($order_id)
 			{
@@ -164,7 +131,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 					if($order_data)
 					{
-						$args = [];
+						$mrkv_ua_shipping_args = [];
 						$keys_shipping = array_keys(MRKV_UA_SHIPPING_LIST);
 			    		$key = '';
 			    		$current_shipping = '';
@@ -201,12 +168,12 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 			            	$last_name = $this->convert_latin_to_ukrainian($last_name);
 			            }
 
-			            $args = array(
+			            $mrkv_ua_shipping_args = array(
 							'mrkv_ua_ship_invoice_first_name' => $first_name,
 							'mrkv_ua_ship_invoice_last_name' => $last_name,
 						);
 
-						$args['mrkv_ua_ship_key'] = $key;
+						$mrkv_ua_shipping_args['mrkv_ua_ship_key'] = $key;
 
 			            $area_name = $order->get_billing_state() ? $order->get_billing_state() . ', ' : '';
 		            	$city_name = $order->get_billing_city() ? $order->get_billing_city() . ', ' : '';
@@ -220,7 +187,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 			            $address_to = htmlspecialchars_decode($address_to);
 			            $address_to = stripslashes($address_to);
 
-			            $args['mrkv_ua_ship_invoice_address'] = $address_to;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_address'] = $address_to;
 
 			            $patronomic = html_entity_decode($order->get_meta($current_shipping . '_patronymic'));
 
@@ -230,17 +197,17 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 			            	if((bool) preg_match('/[A-Za-z]/', $first_name))
 				            {
-				            	$args['mrkv_ua_ship_validate_latin'][] = 'mrkv_ua_ship_invoice_first_name';
+				            	$mrkv_ua_shipping_args['mrkv_ua_ship_validate_latin'][] = 'mrkv_ua_ship_invoice_first_name';
 				            }
 
 				            if((bool) preg_match('/[A-Za-z]/', $last_name))
 				            {
-				            	$args['mrkv_ua_ship_validate_latin'][] = 'mrkv_ua_ship_invoice_last_name';
+				            	$mrkv_ua_shipping_args['mrkv_ua_ship_validate_latin'][] = 'mrkv_ua_ship_invoice_last_name';
 				            }
 
 				            if((bool) preg_match('/[A-Za-z]/', $patronomic))
 				            {
-				            	$args['mrkv_ua_ship_validate_latin'][] = 'mrkv_ua_ship_invoice_patronymic';
+				            	$mrkv_ua_shipping_args['mrkv_ua_ship_validate_latin'][] = 'mrkv_ua_ship_invoice_patronymic';
 				            }
 			            }
 
@@ -271,16 +238,16 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 					        $phone = '0' . $phone;
 					    }	
 
-			            $args['mrkv_ua_ship_invoice_patronymic'] = $patronomic;
-			            $args['mrkv_ua_ship_invoice_phone'] = $phone;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_patronymic'] = $patronomic;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_phone'] = $phone;
 
 			            $payer_delivery = '';
 
 			            foreach($order->get_items( 'shipping' ) as $item_id => $item)
 			            {
-			            	$instance_id = $item->get_instance_id();
+			            	$mrkv_ua_shipping_instance_id = $item->get_instance_id();
 
-			            	$shipping_settings = get_option('woocommerce_' . $current_shipping . '_' . $instance_id . '_settings');
+			            	$shipping_settings = get_option('woocommerce_' . $current_shipping . '_' . $mrkv_ua_shipping_instance_id . '_settings');
 
 			            	$order_total_for_min = $order->get_total();
 
@@ -298,16 +265,16 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 						    }
 
 						    if (!empty($shipping_settings) && isset($shipping_settings['shipping_type'])) {
-						        $args['mrkv_ua_ship_invoice_shipment_type'] = $shipping_settings['shipping_type'];
+						        $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_shipment_type'] = $shipping_settings['shipping_type'];
 						    }
 			            }
 
-			            $args['mrkv_ua_ship_invoice_payer_delivery'] = $payer_delivery;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_payer_delivery'] = $payer_delivery;
 
 			            $order_total = $order->get_total();
 
-			            $args['mrkv_ua_ship_invoice_money_transfer_amount'] = $order_total;
-			            $args['mrkv_ua_ship_invoice_cost'] = $order_total;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_money_transfer_amount'] = $order_total;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_cost'] = $order_total;
 
 			            if($key == 'nova-poshta')
 			            {
@@ -316,7 +283,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		            		$mrkvnp_invoice_prepayment = (isset($shipping_settings_global['shipment']['prepayment']) && $shipping_settings_global['shipment']['prepayment']) ? $shipping_settings_global['shipment']['prepayment'] : 0;
 		            		if($order_total > $mrkvnp_invoice_prepayment)
 		            		{
-		            			$args['mrkv_ua_ship_invoice_money_transfer_amount'] = $order_total - $mrkvnp_invoice_prepayment;
+		            			$mrkv_ua_shipping_args['mrkv_ua_ship_invoice_money_transfer_amount'] = $order_total - $mrkvnp_invoice_prepayment;
 		            		}
 			            }
 
@@ -324,9 +291,9 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 			            if($order->get_payment_method() == 'cod' && $payer_delivery != 'Sender'){
 			            	$post_pay_cost = $order->get_total();
-			            	$args['mrkv_ua_ship_invoice_money_transfer'] = true;
+			            	$mrkv_ua_shipping_args['mrkv_ua_ship_invoice_money_transfer'] = true;
 			            }
-			            $args['mrkv_ua_ship_invoice_cost_back'] = $post_pay_cost;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_cost_back'] = $post_pay_cost;
 			            
 
 			            $weight = 0;
@@ -383,22 +350,22 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 						$weight = number_format($weight, 2, '.', '');
 
-			            $args['mrkv_ua_ship_invoice_shipment_weight'] = $weight;
-			            $args['mrkv_ua_ship_invoice_shipment_length'] = $length;
-			            $args['mrkv_ua_ship_invoice_shipment_width'] = $width;
-			            $args['mrkv_ua_ship_invoice_shipment_height'] = $height;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_shipment_weight'] = $weight;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_shipment_length'] = $length;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_shipment_width'] = $width;
+			            $mrkv_ua_shipping_args['mrkv_ua_ship_invoice_shipment_height'] = $height;
 
 			            if($description_checked)
 			            {
 			            	$description_converted = $this->convert_description($order, $description_checked);
 			            	$description_converted = preg_replace('/["\/.;]+/', '', $description_converted);
 			            	$description_converted = str_replace('pcs', '', $description_converted);
-			            	$args['mrkv_ua_ship_invoice_shipment_description'] = $description_converted;
+			            	$mrkv_ua_shipping_args['mrkv_ua_ship_invoice_shipment_description'] = $description_converted;
 			            }
 
-			            $args = apply_filters( 'mrkv_ua_shipping_arg_order_data', $args, $order, $current_shipping );
+			            $mrkv_ua_shipping_args = apply_filters( 'mrkv_ua_shipping_arg_order_data', $mrkv_ua_shipping_args, $order, $current_shipping );
 
-			            echo wp_json_encode($args);
+			            echo wp_json_encode($mrkv_ua_shipping_args);
 					}
 				}
 			}
@@ -527,9 +494,13 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		        wp_die();
 		    }
 
+			if (!current_user_can('edit_shop_orders')) {
+				wp_send_json_error(__('You do not have permission to edit orders.', 'mrkv-ua-shipping'), 403);
+			}
+
 			$message_error = '';
 			$order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : '';
-			$current_ship_key = isset($_POST['current_ship_key']) ? sanitize_text_field($_POST['current_ship_key']) : '';
+			$current_ship_key = isset($_POST['current_ship_key']) ? sanitize_text_field(wp_unslash($_POST['current_ship_key'])) : '';
 
 			# Check data
 			if($order_id && $current_ship_key)
@@ -576,14 +547,18 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		        wp_die();
 		    }
 
+			if (!current_user_can('edit_shop_orders')) {
+				wp_send_json_error(__('You do not have permission to edit orders.', 'mrkv-ua-shipping'), 403);
+			}
+
 		    $order_id = isset($_POST['mrkv_order_id']) ? intval($_POST['mrkv_order_id']) : '';
 
 			if($order_id)
 			{
 				# Get order object
 				$order = wc_get_order($order_id);
-				$key = isset($_POST['mrkv_current_shipping_key']) ? sanitize_text_field($_POST['mrkv_current_shipping_key']) : '';
-				$current_shipping = isset($_POST['mrkv_current_shipping']) ? sanitize_text_field($_POST['mrkv_current_shipping']) : '';
+				$key = isset($_POST['mrkv_current_shipping_key']) ? sanitize_text_field(wp_unslash($_POST['mrkv_current_shipping_key'])) : '';
+				$current_shipping = isset($_POST['mrkv_current_shipping']) ? sanitize_text_field(wp_unslash($_POST['mrkv_current_shipping'])) : '';
 
 				# Validate shipping key
         		$allowed_keys = array_keys(MRKV_UA_SHIPPING_LIST);
@@ -592,7 +567,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
         		{
         			foreach(MRKV_UA_SHIPPING_LIST[$key]['method'][$current_shipping]['checkout_fields'] as $field_id => $field_val)
 	    			{
-	    				$mrkv_ua_ship_field_inner = isset($_POST[$current_shipping . $field_id]) ? sanitize_text_field($_POST[$current_shipping . $field_id]) : '';
+	    				$mrkv_ua_ship_field_inner = isset($_POST[$current_shipping . $field_id]) ? sanitize_text_field(wp_unslash($_POST[$current_shipping . $field_id])) : '';
 
 	    				if($mrkv_ua_ship_field_inner && isset($field_val['replace']))
 	    				{
@@ -643,8 +618,12 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		        wp_die();
 		    }
 
+			if (!current_user_can('edit_shop_orders')) {
+				wp_send_json_error(__('You do not have permission to edit orders.', 'mrkv-ua-shipping'), 403);
+			}
+
 		    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : '';
-		    $invoice_data = isset($_POST['invoice']) ? sanitize_text_field($_POST['invoice']) : '';
+		    $invoice_data = isset($_POST['invoice']) ? sanitize_text_field(wp_unslash($_POST['invoice'])) : '';
 
 			if($order_id && $invoice_data)
 			{
@@ -665,6 +644,10 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		        wp_send_json_error(__('Invalid nonce.', 'mrkv-ua-shipping'), 403);
 		        wp_die();
 		    }
+
+			if (!current_user_can('edit_shop_orders')) {
+				wp_send_json_error(__('You do not have permission to edit orders.', 'mrkv-ua-shipping'), 403);
+			}
 
 		    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : '';
 
@@ -725,7 +708,11 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 		        wp_die();
 		    }
 
-		    $orders_raw = isset($_POST['orders']) ? sanitize_text_field($_POST['orders']) : '';
+			if (!current_user_can('edit_shop_orders')) {
+				wp_send_json_error(__('You do not have permission to edit orders.', 'mrkv-ua-shipping'), 403);
+			}
+
+		    $orders_raw = isset($_POST['orders']) ? sanitize_text_field(wp_unslash($_POST['orders'])) : '';
 
 			if($orders_raw)
 			{

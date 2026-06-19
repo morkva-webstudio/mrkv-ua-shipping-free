@@ -31,7 +31,7 @@ if (!class_exists('MRKV_UA_SHIPPING_CALCULATE_UKR_POSHTA'))
 		public function calculate_shipping_cost($address_from, $address_to, $weight, $service_type, $cost, $cargo_type, $length, $max_width, $max_height) 
 	    {
 	    	# Set arguments
-	        $args = array(
+	        $mrkv_ua_shipping_args = array(
 	            "weight" => intval($weight),
 		        "length" => $length,
 		        "addressFrom" => array(
@@ -54,7 +54,7 @@ if (!class_exists('MRKV_UA_SHIPPING_CALCULATE_UKR_POSHTA'))
 	        );
 
 	        # Send request
-	        $obj = $this->ukr_poshta_api->send_post_request_curl('ecom/0.0.1/domestic/delivery-price', 'POST', $args );
+	        $obj = $this->ukr_poshta_api->send_post_request_curl('ecom/0.0.1/domestic/delivery-price', 'POST', $mrkv_ua_shipping_args );
 
 	        if(isset($obj['deliveryPrice']))
 	        {
@@ -71,10 +71,10 @@ if (!class_exists('MRKV_UA_SHIPPING_CALCULATE_UKR_POSHTA'))
 		 * Get all sender contacts list
 		 * @return 
 		 * */
-		public function calculate_shipping_internal_cost($args) 
+		public function calculate_shipping_internal_cost($mrkv_ua_shipping_args) 
 	    {
 	        # Send request
-	        $obj = $this->ukr_poshta_api->send_post_request_curl('ecom/0.0.1/international/delivery-price', 'POST', $args );
+	        $obj = $this->ukr_poshta_api->send_post_request_curl('ecom/0.0.1/international/delivery-price', 'POST', $mrkv_ua_shipping_args );
 
 	        if(isset($obj['deliveryPrice']))
 	        {

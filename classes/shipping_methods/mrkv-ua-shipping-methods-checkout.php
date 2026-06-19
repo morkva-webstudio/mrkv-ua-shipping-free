@@ -50,7 +50,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 							# Include settings checkout by shipping
 							include 'mrkv_ua_shipping_translate.php';
 
-							$middle_name_arg['label'] = $translate_labels[$key]['method'][$method_id]['checkout_fields']['_patronymic']['label'];
+							$middle_name_arg['label'] = $mrkv_ua_shipping_translate_labels[$key]['method'][$method_id]['checkout_fields']['_patronymic']['label'];
 
 							$middle_name_arg['required'] = false;
 
@@ -84,14 +84,17 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 	        wp_enqueue_script('front-mrkv-ua-shipping-select2', MRKV_UA_SHIPPING_ASSETS_URL . '/js/global/select2.min.js', array('jquery'), MRKV_UA_SHIPPING_PLUGIN_VERSION, true);
 	        wp_enqueue_script('front-mrkv-ua-shipping', MRKV_UA_SHIPPING_ASSETS_URL . '/js/front/front-mrkv-ua-shipping.js', array('jquery','jquery-ui-autocomplete'), MRKV_UA_SHIPPING_PLUGIN_VERSION, true);
 
-	        $args = array(
+	        $mrkv_ua_shipping_args = array(
 	        	'ajax_url' => admin_url( 'admin-ajax.php' ),
 	        	'nonce'    => wp_create_nonce('mrkv_ua_ship_nonce'),
 	        	'select2_texts' => array(
 			        'errorLoading'   => __('Error loading results.', 'mrkv-ua-shipping'),
-			        'inputTooLong'   => __('Please delete %d character(s).', 'mrkv-ua-shipping'),
+					// translators: %d: number of characters
+			        'inputTooLong'   => __('Please delete %d character(s).', 'mrkv-ua-shipping'), 
+					// translators: %d: number of characters
 			        'inputTooShort'  => __('Please enter %d more character(s).', 'mrkv-ua-shipping'),
 			        'loadingMore'    => __('Loading more results...', 'mrkv-ua-shipping'),
+					// translators: %d: number of items
 			        'maximumSelected'=> __('You can only select %d item(s).', 'mrkv-ua-shipping'),
 			        'noResults'      => __('No results found.', 'mrkv-ua-shipping'),
 			        'searching'      => __('Searching...', 'mrkv-ua-shipping'),
@@ -108,7 +111,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 
 					wp_enqueue_script('front-mrkv-ua-shipping-' . $method_key, MRKV_UA_SHIPPING_ASSETS_URL . '/js/front/front-mrkv-ua-shipping-' . $method_key .'.js', array('jquery','jquery-ui-autocomplete', 'front-mrkv-ua-shipping-select2'), MRKV_UA_SHIPPING_PLUGIN_VERSION, true);
 
-					wp_localize_script('front-mrkv-ua-shipping-' . $method_key, 'mrkv_ua_ship_helper', $args);
+					wp_localize_script('front-mrkv-ua-shipping-' . $method_key, 'mrkv_ua_ship_helper', $mrkv_ua_shipping_args);
 	        	}
 	        }
 		}
@@ -224,7 +227,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 					    	<div id="<?php echo esc_html($method); ?>_fields" class="<?php echo esc_html($method); ?>-fields mrkv_ua_shipping_checkout_fields">
 					        	<div id="<?php echo esc_html($method); ?>-shipping-info">
 					        		<?php 
-						        		foreach($methods_fields[$key]['method'][$method]['checkout_fields'] as $id => $args)
+						        		foreach($methods_fields[$key]['method'][$method]['checkout_fields'] as $id => $mrkv_ua_shipping_args)
 						        		{
 						        			$is_enabled_address_data = (isset($shipping['settings']['checkout']['hide_saving_data']) && $shipping['settings']['checkout']['hide_saving_data'] == 'on') ? true : false;
 
@@ -237,36 +240,36 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 						        				$default_value = '';
 						        			}
 
-						        			if($default_value && $args['type'] == 'select')
+						        			if($default_value && $mrkv_ua_shipping_args['type'] == 'select')
 						        			{
-						        				$args['options'][$default_value] = $default_value;
-						        				$args['custom_attributes']['data-default'] = $default_value;
+						        				$mrkv_ua_shipping_args['options'][$default_value] = $default_value;
+						        				$mrkv_ua_shipping_args['custom_attributes']['data-default'] = $default_value;
 						        			}
 
-						        			if(isset($args['label']))
+						        			if(isset($mrkv_ua_shipping_args['label']))
 						        			{
-						        				$args['label'] = esc_html( $translate_labels[$key]['method'][$method]['checkout_fields'][$id]['label'] );
+						        				$mrkv_ua_shipping_args['label'] = esc_html( $mrkv_ua_shipping_translate_labels[$key]['method'][$method]['checkout_fields'][$id]['label'] );
 						        			}
 
-						        			if(isset($args['type']) && $args['type'] == 'hidden')
+						        			if(isset($mrkv_ua_shipping_args['type']) && $mrkv_ua_shipping_args['type'] == 'hidden')
 						        			{
-						        				unset($args['label']);
+						        				unset($mrkv_ua_shipping_args['label']);
 						        			}
 
-						        			if(isset($args['placeholder']))
+						        			if(isset($mrkv_ua_shipping_args['placeholder']))
 						        			{
-						        				$args['placeholder'] = esc_html( $translate_labels[$key]['method'][$method]['checkout_fields'][$id]['placeholder'] );
+						        				$mrkv_ua_shipping_args['placeholder'] = esc_html( $mrkv_ua_shipping_translate_labels[$key]['method'][$method]['checkout_fields'][$id]['placeholder'] );
 						        			}
 
-						        			if(isset($args['options']) && !empty($args['options']))
+						        			if(isset($mrkv_ua_shipping_args['options']) && !empty($mrkv_ua_shipping_args['options']))
 						        			{
-						        				foreach($args['options'] as $key_option => $value_option)
+						        				foreach($mrkv_ua_shipping_args['options'] as $key_option => $value_option)
 						        				{
-						        					$args['options'] = array('' => esc_html($translate_labels[$key]['method'][$method]['checkout_fields'][$id]['options'][''])); 
+						        					$mrkv_ua_shipping_args['options'] = array('' => esc_html($mrkv_ua_shipping_translate_labels[$key]['method'][$method]['checkout_fields'][$id]['options'][''])); 
 						        				}
 						        			}
 
-						        			woocommerce_form_field($method . $id, $args, $default_value);
+						        			woocommerce_form_field($method . $id, $mrkv_ua_shipping_args, $default_value);
 						        		}
 					        		?>
 					    		</div>

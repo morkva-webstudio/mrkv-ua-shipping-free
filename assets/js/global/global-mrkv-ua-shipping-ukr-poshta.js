@@ -355,7 +355,7 @@ jQuery(window).on('load', function()
 	    function mrkvUaShipInterGetUUID() 
 	    {
 	        let postcode = jQuery('#mrkv_ua_shipping_ukr-poshta_international_postcode').val();
-			let country = jQuery('#billing_country').val();
+			var let = (jQuery('#ship-to-different-address-checkbox').is(':checked') ? jQuery('#shipping_country').val() : jQuery('#billing_country').val()) || '';
 			let region = jQuery('#mrkv_ua_shipping_ukr-poshta_international_region').val();
 			let city = jQuery('#mrkv_ua_shipping_ukr-poshta_international_city').val();
 			let street = jQuery('#mrkv_ua_shipping_ukr-poshta_international_street').val();

@@ -1,9 +1,9 @@
-=== Morkva UA Shipping ===
+=== morkva UA Shipping ===
 Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.8.5
+Stable tag: 1.10.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 * Підтримка зон доставки WooCommerce
 * Підтримка PHP 8.0+
 * Підтримка WPML та Polylang
-* Сумісність з плагінами Morkva Plata by Mono, Morkva LiqPay, Morkva Dilovod, Morkva KeyCRM, Freelancevip Turbo SMS
+* Сумісність з плагінами morkva Plata by Mono, morkva LiqPay, morkva Dilovod, morkva KeyCRM, Freelancevip Turbo SMS
 
 [База знань](https://docs.morkva.co.ua/uk/plugins)
 [Про-версія](https://morkva.co.ua/shop/morkva-ua-shipping/)
@@ -170,6 +170,52 @@ https://youtu.be/47-VrH_QJAE
 
 
 == Changelog ==
+
+= 1.10.5 =
+* [fix] виправили розрахунок вартості доставки
+
+= 1.10.4 =
+* [fix] виправили пошук відділень НП за номером
+
+= 1.10.3 =
+* [fix] виправили вивід попапу створення ТТН на сторінці замовлень
+* [fix] виправили warning функції ID
+
+= 1.10.2 =
+* [new] змінили метод отримання PDF накладної УП
+* [new] змінили метод завантаження відділень НП
+* [new] переробили метод збереження полів користувача
+* [fix] виправили отримання відділень НП Міжнародна
+* [fix] виправили створення замовлення з увімкнутим створенням користувача
+* WP 7.0 - сумісний
+
+= 1.10.1 =
+* [hotfix] виправили помилку option fields
+
+= 1.10.0 =
+* [new] оптимізували запити
+
+= 1.9.3 =
+* [fix] виправили форматування файлу замовлення
+
+= 1.9.2 =
+* [new] додали друк накладних на сторінці замовлень
+* [fix] виправили помилку sender does not belong to this address
+
+= 1.9.1 =
+* [new] додали перевірку адреси відправника в налаштуваннях
+
+= 1.9.0 =
+* [new] змінили UI налаштувань на сторінці товару
+
+= 1.8.8 =
+* [new] додали перевірку сторінки розрахунку вартості доставки
+
+= 1.8.7 =
+* [fix] виправили перевірку опису створення ТТН
+
+= 1.8.6 =
+* [new] змінили UI налаштувань
 
 = 1.8.5 =
 * [new] додано хук налаштувань mrkv_ua_shipping_settings_page_row

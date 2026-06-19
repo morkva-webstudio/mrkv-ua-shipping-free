@@ -1,5 +1,6 @@
 <?php
-$shipping_zones = [
+if ( ! defined( 'ABSPATH' ) ) exit;
+$mrkv_ua_shipping_shipping_zones = [
     1 => [
         'countries' => ['PL', 'MD'],
         'costs' => [
@@ -154,9 +155,9 @@ $shipping_zones = [
         ] 
     ]
 ];
-define('MRKV_UA_SHIPPING_GLOBAL_SHIPPING_ZONE', $shipping_zones);
+define('MRKV_UA_SHIPPING_GLOBAL_SHIPPING_ZONE', $mrkv_ua_shipping_shipping_zones);
 
-$excluded_shipping_zones = [
+$mrkv_ua_shipping_excluded_shipping_zones = [
 	'CA' => [
 		'costs' => [
 			'documnets' => [
@@ -221,9 +222,9 @@ $excluded_shipping_zones = [
 	]
 ];
 
-define('MRKV_UA_SHIPPING_GLOBAL_EXCLUDE', $excluded_shipping_zones);
+define('MRKV_UA_SHIPPING_GLOBAL_EXCLUDE', $mrkv_ua_shipping_excluded_shipping_zones);
 
-$shipping_address = [
+$mrkv_ua_shipping_shipping_address = [
 	'countries' => ['PL', 'MD', 'RO'],
 	'costs' => [
 		'30' => 100,
@@ -231,4 +232,4 @@ $shipping_address = [
 	]
 ];
 
-define('MRKV_UA_SHIPPING_GLOBAL_ADDRESS', $shipping_address);
+define('MRKV_UA_SHIPPING_GLOBAL_ADDRESS', $mrkv_ua_shipping_shipping_address);

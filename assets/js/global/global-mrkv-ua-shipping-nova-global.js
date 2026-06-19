@@ -106,7 +106,7 @@ jQuery(window).on('load', function()
 
  	function mrkvUaShipGetWarehouse(shipping_method)
  	{
- 		var country = jQuery('#billing_country').val();
+ 		var country = (jQuery('#ship-to-different-address-checkbox').is(':checked') ? jQuery('#shipping_country').val() : jQuery('#billing_country').val()) || '';
 
  		if(country)
  		{

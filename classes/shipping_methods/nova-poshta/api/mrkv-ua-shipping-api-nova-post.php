@@ -49,7 +49,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POST'))
 		{
 			# Set data
 			$this->settings_method = $settings;
-			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->slug_method, $this->get_debug_enabled(), $this->get_debug_request_enabled());
+			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->get_debug_enabled());
 			$this->active_api = $this->get_api_key_active();
 		}
 
@@ -71,10 +71,10 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POST'))
 		 * 
 		 * @return mixed Answer
 		 * */
-		public function send_post_request($args, $slug, $method) 
+		public function send_post_request($mrkv_ua_shipping_args, $slug, $method) 
 	    {
 			# Save to log
-			$this->debug_log->add_data_request(\wp_json_encode( $args ));
+			$this->debug_log->add_data_request(\wp_json_encode( $mrkv_ua_shipping_args ));
 
 			if($method == 'POST')
 			{	
@@ -85,7 +85,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POST'))
                         'Content-Type' => 'application/json',
                         'Authorization' => $this->jwt_key_key
                     ],
-                    'body'        => wp_json_encode( $args ),
+                    'body'        => wp_json_encode( $mrkv_ua_shipping_args ),
                     'data_format' => 'body',
                 ) );
 			}
@@ -109,7 +109,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POST'))
             	$error_message = $response->get_error_message();
 
             	# Save to log
-				$this->debug_log->add_data($order_id . $error_message);
+				$this->debug_log->add_data_error($order_id . $error_message);
             	# Return error string
 				return $error_message;
             }
@@ -189,22 +189,6 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POST'))
 	    public function get_debug_enabled()
 	    {
 	    	if(isset($this->settings_method['debug']['log']) && $this->settings_method['debug']['log'] == 'on')
-	    	{
-	    		return true;	
-	    	}
-	    	else
-	    	{
-	    		return false;	
-	    	}
-	    }
-
-	    /**
-	     * Get Debug request enabled
-	     * @return boolean Debug
-	     * */
-	    public function get_debug_request_enabled()
-	    {
-	    	if(isset($this->settings_method['debug']['query']) && $this->settings_method['debug']['query'] == 'on')
 	    	{
 	    		return true;	
 	    	}

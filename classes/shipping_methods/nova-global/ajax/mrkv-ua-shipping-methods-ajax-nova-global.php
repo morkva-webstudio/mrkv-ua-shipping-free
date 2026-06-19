@@ -29,16 +29,16 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA_GLOBAL'))
 		    require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-global/api/mrkv-ua-shipping-api-nova-global.php';
 			$mrkv_object_nova_global = new MRKV_UA_SHIPPING_API_NOVA_GLOBAL(get_option('nova-global_m_ua_settings'));
 
-			$warehouse_types = isset($_POST['warehouse_types']) ? $_POST['warehouse_types'] : array();
-			$method = isset($_POST['method']) ? sanitize_text_field($_POST['method']) : '';
-			$language = isset($_POST['language']) ? sanitize_text_field($_POST['language']) : '';
-			$country = isset($_POST['country']) ? sanitize_text_field($_POST['country']) : '';
+			$warehouse_types = isset($_POST['warehouse_types']) && is_array($_POST['warehouse_types']) ? map_deep(wp_unslash($_POST['warehouse_types']), 'sanitize_text_field') : array();
+			$method = isset($_POST['method']) ? sanitize_text_field(wp_unslash($_POST['method'])) : '';
+			$language = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
+			$country = isset($_POST['country']) ? sanitize_text_field(wp_unslash($_POST['country'])) : ''; 
 
 			if($language && $country && $warehouse_types && is_array($warehouse_types) && $method && isset($warehouse_types[$method]))
 			{
 				$type = $warehouse_types[$method]; 
 
-				$args = array(
+				$mrkv_ua_shipping_args = array(
 					'country' => $country,
 					'ext' => 0,
 					'language' => $language,
@@ -46,7 +46,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA_GLOBAL'))
 				);
 
 				# Send request
-	        	$obj = $mrkv_object_nova_global->send_post_request( $args, 'Dictionary/getWarehouses' );
+	        	$obj = $mrkv_object_nova_global->send_post_request( $mrkv_ua_shipping_args, 'Dictionary/getWarehouses' );
 
 	        	if(isset($obj['warehouse_list']) && !empty($obj['warehouse_list']))
 	        	{

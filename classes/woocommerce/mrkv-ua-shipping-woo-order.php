@@ -37,7 +37,13 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 	            $screen = 'shop_order';
 	        }
 
-	        $order_id = $post->ID;
+	        if ( $post instanceof \WP_Post ) {
+                $order_id = $post->ID;
+            } elseif ( $post instanceof \WC_Order ) {
+                $order_id = $post->get_id();
+            } else {
+                $order_id = false;
+            }
 
 	        if ($order_id) 
 	        {
@@ -73,7 +79,7 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 		            }
 		            else
 		            {
-		            	add_meta_box('mrkv_ua_shipping_data_box', __('MRKV UA Shipping', 'mrkv-ua-shipping'), array( $this, 'mrkv_ua_shipping_changer_add_plugin_meta_box' ), $screen, 'side', 'core');
+		            	add_meta_box('mrkv_ua_shipping_data_box', __('morkva UA Shipping', 'mrkv-ua-shipping'), array( $this, 'mrkv_ua_shipping_changer_add_plugin_meta_box' ), $screen, 'side', 'core');
 		            }
 	            }
 	        }
@@ -81,7 +87,14 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 
 		public function mrkv_ua_shipping_changer_add_plugin_meta_box($post)
 		{
-			$order_id = $post->ID;
+			if ( $post instanceof \WP_Post ) {
+                $order_id = $post->ID;
+            } elseif ( $post instanceof \WC_Order ) {
+                $order_id = $post->get_id();
+            } else {
+                $order_id = false;
+            }
+
 			if ($order_id) 
 	        {
 	            $order = wc_get_order($order_id);
@@ -133,7 +146,7 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 							                        order_id: orderId,
 							                        shipping_method: shippingMethod,
 							                        shipping_method_name: shippingMethodName,
-							                        nonce: '<?php echo wp_create_nonce('mrkv_ua_ship_nonce'); ?>'
+							                        nonce: '<?php echo esc_js( wp_create_nonce( 'mrkv_ua_ship_nonce' ) ); ?>'
 							                    },
 							                    success: function(response) 
 							                    {
@@ -154,7 +167,14 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 
 		public function mrkv_ua_shipping_add_plugin_meta_box($post)
 		{
-			$order_id = $post->ID;
+			if ( $post instanceof \WP_Post ) {
+                $order_id = $post->ID;
+            } elseif ( $post instanceof \WC_Order ) {
+                $order_id = $post->get_id();
+            } else {
+                $order_id = false;
+            }
+			
 			if ($order_id) 
 	        {
             	$order = wc_get_order($order_id);
@@ -195,12 +215,14 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 		    				$mrkv_ua_ship_invoice = $order->get_meta(MRKV_UA_SHIPPING_LIST[$key]['old_ttn_slug']);
 		    			}
 
+						do_action( 'mrkv_ua_shipping_metabox_start', $key, $order);
+
 			            if($mrkv_ua_ship_invoice){
 			            	?>
-			            		<h3><?php echo __('Invoice number', 'mrkv-ua-shipping'); ?></h3>
-			            		<div class="mrkv_ua_ship_global__invoice" data-ttn="<?php echo esc_html($mrkv_ua_ship_invoice); ?>"><?php echo $mrkv_ua_ship_invoice; ?><img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/copy-ttn.svg" alt="<?php echo esc_html__('Copy invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Copy invoice', 'mrkv-ua-shipping'); ?>"></div>
+			            		<h3><?php echo esc_html__('Invoice number', 'mrkv-ua-shipping'); ?></h3>
+			            		<div class="mrkv_ua_ship_global__invoice" data-ttn="<?php echo esc_html($mrkv_ua_ship_invoice); ?>"><?php echo esc_html($mrkv_ua_ship_invoice); ?><img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/copy-ttn.svg" alt="<?php echo esc_html__('Copy invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Copy invoice', 'mrkv-ua-shipping'); ?>"></div>
 			            		<hr class="mrkv-hr-sidebar">
-			            		<h3><?php echo __('Invoice action', 'mrkv-ua-shipping'); ?></h3>
+			            		<h3><?php echo esc_html__('Invoice action', 'mrkv-ua-shipping'); ?></h3>
 			            		<div class="mrkv_ua_invoice_action_list">
 			            			<?php 
 			            				$shipping_settings = get_option($key . '_m_ua_settings');
@@ -208,41 +230,29 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 			            				{
 			            					case 'nova-poshta':
 				            					?>
-				            						<a target="blanc" href="<?php echo MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_pdf'] . $mrkv_ua_ship_invoice . MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_link_end'] . $shipping_settings['api_key'] ?>">
-				            							<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/printer-icon.svg" alt="<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>">
-				            							<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>
+				            						<a target="blanc" href="<?php echo esc_url(MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_pdf'] . $mrkv_ua_ship_invoice . MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_link_end'] . $shipping_settings['api_key']); ?>">
+				            							<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/printer-icon.svg" alt="<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>">
+				            							<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>
 			            							</a>
-				            						<a target="blanc" href="<?php echo MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_sticker'] . $mrkv_ua_ship_invoice . MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_link_end'] . $shipping_settings['api_key'] ?>">
-				            							<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/sticker-icon.svg" alt="<?php echo __('Print sticker', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Print sticker', 'mrkv-ua-shipping'); ?>">
-				            							<?php echo __('Print sticker', 'mrkv-ua-shipping'); ?>
+				            						<a target="blanc" href="<?php echo esc_url(MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_sticker'] . $mrkv_ua_ship_invoice . MRKV_UA_SHIPPING_LIST[$key]['invoice_links']['invoice_link_end'] . $shipping_settings['api_key']); ?>">
+				            							<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/sticker-icon.svg" alt="<?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?>">
+				            							<?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?>
 			            							</a>
 				            					<?php
 			            					break;
 			            					case 'ukr-poshta':
-				            					if($current_shipping == 'mrkv_ua_shipping_ukr-poshta_international')
-				            					{
-				            						?>
-				            						<a class="mrkv_ua_ship_print_inv_ukr" data-form="form-ukr-poshta-ttn-international">
-				            							<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/printer-icon.svg" alt="<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>">
-			            								<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>
-			            							</a>
-				            						<?php
-				            					}
-				            					else
-				            					{
-				            						?>
-					            						<a class="mrkv_ua_ship_print_inv_ukr" data-form="form-ukr-poshta-ttn">
-					            							<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/printer-icon.svg" alt="<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>">
-				            								<?php echo __('Print invoice', 'mrkv-ua-shipping'); ?>
+				            					?>
+													<a class="mrkv_ua_ship_print_inv_ukr" data-form="form-ukr-poshta-ttn">
+					            							<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/printer-icon.svg" alt="<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>">
+				            								<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>
 				            							</a>
-					            					<?php
-				            					}
+												<?php
 			            					break;
 			            				}
 			            			?>
 			            			<a class="mrkv_ua_ship_send_remove_ttn">
-	        							<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/trash-icon.svg" alt="<?php echo __('Remove ttn', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Remove ttn', 'mrkv-ua-shipping'); ?>">
-	        							<?php echo __('Remove ttn', 'mrkv-ua-shipping'); ?>
+	        							<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/trash-icon.svg" alt="<?php echo esc_html__('Remove ttn', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Remove ttn', 'mrkv-ua-shipping'); ?>">
+	        							<?php echo esc_html__('Remove ttn', 'mrkv-ua-shipping'); ?>
 	    							</a>
 			            		</div>
 			            	<?php
@@ -252,9 +262,9 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 			            	{
 				            	?>
 				            	<a>
-				            		<div data-method="<?php echo $current_shipping; ?>" data-ship="<?php echo $key; ?>" data-order-id="<?php echo $order->get_id(); ?>" class="mrkv_ua_ship_global_create__invoice">
-				            			<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/add-square-icon.svg" alt="<?php echo $order->get_shipping_method(); ?>" title="<?php echo $order->get_shipping_method(); ?>">
-				            			<span><?php echo __('Create Invoice', 'mrkv-ua-shipping'); ?></span>
+				            		<div data-method="<?php echo esc_html($current_shipping); ?>" data-ship="<?php echo esc_html($key); ?>" data-order-id="<?php echo esc_html($order->get_id()); ?>" class="mrkv_ua_ship_global_create__invoice">
+				            			<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/add-square-icon.svg" alt="<?php echo esc_html($order->get_shipping_method()); ?>" title="<?php echo esc_html($order->get_shipping_method()); ?>">
+				            			<span><?php echo esc_html__('Create Invoice', 'mrkv-ua-shipping'); ?></span>
 				            			<div class="mrkv_ua_ship_create_invoice__loader"></div>
 				            		</div>
 				            	</a>
@@ -277,11 +287,11 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 		            	}
 
 			            ?>
-			            	<h3><?php echo __('Change address', 'mrkv-ua-shipping'); ?></h3>
+			            	<h3><?php echo esc_html__('Change address', 'mrkv-ua-shipping'); ?></h3>
 			            	<div class="mrkv_ua_ship_edit_data">
-			            		<input type="hidden" name="mrkv_order_id" value="<?php echo $order_id; ?>">
-			            		<input type="hidden" name="mrkv_current_shipping" value="<?php echo $current_shipping; ?>">
-			            		<input type="hidden" name="mrkv_current_shipping_key" value="<?php echo $key; ?>">
+			            		<input type="hidden" name="mrkv_order_id" value="<?php echo esc_html($order_id); ?>">
+			            		<input type="hidden" name="mrkv_current_shipping" value="<?php echo esc_html($current_shipping); ?>">
+			            		<input type="hidden" name="mrkv_current_shipping_key" value="<?php echo esc_html($key); ?>">
 					            <?php
 						            foreach(MRKV_UA_SHIPPING_LIST[$key]['method'][$current_shipping]['checkout_fields'] as $id => $field_val)
 				            		{
@@ -335,11 +345,12 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 						            wp_nonce_field( 'mrkv_ua_ship_nonce_action', 'mrkv_ua_ship_nonce' );
 					            ?>
 					            <div class="mrkv_ua_shipping_change_field_address button">
-					            	<?php echo __('Save Field', 'mrkv-ua-shipping'); ?>
+					            	<?php echo esc_html__('Save Field', 'mrkv-ua-shipping'); ?>
 					            	<div class="mrkv_ua_ship_create_invoice__loader"></div>
 					            </div>
 			            	</div>
 			            <?php
+						do_action( 'mrkv_ua_shipping_metabox_end', $key, $order);
 		    		}
 		    		else
 		    		{
@@ -383,8 +394,8 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 					    printf('<div class="address"><p%s><strong>%s:</strong> %s</p></div>
 					        <div class="edit_address">', 
 					        '',
-					        $field_value['label'],
-					        $billing_data 
+					        esc_html($field_value['label']),
+					        esc_html($billing_data)
 					    );
 
 					    woocommerce_wp_text_input( array(

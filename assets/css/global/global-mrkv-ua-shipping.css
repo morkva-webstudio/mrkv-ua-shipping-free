@@ -117,20 +117,24 @@
 }
 .mrkv_ua_ship_global_orders_li{
 	display: flex;
-	margin-left: 30px;
+	margin-left: auto;
 	display: flex;
     align-items: center;
     gap: 8px;
     background: #fff;
     border-radius: 10px;
     line-height: 1.2;
-    padding: 8px 15px;
+    padding: 8px;
     justify-content: center;
     width: fit-content;
     border: 1px solid #f2f2f2;
+    margin-right: auto;
+}
+.mrkv_ua_ship_global_orders_li:not(:has(img)){
+    padding: 8px 13px;
 }
 .mrkv_ua_ship_global_orders_li img{
-	width: 20px;
+	width: 15px;
 }
 .mrkv_ua_ship_global_create__invoice{
 	display: flex;
@@ -163,9 +167,17 @@
     width: 15px;
     height: 15px;
 }
+#mrkv_ua_invoice, #mrkv_ua_shipping{
+    text-align: center;
+}
 .mrkv_ua_ship_global_create__invoice .mrkv_ua_ship_create_invoice__loader::before,
 .mrkv_ua_shipping_change_field_address .mrkv_ua_ship_create_invoice__loader:before{
     border: 2px solid #000;
+}
+.mrkv_ua_shipping_change_field_address .mrkv_ua_ship_create_invoice__loader{
+    top: 25%;
+    left: 48%;
+    transform: translate(-50%, -50%) !important;
 }
 .mrkv_ua_ship_global_create__invoice img{
     width: 20px !important;
@@ -723,6 +735,34 @@ select[name="mrkv_ua_ship_invoice_sender_ref"]{
 }
 .mrkv-field-disabled .select2{
     opacity: .7;
+}
+
+.column-mrkv_ua_invoice .mrkv_column-li_action{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px
+}
+.column-mrkv_ua_invoice a img{
+    width: 15px;
+}
+.column-mrkv_ua_invoice a.mrkv-col-added-link{
+    cursor: pointer;
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 8px 15px;
+    border: 1px solid #f2f2f2;
+}
+.column-mrkv_ua_invoice:has(.mrkv-col-added-link) .mrkv_ua_ship_global_invoice-link span{
+    display: none;
+}
+.column-mrkv_ua_invoice:has(.mrkv-col-added-link) a{
+    padding: 8px;
+    max-height: 14px;
+}
+.column-mrkv_ua_invoice:has(.mrkv-col-added-link) a:hover, .column-mrkv_ua_invoice:has(.mrkv-col-added-link) a:focus{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #ed6230;
 }
 
 @media(max-width: 768px){

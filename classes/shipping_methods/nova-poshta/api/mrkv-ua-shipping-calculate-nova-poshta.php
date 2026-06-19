@@ -31,7 +31,7 @@ if (!class_exists('MRKV_UA_SHIPPING_CALCULATE_NOVA_POSHTA'))
 		public function calculate_shipping_cost($city_sender, $city_recipient, $weight, $service_type, $cost, $cargo_type) 
 	    {
 	    	# Set arguments
-	        $args = array(
+	        $mrkv_ua_shipping_args = array(
 	            "apiKey" => $this->nova_poshta_api->get_api_key(),
 	            "modelName" => "InternetDocumentGeneral",
 	            "calledMethod" => "getDocumentPrice",
@@ -47,7 +47,7 @@ if (!class_exists('MRKV_UA_SHIPPING_CALCULATE_NOVA_POSHTA'))
 	        );
 
 	        # Send request
-	        $obj = $this->nova_poshta_api->send_post_request( $args );
+	        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 	        if(isset($obj['data'][0]))
 	        {
@@ -63,7 +63,7 @@ if (!class_exists('MRKV_UA_SHIPPING_CALCULATE_NOVA_POSHTA'))
 	    public function get_tiregroup_list()
 	    {
 	    	# Set arguments
-	        $args = array(
+	        $mrkv_ua_shipping_args = array(
 	            "apiKey" => $this->nova_poshta_api->get_api_key(),
 	            "modelName" => "CommonGeneral",
 	            "calledMethod" => "getTiresWheelsList",
@@ -71,7 +71,7 @@ if (!class_exists('MRKV_UA_SHIPPING_CALCULATE_NOVA_POSHTA'))
 	        );
 
 	        # Send request
-	        $obj = $this->nova_poshta_api->send_post_request( $args );
+	        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 	        if(isset($obj['data']))
 	        {

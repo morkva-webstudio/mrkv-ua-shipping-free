@@ -60,10 +60,21 @@ if (!class_exists('MRKV_UA_SHIPPING_NOTIFICATION'))
 			$api_fixed = get_option('mrkv_api_fixed_np');
 
 		    if ($api_fixed) {
-		        echo '<div class="notice notice-error is-dismissible">
-		                <p>' . __('Your Nova Poshta API key needs to be updated so that the branches are pulled up on the Checkout page, update the API key in your <a href="http://my.novaposhta.ua/" target="blanc">Nova Poshta account</a> and save it in <a href="', 'mrkv-ua-shipping') . esc_url(admin_url('admin.php?page=mrkv_ua_shipping_nova-poshta')) . __('">the settings</a>.', 'mrkv-ua-shipping') .'</p>
-		              </div>';
-		    }
+				?>
+				<div class="notice notice-error is-dismissible">
+					<p>
+						<?php
+						printf(
+							/* translators: 1: Nova Poshta account link, 2: Plugin settings link */
+							esc_html__( 'Your Nova Poshta API key needs to be updated so that the branches are pulled up on the Checkout page, update the API key in your %1$s and save it in %2$s.', 'mrkv-ua-shipping' ),
+							'<a href="' . esc_url( 'http://my.novaposhta.ua/' ) . '" target="_blank">' . esc_html__( 'Nova Poshta account', 'mrkv-ua-shipping' ) . '</a>',
+							'<a href="' . esc_url( admin_url( 'admin.php?page=mrkv_ua_shipping_nova-poshta' ) ) . '">' . esc_html__( 'the settings', 'mrkv-ua-shipping' ) . '</a>'
+						);
+						?>
+					</p>
+				</div>
+				<?php
+			}
 		}
 	}
 }

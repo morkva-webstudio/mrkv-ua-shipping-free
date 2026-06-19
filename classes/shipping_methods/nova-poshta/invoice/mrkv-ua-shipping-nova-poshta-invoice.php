@@ -57,7 +57,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 				}
 			}
 
-			$args = array();
+			$mrkv_ua_shipping_args = array();
 			$status = '';
 			$message = '';
 			$invoice = '';
@@ -254,7 +254,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
             }
 
 			# Args for query
-			$args = array(
+			$mrkv_ua_shipping_args = array(
 				"PayerType" => $payer_type,
 				"PaymentMethod" => $delivery_payment_method,
 				"DateTime" => $date_time_data,
@@ -281,26 +281,26 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 
 			if(!empty($cargo_details) && $cargo_type == 'TiresWheels')
 			{
-				$args['CargoDetails'] = $cargo_details; 
+				$mrkv_ua_shipping_args['CargoDetails'] = $cargo_details; 
 			}
 
 			if($cargo_type == 'Documents')
 			{
-				unset($args['OptionsSeat']);
+				unset($mrkv_ua_shipping_args['OptionsSeat']);
 			}
 
 
 
-			if($args["Cost"] < 200)
+			if($mrkv_ua_shipping_args["Cost"] < 200)
 			{
-				$args["Cost"] = 200;
+				$mrkv_ua_shipping_args["Cost"] = 200;
 			}
 
 			$invoice_arg = array(
 				"apiKey" => $this->shipping_api->get_api_key(),
 				"modelName" => "InternetDocument",
 				"calledMethod" => "save",
-				"methodProperties" => $args,
+				"methodProperties" => $mrkv_ua_shipping_args,
 			);
 
 			$invoice_arg = apply_filters( 'mrkv_ua_shipping_arg_invoice_data', $invoice_arg, $this->order, $key_ship );
@@ -330,6 +330,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 
 	        	# Send invoice number
         		do_action('mrkv_keycrm_send_invoice_number', $this->order->get_id());
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         		do_action('salesdrive_send_order_send_ttn', $this->order->get_id(), $invoice, 'np');
 	        }
 	        else
@@ -338,22 +339,22 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 
 	        	if(isset($obj['errors'][0]))
 	        	{
-	        		$this->shipping_api->debug_log->add_data($obj['errors'][0]);
+	        		$this->shipping_api->debug_log->add_data_error($obj['errors'][0]);
 	        		$message = $obj['errors'];
 	        	}
 	        	else{
-	        		$this->shipping_api->debug_log->add_data(__('Error with create invoice','mrkv-ua-shipping'));
+	        		$this->shipping_api->debug_log->add_data_error(__('Error with create invoice','mrkv-ua-shipping'));
 	        		$message = array(__('Error with create invoice','mrkv-ua-shipping'));
 	        	}
 
-	        	$this->order->add_order_note(__('Error create invoice','mrkv-ua-shipping') . ': ' . print_r($message, 1), $is_customer_note = 0, $added_by_user = false);
+	        	$this->order->add_order_note(__('Error create invoice','mrkv-ua-shipping') . ': ' . wp_json_encode( $message, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ), $is_customer_note = 0, $added_by_user = false);
 	        }
 
 			return array(
 				'status' => $status,
 				'message' => $message,
 				'invoice' => $invoice,
-				'arguments' => $args,
+				'arguments' => $mrkv_ua_shipping_args,
 				'print' => 'https://my.novaposhta.ua/orders/printDocument/orders%5B%5D/' . $invoice . '/type/pdf/apiKey/' . $this->settings_shipping['api_key'],
 				'form_print' => '',
 				'print_sticker' =>  'https://my.novaposhta.ua/orders/printMarkings/orders[]/' . $invoice . '/type/pdf/apiKey/' . $this->settings_shipping['api_key']
@@ -406,9 +407,9 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			{
 	            foreach($this->order->get_items( 'shipping' ) as $item_id => $item)
 	            {
-	            	$instance_id = $item->get_instance_id();
+	            	$mrkv_ua_shipping_instance_id = $item->get_instance_id();
 
-	            	$shipping_instance_settings = get_option('woocommerce_' . $item->get_method_id() . '_' . $instance_id . '_settings');
+	            	$shipping_instance_settings = get_option('woocommerce_' . $item->get_method_id() . '_' . $mrkv_ua_shipping_instance_id . '_settings');
 
 	            	$order_total_for_min = $this->order->get_total();
 

@@ -20,6 +20,18 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		}
 
 		/**
+		 * Recursively sanitize an array of settings
+		 * @param mixed $value
+		 * @return mixed
+		 */
+		public function mrkv_ua_shipping_sanitize_settings( $value ) {
+			if ( is_array( $value ) ) {
+                return array_map( [ $this, 'mrkv_ua_shipping_sanitize_settings' ], $value );
+            }
+            return sanitize_text_field( wp_unslash( (string) $value ) );
+		}
+
+		/**
 		 * Register plugin options
 		 * 
 		 * */
@@ -34,7 +46,7 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 	        foreach ($options as $option) 
 	        {
 	        	# Register option
-	            register_setting('mrkv-ua-shipping-settings-group', $option);
+	            register_setting('mrkv-ua-shipping-settings-group', $option, array('sanitize_callback' => array($this, 'mrkv_ua_shipping_sanitize_settings')));
 	        }
 
 	        foreach(MRKV_UA_SHIPPING_LIST as $slug => $shipping)

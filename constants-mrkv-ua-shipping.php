@@ -1,7 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; 
 # Get plugin data
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
-$plugData = get_plugin_data(MRKV_UA_SHIPPING_PLUGIN_FILE,false, false);
+$mrkv_ua_shipping_plug_data = get_plugin_data(MRKV_UA_SHIPPING_PLUGIN_FILE,false, false);
 
 # Constans 
 
@@ -16,7 +17,8 @@ define('MRKV_UA_SHIPPING_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets');
 define('MRKV_UA_SHIPPING_IMG_URL', plugin_dir_url(__FILE__) . 'assets/images');
 
 # Data
-define('MRKV_UA_SHIPPING_PLUGIN_VERSION', $plugData['Version']);
+define('MRKV_UA_SHIPPING_NAME', $mrkv_ua_shipping_plug_data['Name']);
+define('MRKV_UA_SHIPPING_PLUGIN_VERSION', $mrkv_ua_shipping_plug_data['Version']);
 define('MRKV_UA_SHIPPING_PLUGIN_TEXT_DOMAIN', 'mrkv-ua-shipping');
 
 # Allow tags 

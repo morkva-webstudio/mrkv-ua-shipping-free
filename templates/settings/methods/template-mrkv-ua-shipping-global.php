@@ -1,3 +1,4 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <div class="admin_mrkv_ua_shipping_page">
 	<div class="admin_mrkv_ua_shipping_page__header">
 		<?php 
@@ -24,21 +25,19 @@
 		</div>
 		<div class="admin_mrkv_ua_shipping__block col-mrkv-7">
 			<form class="mrkv_ua_shipping_method_form" method="post" action="options.php">
-				<?php settings_fields('mrkv-ua-shipping-' . SETTINGS_MRKV_UA_SHIPPING_SLUG .'-group'); ?>
+				<?php settings_fields('mrkv-ua-shipping-' . MRKV_UA_SHIPPING_SETTINGS_SLUG .'-group'); ?>
 				<div class="mrkv_block_rounded">
 					<?php 
-					include MRKV_UA_SHIPPING_PLUGIN_PATH_TEMP . '/settings/methods/shipping_fields/mrkv-ua-shipping-' . SETTINGS_MRKV_UA_SHIPPING_SLUG . '.php';
+					include MRKV_UA_SHIPPING_PLUGIN_PATH_TEMP . '/settings/methods/shipping_fields/mrkv-ua-shipping-' . MRKV_UA_SHIPPING_SETTINGS_SLUG . '.php';
 				?>
-					<?php echo submit_button(__('Save', 'mrkv-ua-shipping')); ?>
+					<?php submit_button(__('Save', 'mrkv-ua-shipping')); ?>
 				</div>
 			</form>
 		</div>
 		<div class="admin_mrkv_ua_shipping__block col-mrkv-3">
-			<div class="admin_mrkv_ua_shipping__plugin-info mrkv_block_rounded">
-				<?php 
-					include MRKV_UA_SHIPPING_PLUGIN_PATH_TEMP . '/elements/template-mrkv-ua-shipping-support.php';
-				?>
-			</div>
+			<?php 
+				include MRKV_UA_SHIPPING_PLUGIN_PATH_TEMP . '/elements/template-mrkv-ua-shipping-support.php';
+			?>
 		</div>
 	</div>
 </div>

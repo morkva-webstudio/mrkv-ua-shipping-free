@@ -42,7 +42,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_GLOBAL'))
 		{
 			# Set data
 			$this->settings_method = $settings;
-			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->slug_method, $this->get_debug_enabled(), $this->get_debug_request_enabled());
+			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->get_debug_enabled());
 		}
 
 		/**
@@ -75,7 +75,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_GLOBAL'))
 			$auth_string = base64_encode($username . ':' . $password);
 
 	    	# Create arguments
-			$args = array(
+			$mrkv_ua_shipping_args = array(
 				'timeout' => 30,
 				'redirection' => 10,
 				'httpversion' => '1.0',
@@ -93,7 +93,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_GLOBAL'))
 			$this->debug_log->add_data_request(\wp_json_encode( $params ));
 
 			# Send request
-			$response = wp_remote_post( $url . $url_path, $args );
+			$response = wp_remote_post( $url . $url_path, $mrkv_ua_shipping_args );
 
 			# Check answer
 			if ( is_wp_error( $response ) ) 
@@ -102,7 +102,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_GLOBAL'))
 				$error_message = $response->get_error_message();
 
 				# Save to log
-				$this->debug_log->add_data($error_message);
+				$this->debug_log->add_data_error($error_message);
 
 				# Return error string
 				return $error_message;
@@ -127,22 +127,6 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_GLOBAL'))
 	    public function get_debug_enabled()
 	    {
 	    	if(isset($this->settings_method['debug']['log']) && $this->settings_method['debug']['log'] == 'on')
-	    	{
-	    		return true;	
-	    	}
-	    	else
-	    	{
-	    		return false;	
-	    	}
-	    }
-
-	    /**
-	     * Get Debug request enabled
-	     * @return boolean Debug
-	     * */
-	    public function get_debug_request_enabled()
-	    {
-	    	if(isset($this->settings_method['debug']['query']) && $this->settings_method['debug']['query'] == 'on')
 	    	{
 	    		return true;	
 	    	}

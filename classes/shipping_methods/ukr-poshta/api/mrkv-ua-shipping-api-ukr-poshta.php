@@ -52,7 +52,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 		{
 			# Set data
 			$this->settings_method = $settings;
-			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->slug_method, $this->get_debug_enabled(), $this->get_debug_request_enabled());
+			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->get_debug_enabled());
 			$this->active_api = $this->get_api_key_active();
 			$this->active_api_test = $this->get_api_key_active_test();
 		}
@@ -68,7 +68,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 	    	# Get required URL
 	        $url = $this->api_url . $model . $add;
 
-	        $args = array(
+	        $mrkv_ua_shipping_args = array(
 	        	'timeout' => 30,
 				'redirection' => 10,
 				'httpversion' => '1.0',
@@ -83,7 +83,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 
 	        if(!empty($params))
 	        {
-	        	$args['body'] = \wp_json_encode( $params );
+	        	$mrkv_ua_shipping_args['body'] = \wp_json_encode( $params );
 	        	
 	        	# Save to log
 				$this->debug_log->add_data_request(\wp_json_encode( $params ));
@@ -92,12 +92,12 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 	        if($method == 'POST')
 	        {
 	        	# Send request
-				$response = wp_remote_post( $url, $args );
+				$response = wp_remote_post( $url, $mrkv_ua_shipping_args );
 	        }
 	        else
 	        {
 	        	# Send request
-				$response = wp_remote_get( $url, $args );
+				$response = wp_remote_get( $url, $mrkv_ua_shipping_args );
 	        }
 
 			# Check answer
@@ -107,7 +107,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 				$error_message = $response->get_error_message();
 
 				# Save to log
-				$this->debug_log->add_data($error_message);
+				$this->debug_log->add_data_error($error_message);
 
 				# Return error string
 				return $error_message;
@@ -132,70 +132,67 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 		 * @return mixed Answer
 		 * */
 		public function send_post_request_curl($model, $method = 'POST', $params = array(), $add = '', $api_token_type = '') 
-	    {
-	    	# Get required URL
-	        $url = $this->api_url . $model;
+		{
+			// Build the full request URL
+			$url = $this->api_url . $model;
 
-	        # Save to log
-			$this->debug_log->add_data_request(\wp_json_encode( $params ));
+			// Log the request data for debugging purposes
+			$this->debug_log->add_data_request(\wp_json_encode($params));
 
-		    $authorization = "Authorization: Bearer " . $this->get_production_bearer_ecom($api_token_type);
-
-		    $header = array('Content-Type: application/json' , $authorization );
-
-			if($add == 'token')
-	        {
-	        	$url .= '?token=' . $this->get_production_cp_token();
-	        }
-			elseif($add == 'tracking'){
-				$header[] = "Tracking: Bearer " . $this->get_production_bearer_status_tracking();
-			}
-			elseif($add)
-			{
+			// Determine the authorization header based on token type
+			$authorization = "Bearer " . $this->get_production_bearer_ecom($api_token_type);
+			
+			if ($add === 'token') {
+				// Use WordPress built-in function to safely append query arguments
+				$url = add_query_arg('token', $this->get_production_cp_token(), $url);
+			} elseif ($add === 'tracking') {
+				// Set specific bearer token for tracking requests
+				$authorization = "Bearer " . $this->get_production_bearer_status_tracking();
+			} elseif ($add) {
+				// Append legacy token and additional string if provided
 				$url .= '?token=' . $this->get_production_cp_token() . $add;
 			}
 
-		    $ch = curl_init($url);
+			// Set up request arguments for WP_Http
+			$mrkv_ua_shipping_args = array(
+				'method'      => $method,
+				'timeout'     => 30,
+				'redirection' => 5,
+				'httpversion' => '1.0',
+				'blocking'    => true,
+				'headers'     => array(
+					'Content-Type'  => 'application/json',
+					'Authorization' => $authorization,
+				),
+				// Encode parameters as JSON string for the request body
+				'body'        => ( 'GET' === $method ) ? null : \wp_json_encode($params),
+				'cookies'     => array(),
+				'sslverify'   => false, // Equivalent to CURLOPT_SSL_VERIFYPEER = 0
+			);
 
-		    if($method == 'POST')
-		    {
-		    	curl_setopt($ch, CURLOPT_POSTFIELDS, \wp_json_encode( $params ));
-		    }
-		    elseif($method == 'PUT')
-		    {
-		    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-            	curl_setopt($ch, CURLOPT_POSTFIELDS, \wp_json_encode($params));
-		    }
-		    else
-		    {
-		        curl_setopt($ch, CURLOPT_HEADER, 0);
-		        curl_setopt($ch, CURLOPT_HTTPGET, 1);
-		        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-		    }
-		    
-		    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true);
-		    curl_setopt($ch, CURLOPT_HTTPHEADER, $header); 
-		    $response = curl_exec( $ch );
-		    curl_close ( $ch );
+			// Execute the remote request
+			$response = wp_remote_request($url, $mrkv_ua_shipping_args);
 
-		    $obj = json_decode($response, true);
+			// Handle potential WordPress errors (e.g., DNS, Connection timeout)
+			if (is_wp_error($response)) {
+				$error_message = $response->get_error_message();
+				$this->debug_log->add_data_error($error_message);
+				return $error_message;
+			}
 
-			# Check answer
-			if ( isset($obj['message']) ) 
-			{
-				# Save to log
-				$this->debug_log->add_data($obj['message']);
+			// Retrieve the response body and decode the JSON
+			$response_body = wp_remote_retrieve_body($response);
+			$obj = json_decode($response_body, true);
 
-				# Return error string
+			// Check if the API returned a specific error message
+			if (isset($obj['message'])) {
+				$this->debug_log->add_data_error($obj['message']);
 				return $obj['message'];
 			} 
-			else 
-			{
-				# Return array
-				return $obj;
-			}
-	    }
+			
+			// Return the decoded response array
+			return $obj;
+		}
 
 	    /**
 	     * Check api key correct
@@ -219,7 +216,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 		    		}
 
 	    			# Save to log
-					$this->debug_log->add_data($error_message);
+					$this->debug_log->add_data_error($error_message);
 
 					return __('Token incorrect', 'mrkv-ua-shipping');
 		    	}
@@ -255,7 +252,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 		    		}
 
 	    			# Save to log
-					$this->debug_log->add_data($error_message);
+					$this->debug_log->add_data_error($error_message);
 
 					return __('Token incorrect', 'mrkv-ua-shipping');
 		    	}
@@ -349,22 +346,6 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 	    public function get_debug_enabled()
 	    {
 	    	if(isset($this->settings_method['debug']['log']) && $this->settings_method['debug']['log'] == 'on')
-	    	{
-	    		return true;	
-	    	}
-	    	else
-	    	{
-	    		return false;	
-	    	}
-	    }
-
-	    /**
-	     * Get Debug request enabled
-	     * @return boolean Debug
-	     * */
-	    public function get_debug_request_enabled()
-	    {
-	    	if(isset($this->settings_method['debug']['query']) && $this->settings_method['debug']['query'] == 'on')
 	    	{
 	    		return true;	
 	    	}

@@ -1,48 +1,49 @@
-<?php 
-	$shipping_slug = 'nova-poshta';
-	$shipping_slug_option = $shipping_slug . '_m_ua_settings';
-	$mrk_ua_ship_nova_settings = apply_filters('mrkv_ua_shipping_popup_settings', get_option($shipping_slug_option), $shipping_slug );
+<?php
+	if ( ! defined( 'ABSPATH' ) ) exit;
+	$mrkv_ua_shipping_shipping_slug = 'nova-poshta';
+	$mrkv_ua_shipping_shipping_slug_option = $mrkv_ua_shipping_shipping_slug . '_m_ua_settings';
+	$mrkv_ua_shipping_nova_settings = apply_filters('mrkv_ua_shipping_popup_settings', get_option($mrkv_ua_shipping_shipping_slug_option), $mrkv_ua_shipping_shipping_slug );
 ?>
-<form data-ship="<?php echo $shipping_slug; ?>">
+<form data-ship="<?php echo esc_attr($mrkv_ua_shipping_shipping_slug); ?>">
 	<input type="hidden" name="order_id" value="">
 	<h3>
-		<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/user-icon.svg" alt="<?php echo __('Sender', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Sender', 'mrkv-ua-shipping'); ?>">
-		<span><?php echo __('Sender\'s data', 'mrkv-ua-shipping'); ?></span>
+		<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/user-icon.svg" alt="<?php echo esc_html__('Sender', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Sender', 'mrkv-ua-shipping'); ?>">
+		<span><?php echo esc_html__('Sender\'s data', 'mrkv-ua-shipping'); ?></span>
 	</h3>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_1'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_1'); ?>
 	<div class="admin_ua_ship_morkva_settings_row">
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Sender contact person', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Sender contact person', 'mrkv-ua-shipping'); ?>
 					<?php
-						$data = isset($mrk_ua_ship_nova_settings['sender']['ref']) ? $mrk_ua_ship_nova_settings['sender']['ref'] : '';
+						$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['sender']['ref']) ? $mrkv_ua_shipping_nova_settings['sender']['ref'] : '';
 
-						if(!$data)
+						if(!$mrkv_ua_shipping_data)
 						{
 							?>
-								<div class="admin_ua_ship_morkva__notification mrkv-notification-red"><?php echo __('Sender Ref Incorrect', 'mrkv-ua-shipping'); ?></div>
+								<div class="admin_ua_ship_morkva__notification mrkv-notification-red"><?php echo esc_html__('Sender Ref Incorrect', 'mrkv-ua-shipping'); ?></div>
 							<?php
 						}
 					?>
 				</label>
 				<?php
-					if(isset($mrk_ua_ship_nova_settings['sender']['list']))
+					if(isset($mrkv_ua_shipping_nova_settings['sender']['list']))
 					{
-						$senders = json_decode(base64_decode($mrk_ua_ship_nova_settings['sender']['list']), true);
+						$mrkv_ua_shipping_senders = json_decode(base64_decode($mrkv_ua_shipping_nova_settings['sender']['list']), true);
 
-						echo $mrkv_global_option_generator->get_select_tag('', 'mrkv_ua_ship_invoice_sender_ref', $senders, $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_sender_ref' , __('Choose a sender', 'mrkv-ua-shipping'));
+						echo wp_kses($mrkv_global_option_generator->get_select_tag('', 'mrkv_ua_ship_invoice_sender_ref', $mrkv_ua_shipping_senders, $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_sender_ref' , __('Choose a sender', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
 
-						if(isset($senders[0]['attr']) && !empty($senders))
+						if(isset($mrkv_ua_shipping_senders[0]['attr']) && !empty($mrkv_ua_shipping_senders))
 						{
-							foreach($senders[0]['attr'] as $sender_data_key => $sender_data_val)
+							foreach($mrkv_ua_shipping_senders[0]['attr'] as $mrkv_ua_shipping_sender_data_key => $mrkv_ua_shipping_sender_data_val)
 							{
-								if($sender_data_key == 'ref')
+								if($mrkv_ua_shipping_sender_data_key == 'ref')
 								{
 									continue;
 								}
-								$data = isset($mrk_ua_ship_nova_settings['sender'][$sender_data_key]) ? $mrk_ua_ship_nova_settings['sender'][$sender_data_key] : '';
-								echo $mrkv_global_option_generator->get_input_hidden('mrkv_ua_ship_invoice_sender_' . $sender_data_key, $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_sender_' . $sender_data_key);
+								$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['sender'][$mrkv_ua_shipping_sender_data_key]) ? $mrkv_ua_shipping_nova_settings['sender'][$mrkv_ua_shipping_sender_data_key] : '';
+								echo wp_kses($mrkv_global_option_generator->get_input_hidden('mrkv_ua_ship_invoice_sender_' . $mrkv_ua_shipping_sender_data_key, $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_sender_' . $mrkv_ua_shipping_sender_data_key), MRKV_UA_SHIPPING_ALLOW_TAGS);
 							}
 						}
 					}
@@ -52,63 +53,63 @@
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Address from', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Address from', 'mrkv-ua-shipping'); ?>
 					<?php
-					$full_address = '';
-					$full_address .= isset($mrk_ua_ship_nova_settings['sender']['city']['name']) ? $mrk_ua_ship_nova_settings['sender']['city']['name'] . ', ' : '';
-					$data_error = '';
+					$mrkv_ua_shipping_full_address = '';
+					$mrkv_ua_shipping_full_address .= isset($mrkv_ua_shipping_nova_settings['sender']['city']['name']) ? $mrkv_ua_shipping_nova_settings['sender']['city']['name'] . ', ' : '';
+					$mrkv_ua_shipping_data_error = '';
 
-					$data = isset($mrk_ua_ship_nova_settings['sender']['address_type']) ? $mrk_ua_ship_nova_settings['sender']['address_type'] : '';
+					$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['sender']['address_type']) ? $mrkv_ua_shipping_nova_settings['sender']['address_type'] : '';
 
-					if($data == 'W')
+					if($mrkv_ua_shipping_data == 'W')
 					{
-						$full_address .= isset($mrk_ua_ship_nova_settings['sender']['warehouse']['name']) ? $mrk_ua_ship_nova_settings['sender']['warehouse']['name'] . ' ' : '';
-						$data_error = isset($mrk_ua_ship_nova_settings['sender']['warehouse']['ref']) ? $mrk_ua_ship_nova_settings['sender']['warehouse']['ref'] : '';
+						$mrkv_ua_shipping_full_address .= isset($mrkv_ua_shipping_nova_settings['sender']['warehouse']['name']) ? $mrkv_ua_shipping_nova_settings['sender']['warehouse']['name'] . ' ' : '';
+						$mrkv_ua_shipping_data_error = isset($mrkv_ua_shipping_nova_settings['sender']['warehouse']['ref']) ? $mrkv_ua_shipping_nova_settings['sender']['warehouse']['ref'] : '';
 
-						if(!$data_error)
+						if(!$mrkv_ua_shipping_data_error)
 						{
 							?>
-								<div class="admin_ua_ship_morkva__notification mrkv-notification-red"><?php echo __('Warehouse Ref Incorrect', 'mrkv-ua-shipping'); ?></div>
+								<div class="admin_ua_ship_morkva__notification mrkv-notification-red"><?php echo esc_html__('Warehouse Ref Incorrect', 'mrkv-ua-shipping'); ?></div>
 							<?php
 						}
 					}
-					elseif($data == 'D')
+					elseif($mrkv_ua_shipping_data == 'D')
 					{
-						$full_address .= (isset($mrk_ua_ship_nova_settings['sender']['street']['name']) && $mrk_ua_ship_nova_settings['sender']['street']['name']) ? $mrk_ua_ship_nova_settings['sender']['street']['name'] . ' ' : '';
-						$full_address .= (isset($mrk_ua_ship_nova_settings['sender']['street']['house']) && $mrk_ua_ship_nova_settings['sender']['street']['house']) ? $mrk_ua_ship_nova_settings['sender']['street']['house'] . ', ' : '';
-						$full_address .= (isset($mrk_ua_ship_nova_settings['sender']['street']['flat']) && $mrk_ua_ship_nova_settings['sender']['street']['flat']) ? __('flat/office', 'mrkv-ua-shipping') . ' ' . $mrk_ua_ship_nova_settings['sender']['street']['flat'] . ' ' : '';
+						$mrkv_ua_shipping_full_address .= (isset($mrkv_ua_shipping_nova_settings['sender']['street']['name']) && $mrkv_ua_shipping_nova_settings['sender']['street']['name']) ? $mrkv_ua_shipping_nova_settings['sender']['street']['name'] . ' ' : '';
+						$mrkv_ua_shipping_full_address .= (isset($mrkv_ua_shipping_nova_settings['sender']['street']['house']) && $mrkv_ua_shipping_nova_settings['sender']['street']['house']) ? $mrkv_ua_shipping_nova_settings['sender']['street']['house'] . ', ' : '';
+						$mrkv_ua_shipping_full_address .= (isset($mrkv_ua_shipping_nova_settings['sender']['street']['flat']) && $mrkv_ua_shipping_nova_settings['sender']['street']['flat']) ? __('flat/office', 'mrkv-ua-shipping') . ' ' . $mrkv_ua_shipping_nova_settings['sender']['street']['flat'] . ' ' : '';
 					}
 					else
 					{
-						$full_address .= __('Empty data', 'mrkv-ua-shipping');
+						$mrkv_ua_shipping_full_address .= __('Empty data', 'mrkv-ua-shipping');
 					}
 				?>
 				</label>
-				<p><?php echo $full_address; ?></p>
+				<p><?php echo esc_attr($mrkv_ua_shipping_full_address); ?></p>
 			</div>
 		</div>
 	</div>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_2'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_2'); ?>
 	<hr class="mrkv-ua-ship__hr">
 	<h3>
-		<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/user-icon.svg" alt="<?php echo __('Recipient', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Recipient', 'mrkv-ua-shipping'); ?>">
-		<span><?php echo __('Recipient\'s data', 'mrkv-ua-shipping'); ?></span>
+		<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/user-icon.svg" alt="<?php echo esc_html__('Recipient', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Recipient', 'mrkv-ua-shipping'); ?>">
+		<span><?php echo esc_html__('Recipient\'s data', 'mrkv-ua-shipping'); ?></span>
 	</h3>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_3'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_3'); ?>
 	<div class="admin_ua_ship_morkva_settings_row">
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_row admin_ua_ship_morkva_settings_row_mb-0">
 				<div class="col-mrkv-5">
 					<div class="admin_ua_ship_morkva_settings_line">
 						<?php
-							echo $mrkv_global_option_generator->get_input_text(__('Firstname', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_first_name', '', $shipping_slug_option . '_mrkv_ua_ship_invoice_first_name' , '', __('Enter the Firstname', 'mrkv-ua-shipping'), '');
+							echo wp_kses($mrkv_global_option_generator->get_input_text(__('Firstname', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_first_name', '', $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_first_name' , '', __('Enter the Firstname', 'mrkv-ua-shipping'), ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 						?>
 					</div>	
 				</div>
 				<div class="col-mrkv-5">
 					<div class="admin_ua_ship_morkva_settings_line">
 						<?php
-							echo $mrkv_global_option_generator->get_input_text(__('Lastname', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_last_name', '', $shipping_slug_option . '_mrkv_ua_ship_invoice_last_name' , '', __('Enter the Lastname', 'mrkv-ua-shipping'), '');
+							echo wp_kses($mrkv_global_option_generator->get_input_text(__('Lastname', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_last_name', '', $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_last_name' , '', __('Enter the Lastname', 'mrkv-ua-shipping'), ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 						?>
 					</div>	
 				</div>
@@ -117,14 +118,14 @@
 				<div class="col-mrkv-5">
 					<div class="admin_ua_ship_morkva_settings_line">
 						<?php
-							echo $mrkv_global_option_generator->get_input_text(__('Patronymic', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_patronymic', '', $shipping_slug_option . '_mrkv_ua_ship_invoice_patronymic' , '', __('Enter the Patronymic', 'mrkv-ua-shipping'), '');
+							echo wp_kses($mrkv_global_option_generator->get_input_text(__('Patronymic', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_patronymic', '', $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_patronymic' , '', __('Enter the Patronymic', 'mrkv-ua-shipping'), ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 						?>
 					</div>	
 				</div>
 				<div class="col-mrkv-5">
 					<div class="admin_ua_ship_morkva_settings_line">
 						<?php
-							echo $mrkv_global_option_generator->get_input_text(__('Phone', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_phone', '', $shipping_slug_option . '_mrkv_ua_ship_invoice_phone' , '', __('Enter the Phone', 'mrkv-ua-shipping'), '');
+							echo wp_kses($mrkv_global_option_generator->get_input_text(__('Phone', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_phone', '', $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_phone' , '', __('Enter the Phone', 'mrkv-ua-shipping'), ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 						?>
 					</div>	
 				</div>
@@ -133,33 +134,33 @@
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Address to', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Address to', 'mrkv-ua-shipping'); ?>
 				</label>
 				<p class="mrkv_ua_ship_invoice_address"></p>
 			</div>
 		</div>
 	</div>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_4'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_4'); ?>
 	<hr class="mrkv-ua-ship__hr">
 	<h3>
-		<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/tuning-icon.svg" alt="<?php echo __('Parameters of the shipment', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Parameters of the shipment', 'mrkv-ua-shipping'); ?>">
-		<span><?php echo __('Parameters of the shipment', 'mrkv-ua-shipping'); ?></span>
+		<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/tuning-icon.svg" alt="<?php echo esc_html__('Parameters of the shipment', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Parameters of the shipment', 'mrkv-ua-shipping'); ?>">
+		<span><?php echo esc_html__('Parameters of the shipment', 'mrkv-ua-shipping'); ?></span>
 	</h3>
-	<p><?php echo __('Check the correctness of the shipment data, or fill in if necessary', 'mrkv-ua-shipping'); ?></p>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_5'); ?>
+	<p><?php echo esc_html__('Check the correctness of the shipment data, or fill in if necessary', 'mrkv-ua-shipping'); ?></p>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_5'); ?>
 	<div class="admin_ua_ship_morkva_settings_row admin_ua_ship_morkva_settings_row_mb-0">
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Type of shipment', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Type of shipment', 'mrkv-ua-shipping'); ?>
 				</label>
 				<div class="admin_ua_ship_morkva_settings_row">
 					<?php
-						$data = isset($mrk_ua_ship_nova_settings['shipment']['type']) ? $mrk_ua_ship_nova_settings['shipment']['type'] : '';
-						echo $mrkv_global_option_generator->get_input_radio(__('Parcel', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'Parcel', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_parcel', 'Parcel');
-						echo $mrkv_global_option_generator->get_input_radio(__('Pallet', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'Pallet', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_pallet', 'Parcel');
-						echo $mrkv_global_option_generator->get_input_radio(__('Documents', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'Documents', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_documents', 'Parcel');
-						echo $mrkv_global_option_generator->get_input_radio(__('Tires', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'TiresWheels', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_tires', 'Parcel');
+						$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['shipment']['type']) ? $mrkv_ua_shipping_nova_settings['shipment']['type'] : '';
+						echo wp_kses($mrkv_global_option_generator->get_input_radio(__('Parcel', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'Parcel', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_parcel', 'Parcel'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+						echo wp_kses($mrkv_global_option_generator->get_input_radio(__('Pallet', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'Pallet', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_pallet', 'Parcel'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+						echo wp_kses($mrkv_global_option_generator->get_input_radio(__('Documents', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'Documents', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_documents', 'Parcel'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+						echo wp_kses($mrkv_global_option_generator->get_input_radio(__('Tires', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_type', 'TiresWheels', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_type_tires', 'Parcel'), MRKV_UA_SHIPPING_ALLOW_TAGS);
 					?>
 				</div>
 			</div>
@@ -167,120 +168,120 @@
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Payer of delivery', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Payer of delivery', 'mrkv-ua-shipping'); ?>
 				</label>
 				<div class="admin_ua_ship_morkva_settings_row">
 					<?php
-						$data = isset($mrk_ua_ship_nova_settings['payer']['delivery']) ? $mrk_ua_ship_nova_settings['payer']['delivery'] : '';
-						echo $mrkv_global_option_generator->get_input_radio(__('Recipient', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_payer_delivery', 'Recipient', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_payer_delivery_recipient', 'Recipient');
-						echo $mrkv_global_option_generator->get_input_radio(__('Sender', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_payer_delivery', 'Sender', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_payer_delivery_sender', 'Recipient');
+						$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['payer']['delivery']) ? $mrkv_ua_shipping_nova_settings['payer']['delivery'] : '';
+						echo wp_kses($mrkv_global_option_generator->get_input_radio(__('Recipient', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_payer_delivery', 'Recipient', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_payer_delivery_recipient', 'Recipient'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+						echo wp_kses($mrkv_global_option_generator->get_input_radio(__('Sender', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_payer_delivery', 'Sender', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_payer_delivery_sender', 'Recipient'), MRKV_UA_SHIPPING_ALLOW_TAGS);
 					?>
 				</div>
 			</div>
 		</div>
 	</div>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_6'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_6'); ?>
 	<div class="admin_ua_ship_morkva_settings_row admin_ua_ship_morkva_settings_row_mb-0">
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Weight of the shipment, kg', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Weight of the shipment, kg', 'mrkv-ua-shipping'); ?>
 				</label>
 				<?php 
-					$data = isset($mrk_ua_ship_nova_settings['shipment']['weight']) ? $mrk_ua_ship_nova_settings['shipment']['weight'] : '';
+					$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['shipment']['weight']) ? $mrkv_ua_shipping_nova_settings['shipment']['weight'] : '';
 
-					echo $mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_weight', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_weight' , '', '', '');
+					echo wp_kses($mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_weight', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_weight' , '', '', ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 				?>
 			</div>
 		</div>
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Dimensions of the shipment, cm', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Dimensions of the shipment, cm', 'mrkv-ua-shipping'); ?>
 				</label>
 				<div class="adm_morkva_row_size">
 					<div class="adm_morkva_row_size__col">
-						<span><?php echo __('Length', 'mrkv-ua-shipping'); ?></span>
+						<span><?php echo esc_html__('Length', 'mrkv-ua-shipping'); ?></span>
 						<?php 
-							$data = isset($mrk_ua_ship_nova_settings['shipment']['length']) ? $mrk_ua_ship_nova_settings['shipment']['length'] : '';
-							echo $mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_length', $data, $shipping_slug_option. '_mrkv_ua_ship_invoice_shipment_length' , '', '', '');
+							$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['shipment']['length']) ? $mrkv_ua_shipping_nova_settings['shipment']['length'] : '';
+							echo wp_kses($mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_length', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option. '_mrkv_ua_ship_invoice_shipment_length' , '', '', ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 						?>
 					</div>
 					<span>
 						<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 18C5.17157 18 3.75736 18 2.87868 17.1213C2 16.2426 2 14.8284 2 12C2 9.17157 2 7.75736 2.87868 6.87868C3.75736 6 5.17157 6 8 6C10.8284 6 12.2426 6 13.1213 6.87868C14 7.75736 14 9.17157 14 12" stroke="#ed6230" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10 12C10 14.8284 10 16.2426 10.8787 17.1213C11.7574 18 13.1716 18 16 18C18.8284 18 20.2426 18 21.1213 17.1213C21.4211 16.8215 21.6186 16.4594 21.7487 16M22 12C22 9.17157 22 7.75736 21.1213 6.87868C20.2426 6 18.8284 6 16 6" stroke="#ed6230" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
 					</span>
 					<div class="adm_morkva_row_size__col">
-						<span><?php echo __('Width', 'mrkv-ua-shipping'); ?></span>
+						<span><?php echo esc_html__('Width', 'mrkv-ua-shipping'); ?></span>
 						<?php 
-							$data = isset($mrk_ua_ship_nova_settings['shipment']['width']) ? $mrk_ua_ship_nova_settings['shipment']['width'] : '';
-							echo $mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_width', $data, $shipping_slug_option. '_mrkv_ua_ship_invoice_shipment_width' , '', '', '');
+							$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['shipment']['width']) ? $mrkv_ua_shipping_nova_settings['shipment']['width'] : '';
+							echo wp_kses($mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_width', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option. '_mrkv_ua_ship_invoice_shipment_width' , '', '', ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 						?>
 					</div>
 					<span>
 						<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 18C5.17157 18 3.75736 18 2.87868 17.1213C2 16.2426 2 14.8284 2 12C2 9.17157 2 7.75736 2.87868 6.87868C3.75736 6 5.17157 6 8 6C10.8284 6 12.2426 6 13.1213 6.87868C14 7.75736 14 9.17157 14 12" stroke="#ed6230" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10 12C10 14.8284 10 16.2426 10.8787 17.1213C11.7574 18 13.1716 18 16 18C18.8284 18 20.2426 18 21.1213 17.1213C21.4211 16.8215 21.6186 16.4594 21.7487 16M22 12C22 9.17157 22 7.75736 21.1213 6.87868C20.2426 6 18.8284 6 16 6" stroke="#ed6230" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
 					</span>
 					<div class="adm_morkva_row_size__col">
-						<span><?php echo __('Height', 'mrkv-ua-shipping'); ?></span>
+						<span><?php echo esc_html__('Height', 'mrkv-ua-shipping'); ?></span>
 						<?php 
-							$data = isset($mrk_ua_ship_nova_settings['shipment']['height']) ? $mrk_ua_ship_nova_settings['shipment']['height'] : '';
-							echo $mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_height', $data, $shipping_slug_option. '_mrkv_ua_ship_invoice_shipment_height' , '', '', '');
+							$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['shipment']['height']) ? $mrkv_ua_shipping_nova_settings['shipment']['height'] : '';
+							echo wp_kses($mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_height', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option. '_mrkv_ua_ship_invoice_shipment_height' , '', '', ''), MRKV_UA_SHIPPING_ALLOW_TAGS);
 						?>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_7'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_7'); ?>
 	<div class="admin_ua_ship_morkva_settings_row admin_ua_ship_morkva_settings_row_mb-0">
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('The total weight of the shipment', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('The total weight of the shipment', 'mrkv-ua-shipping'); ?>
 				</label>
 				<?php 
-					$data = isset($mrk_ua_ship_nova_settings['shipment']['volume']) ? $mrk_ua_ship_nova_settings['shipment']['volume'] : '';
+					$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['shipment']['volume']) ? $mrkv_ua_shipping_nova_settings['shipment']['volume'] : '';
 
-					echo $mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_volume', $data, $shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_volume' , '', '', '', 'readonly');
+					echo wp_kses($mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_volume', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_volume' , '', '', '', 'readonly'), MRKV_UA_SHIPPING_ALLOW_TAGS);
 				?>
 			</div>
 		</div>
 		<div class="col-mrkv-5">
 			<div class="admin_ua_ship_morkva_settings_line">
 				<label>
-					<?php echo __('Number of seats', 'mrkv-ua-shipping'); ?>
+					<?php echo esc_html__('Number of seats', 'mrkv-ua-shipping'); ?>
 				</label>
 				<?php 
-					echo $mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_seats', 1, $shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_seats' , '', '', '', '', '1.00');
+					echo wp_kses($mrkv_global_option_generator->get_input_number('', 'mrkv_ua_ship_invoice_shipment_seats', 1, $mrkv_ua_shipping_shipping_slug_option . '_mrkv_ua_ship_invoice_shipment_seats' , '', '', '', '', '1.00'), MRKV_UA_SHIPPING_ALLOW_TAGS);
 				?>
 			</div>
 		</div>
 	</div>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_8'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_8'); ?>
 	<div class="admin_ua_ship_morkva_settings_line">
 		<?php
-			$data = isset($mrk_ua_ship_nova_settings['shipment']['description']) ? $mrk_ua_ship_nova_settings['shipment']['description'] : '';
-			$description = __('Maximum number of characters:', 'mrkv-ua-shipping') . ' 100' . '<div class="mrkv-ua-shipping-desc-validation" data-success="' . __('Within acceptable limits.', 'mrkv-ua-shipping') . '" data-error="' . __('Reduce the number of characters.', 'mrkv-ua-shipping') . '">' . __('Number of symbols:', 'mrkv-ua-shipping') . ' <span class="mrkv-ua-ship-cout-symb"></span>. <span class="mrkv-ua-ship-message-symb"></span>' . '</div>';
+			$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_nova_settings['shipment']['description']) ? $mrkv_ua_shipping_nova_settings['shipment']['description'] : '';
+			$mrkv_ua_shipping_description = __('Maximum number of characters:', 'mrkv-ua-shipping') . ' 100' . '<div class="mrkv-ua-shipping-desc-validation" data-success="' . __('Within acceptable limits.', 'mrkv-ua-shipping') . '" data-error="' . __('Reduce the number of characters.', 'mrkv-ua-shipping') . '">' . __('Number of symbols:', 'mrkv-ua-shipping') . ' <span class="mrkv-ua-ship-cout-symb"></span>. <span class="mrkv-ua-ship-message-symb"></span>' . '</div>';
 
-			echo $mrkv_global_option_generator->get_textarea(__('Description of the shipment', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_description', $data, $shipping_slug_option . 'mrkv_ua_ship_invoice_shipment_description' , '', __('For example, products for children...', 'mrkv-ua-shipping'), $description);
+			echo wp_kses($mrkv_global_option_generator->get_textarea(__('Description of the shipment', 'mrkv-ua-shipping'), 'mrkv_ua_ship_invoice_shipment_description', $mrkv_ua_shipping_data, $mrkv_ua_shipping_shipping_slug_option . 'mrkv_ua_ship_invoice_shipment_description' , '', __('For example, products for children...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
 		?>
 	</div>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_9'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_9'); ?>
 	<hr class="mrkv-ua-ship__hr">
 	<h3>
-		<img src="<?php echo MRKV_UA_SHIPPING_IMG_URL . '/global'; ?>/box-icon.svg" alt="<?php echo __('Additional services', 'mrkv-ua-shipping'); ?>" title="<?php echo __('Additional services', 'mrkv-ua-shipping'); ?>">
-		<span><?php echo __('Additional services', 'mrkv-ua-shipping'); ?></span>
+		<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/box-icon.svg" alt="<?php echo esc_html__('Additional services', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Additional services', 'mrkv-ua-shipping'); ?>">
+		<span><?php echo esc_html__('Additional services', 'mrkv-ua-shipping'); ?></span>
 	</h3>
-	<p><?php echo __('Use additional services as needed', 'mrkv-ua-shipping'); ?></p>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_10'); ?>
+	<p><?php echo esc_html__('Use additional services as needed', 'mrkv-ua-shipping'); ?></p>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_10'); ?>
 	<div class="admin_ua_ship_morkva_settings_row mrkv-addittional-row">
 		<div class="col-mrkv-10">
 			<div class="admin_ua_ship_morkva_settings_line mrkv-field-disabled">
 				<?php
-					echo $mrkv_global_option_generator->get_input_checkbox(__('Money transfer', 'mrkv-ua-shipping'), '', '', $shipping_slug_option . 'mrkv_ua_ship_invoice_money_transfer', '', 'disabled');
+					echo wp_kses($mrkv_global_option_generator->get_input_checkbox(__('Money transfer', 'mrkv-ua-shipping'), '', '', $mrkv_ua_shipping_shipping_slug_option . 'mrkv_ua_ship_invoice_money_transfer', '', 'disabled'), MRKV_UA_SHIPPING_ALLOW_TAGS);
 				?>
-				<?php echo '<span class="mrkv-ua-ship-only-pro">' . __('Only in the Pro version', 'mrkv-ua-shipping') . '</span>'; ?>
+				<span class="mrkv-ua-ship-only-pro"><?php echo esc_html__('Only in the Pro version', 'mrkv-ua-shipping'); ?></span>
 			</div>
 		</div>
 	</div>
-	<?php do_action('mrkv_ua_shipping_ttn_create_row', $shipping_slug, 'row_11'); ?>
+	<?php do_action('mrkv_ua_shipping_ttn_create_row', $mrkv_ua_shipping_shipping_slug, 'row_11'); ?>
 </form>

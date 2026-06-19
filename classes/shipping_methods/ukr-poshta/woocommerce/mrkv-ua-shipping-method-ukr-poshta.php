@@ -10,11 +10,11 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA'))
 	 */
 	class MRKV_UA_SHIPPING_UKR_POSHTA extends WC_Shipping_Method
 	{
-		public function __construct($instance_id = 0)
+		public function __construct($mrkv_ua_shipping_instance_id = 0)
         {
          	# Set instance id
-            $this->instance_id = absint( $instance_id );
-            parent::__construct( $instance_id );
+            $this->instance_id = absint( $mrkv_ua_shipping_instance_id );
+            parent::__construct( $mrkv_ua_shipping_instance_id );
 
             # Set main fields
             $this->id = 'mrkv_ua_shipping_ukr-poshta';
@@ -131,6 +131,30 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA'))
                 'cost' => 0.00,
                 'calc_tax' => 'per_item'
             );
+
+            $should_calculate = true;
+            
+            if (WC()->session) {
+                $is_on_product_page = WC()->session->get('mrkv_is_on_product_page');
+                
+                if ($is_on_product_page === true) {
+                    $should_calculate = false;
+                }
+            }
+
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
+
+            if ( 'woocommerce_update_order_review' === $action ) {
+                $should_calculate = true;
+            }
+
+            $should_calculate = apply_filters('mrkv_ua_shipping_calculation_condtion', $should_calculate, $package);
+
+            if (!$should_calculate) {
+                $this->add_rate($rate);
+                return;
+            }
 
             if($this->get_option('enable_fix_cost') && $this->get_option('enable_fix_cost') == 'yes')
             {

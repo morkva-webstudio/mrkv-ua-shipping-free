@@ -92,19 +92,4 @@ jQuery(window).on('load', function()
             jQuery(this).val(min);
         }
     });
-
-    jQuery('.mrkv_btn_log_clean').click(function(){
-        jQuery.ajax({
-            url: mrkv_ua_ship_helper.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'mrkv_ua_ship_clear_log',
-                shipping: 'ukr-poshta',
-                nonce: mrkv_ua_ship_helper.nonce,
-            }, 
-            success: function( data ) {
-                jQuery('.mrkv_log_file_content').text('');
-            }
-        });
-    });
 });

@@ -39,7 +39,7 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 	    	if(is_object($this->nova_poshta_api))
 	    	{
 	    		# Set arguments
-		        $args = array(
+		        $mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->nova_poshta_api->get_api_key(),
 		            "modelName" => "Counterparty",
 		            "calledMethod" => "getCounterpartyContactPersons",
@@ -50,7 +50,7 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 		        );
 
 		        # Send request
-		        $obj = $this->nova_poshta_api->send_post_request( $args );
+		        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 		        if(isset($obj['data']))
 		        {
@@ -73,7 +73,7 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 	    {
 	    	if(is_object($this->nova_poshta_api))
 	    	{
-	    		$args = array(
+	    		$mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->nova_poshta_api->get_api_key(),
 		            "modelName" => "Counterparty",
 		            "calledMethod" => "getCounterparties",
@@ -84,7 +84,7 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 		        );
 
 		        # Send request
-		        $obj = $this->nova_poshta_api->send_post_request( $args );
+		        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 		        if(isset($obj['data'][0]['Ref']))
 		        {
@@ -95,10 +95,10 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 		        {
 		        	if(isset($obj['errors'][0]))
 		        	{
-		        		$this->nova_poshta_api->debug_log->add_data($obj['errors'][0]);
+		        		$this->nova_poshta_api->debug_log->add_data_error($obj['errors'][0]);
 		        	}
 		        	else{
-		        		$this->nova_poshta_api->debug_log->add_data(__('Error with Sender Counterparties Ref','mrkv-ua-shipping'));
+		        		$this->nova_poshta_api->debug_log->add_data_error(__('Error with Sender Counterparties Ref','mrkv-ua-shipping'));
 		        	}
 		        }
 	    	}
@@ -112,7 +112,7 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 	    {
 	    	if(is_object($this->nova_poshta_api))
 	    	{
-	    		$args = array(
+	    		$mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->nova_poshta_api->get_api_key(),
 		            "modelName" => "Address",
 		            "calledMethod" => "save",
@@ -126,7 +126,7 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 		        );
 
 		        # Send request
-		        $obj = $this->nova_poshta_api->send_post_request( $args );
+		        $obj = $this->nova_poshta_api->send_post_request( $mrkv_ua_shipping_args );
 
 		        if(isset($obj['data'][0]['Ref']))
 		        {
@@ -137,10 +137,10 @@ if (!class_exists('MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA'))
 		        {
 		        	if(isset($obj['errors'][0]))
 		        	{
-		        		$this->nova_poshta_api->debug_log->add_data($obj['errors'][0]);
+		        		$this->nova_poshta_api->debug_log->add_data_error($obj['errors'][0]);
 		        	}
 		        	else{
-		        		$this->nova_poshta_api->debug_log->add_data(__('Error with Sender Counterparties Ref','mrkv-ua-shipping'));
+		        		$this->nova_poshta_api->debug_log->add_data_error(__('Error with Sender Counterparties Ref','mrkv-ua-shipping'));
 		        	}
 		        	
 		        	

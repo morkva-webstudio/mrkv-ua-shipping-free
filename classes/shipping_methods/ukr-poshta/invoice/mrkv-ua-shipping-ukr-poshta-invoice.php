@@ -51,7 +51,7 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 				$current_shipping_method = $method_data->get_method_id();
 			}
 
-			$args = array();
+			$mrkv_ua_shipping_args = array();
 			$status = '';
 			$message = '';
 			$invoice = '';
@@ -87,7 +87,7 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 				$receive_type = 'RETURN';
 			}
 
-			$args = array(
+			$mrkv_ua_shipping_args = array(
 		    	"sender" 			=> array( "uuid" => $sender ),
 		    	"recipient" 		=> array( "uuid" => $recipient ),
 		    	"type" 				=> $shipment_type,
@@ -111,10 +111,10 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 			    "transferPostPayToBankAccount" => $transfer_post_pay
 		    );
 
-		    $args = apply_filters( 'mrkv_ua_shipping_arg_invoice_data', $args, $this->order, $current_shipping_method );
+		    $mrkv_ua_shipping_args = apply_filters( 'mrkv_ua_shipping_arg_invoice_data', $mrkv_ua_shipping_args, $this->order, $current_shipping_method );
 
 			# Send request
-	        $obj = $this->shipping_api->send_post_request_curl('ecom/0.0.1/shipments', 'POST', $args, 'token');
+	        $obj = $this->shipping_api->send_post_request_curl('ecom/0.0.1/shipments', 'POST', $mrkv_ua_shipping_args, 'token');
 
 	        if(isset($obj['barcode']))
 	        {
@@ -138,6 +138,7 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 
 	        	# Send invoice number
         		do_action('mrkv_keycrm_send_invoice_number', $this->order->get_id());
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         		do_action('salesdrive_send_order_send_ttn', $this->order->get_id(), $invoice, '');
 	        }
 	        else
@@ -154,16 +155,16 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 		    	}
 
 		    	# Save to log
-				$this->shipping_api->debug_log->add_data($error_message);
-				$this->order->add_order_note(__('Error create invoice','mrkv-ua-shipping') . ': ' . print_r($error_message, 1), $is_customer_note = 0, $added_by_user = false);
-				$message = $error_message;
+				$this->shipping_api->debug_log->add_data_error($error_message);
+				$this->order->add_order_note(__('Error create invoice','mrkv-ua-shipping') . ': ' . wp_json_encode( $error_message, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ), $is_customer_note = 0, $added_by_user = false);
+				$message = $error_message; 
 	        }
 
 			return array(
 				'status' => $status,
 				'message' => $message,
 				'invoice' => $invoice,
-				'arguments' => $args,
+				'arguments' => $mrkv_ua_shipping_args,
 				'print' => '',
 				'form_print' => 'form-ukr-poshta-ttn',
 				'print_sticker' => ''
@@ -392,9 +393,9 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 			foreach ($shipping_methods as $shipping_method) 
 			{
 				$shipping_method_id = $shipping_method->get_method_id();
-				$instance_id = $shipping_method->get_instance_id();
+				$mrkv_ua_shipping_instance_id = $shipping_method->get_instance_id();
 
-				$shipping_settings = get_option("woocommerce_{$shipping_method_id}_{$instance_id}_settings");
+				$shipping_settings = get_option("woocommerce_{$shipping_method_id}_{$mrkv_ua_shipping_instance_id}_settings");
 
 				if (!empty($shipping_settings) && isset($shipping_settings['shipping_type'])) {
 			        return $shipping_settings['shipping_type'];
@@ -436,9 +437,9 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 			{
 				foreach($this->order->get_items( 'shipping' ) as $item_id => $item)
 	            {
-	            	$instance_id = $item->get_instance_id();
+	            	$mrkv_ua_shipping_instance_id = $item->get_instance_id();
 
-	            	$shipping_instance_settings = get_option('woocommerce_' . $item->get_method_id() . '_' . $instance_id . '_settings');
+	            	$shipping_instance_settings = get_option('woocommerce_' . $item->get_method_id() . '_' . $mrkv_ua_shipping_instance_id . '_settings');
 
 	            	$order_total_for_min = $this->order->get_total();
 

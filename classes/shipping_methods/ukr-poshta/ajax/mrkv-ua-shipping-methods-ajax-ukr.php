@@ -15,6 +15,8 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 		 * */
 		function __construct()
 		{
+			add_action( 'admin_post_mrkv_ua_print_ukrposhta_pdf', [$this, 'mrkv_ua_handle_pdf_printing'] );
+
 			add_action( 'wp_ajax_mrkv_ua_ship_ukr_poshta_city', array($this, 'get_ukr_poshta_city') );
 			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_ukr_poshta_city', array($this, 'get_ukr_poshta_city') );
 
@@ -85,7 +87,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
-			$city_ref = isset($_POST['ref']) ? sanitize_text_field($_POST['ref']) : '';
+			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
 
 			# Send request
 	        $obj = $mrkv_object_ukr_poshta->send_post_request('address-classifier-ws/get_postoffices_by_postcode_cityid_cityvpzid?city_id=' . $city_ref, 'GET');
@@ -128,7 +130,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
-			$city_ref = isset($_POST['ref']) ? sanitize_text_field($_POST['ref']) : '';
+			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
 
 			# Send request
 	        $obj = $mrkv_object_ukr_poshta->send_post_request('address-classifier-ws/get_street_by_region_id_and_district_id_and_city_id_and_street_ua?city_id=' . $city_ref, 'GET');
@@ -166,8 +168,8 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
-			$street_ref = isset($_POST['ref']) ? sanitize_text_field($_POST['ref']) : '';
-			$house = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '';
+			$street_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
+			$house = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
 
 			# Send request
 	        $obj = $mrkv_object_ukr_poshta->send_post_request('address-classifier-ws/get_addr_house_by_street_id?street_id=' . $street_ref . '&housenumber=' . $house, 'GET');
@@ -205,7 +207,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
-			$warehouse_name = isset($_POST['warehouse_name']) ? sanitize_text_field($_POST['warehouse_name']) : '';
+			$warehouse_name = isset($_POST['warehouse_name']) ? sanitize_text_field(wp_unslash($_POST['warehouse_name'])) : '';
 
 			# Send request
 	        $obj = $mrkv_object_ukr_poshta->send_post_request_curl('ecom/0.0.1/addresses', 'POST', array( "postcode" => $warehouse_name  ));
@@ -228,12 +230,12 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
-			$postcode = isset($_POST['postcode']) ? sanitize_text_field($_POST['postcode']) : '';
-			$country = isset($_POST['country']) ? sanitize_text_field($_POST['country']) : '';
-			$region = isset($_POST['region']) ? sanitize_text_field($_POST['region']) : '';
-			$city = isset($_POST['city']) ? sanitize_text_field($_POST['city']) : '';
-			$street = isset($_POST['street']) ? sanitize_text_field($_POST['street']) : '';
-			$apartment_number = isset($_POST['apartment_number']) ? sanitize_text_field($_POST['apartment_number']) : '';
+			$postcode = isset($_POST['postcode']) ? sanitize_text_field(wp_unslash($_POST['postcode'])) : '';
+			$country = isset($_POST['country']) ? sanitize_text_field(wp_unslash($_POST['country'])) : '';
+			$region = isset($_POST['region']) ? sanitize_text_field(wp_unslash($_POST['region'])) : '';
+			$city = isset($_POST['city']) ? sanitize_text_field(wp_unslash($_POST['city'])) : '';
+			$street = isset($_POST['street']) ? sanitize_text_field(wp_unslash($_POST['street'])) : '';
+			$apartment_number = isset($_POST['apartment_number']) ? sanitize_text_field(wp_unslash($_POST['apartment_number'])) : '';
 
 			# Send request
 	        $obj = $mrkv_object_ukr_poshta->send_post_request_curl('ecom/0.0.1/addresses', 'POST', array(
@@ -251,6 +253,25 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
        		}
 
        		wp_die();
+		}
+
+		public function mrkv_ua_handle_pdf_printing() {
+			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+				wp_die( esc_html__( 'You do not have permission to access this page.', 'mrkv-ua-shipping' ) );
+			}
+
+			$nonce_value = isset( $_POST['mrkv_ua_shipping_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['mrkv_ua_shipping_nonce'] ) ) : '';
+			if ( empty( $nonce_value ) || ! wp_verify_nonce( $nonce_value, 'mrkv_ua_print_pdf_action' ) ) {
+				wp_die( esc_html__( 'Security check failed. Please refresh the page and try again.', 'mrkv-ua-shipping' ) );
+			}
+
+			$template_path = MRKV_UA_SHIPPING_PLUGIN_PATH . 'templates/orders/mrkv-ua-ship-ukr-poshta-pdf.php';
+
+			if ( file_exists( $template_path ) ) {
+				include $template_path;
+			}
+			
+			exit;
 		}
 	}
 }
