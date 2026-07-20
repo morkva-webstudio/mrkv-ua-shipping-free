@@ -167,7 +167,6 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ORDER'))
             $settings_global = get_option( 'm_ua_active_plugins' );
             if( isset( $settings_global['checkout_block']['fields_under_methods'] ) && $settings_global['checkout_block']['fields_under_methods']  == 'on'){
                 $is_under_methods = true;
-                break;
             }
 
             $active_prefix = $has_mrkv_ua_ship ? 'mrkv-ua-shipping/' . $current_shipping : '###';

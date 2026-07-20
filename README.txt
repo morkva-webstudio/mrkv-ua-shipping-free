@@ -8,17 +8,19 @@ License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
-Нова Пошта по Україні та закордон, Укрпошта по Україні та закордон. Rozetka Delivery. Зручне створення ТТН. Друк ТТН. Сумісний з іншими плагінами.
+Нова Пошта по Україні та закордон, Укрпошта по Україні та закордон, Rozetka Delivery. Підтримує WooCommerce Checkout Blocks. Зручне створення ТТН.
 
 == Description ==
 
-* Єдиний плагін для доставок по Україні: Нова Пошта, Укрпошта, Rozetka Delivery.
-* Міжнародна доставка з України: Нова Пошта, Укрпошта, Nova Global.
+* Єдиний плагін для доставок по Україні: Нова Пошта, Укрпошта, Rozetka Delivery
+* Міжнародна доставка з України: Нова Пошта, Укрпошта, Nova Global
+* **NEW** Підтримка WooCommerce Checkout Blocks (блочний чекаут)
 * Підтримка HPOS
 * Підтримка зон доставки WooCommerce
 * Підтримка PHP 8.0+
 * Підтримка WPML та Polylang
-* Сумісність з плагінами morkva Plata by Mono, morkva LiqPay, morkva Dilovod, morkva KeyCRM, Freelancevip Turbo SMS
+* Сумісність з плагінами morkva Plata by Mono, morkva LiqPay, morkva Dilovod, morkva KeyCRM, Turbo SMS
+* Підтримує стандартний спосіб доставки Самовивіз (приховує зайві поля автоматично)
 
 [База знань](https://docs.morkva.co.ua/uk/plugins)
 [Про-версія](https://morkva.co.ua/shop/morkva-ua-shipping/)
@@ -142,7 +144,11 @@ https://youtu.be/47-VrH_QJAE
 
 = Чи працює плагін з checkout blocks? =
 
-Нажаль ні, це новий функціонал Вукомерс і жодний плагін наразі не вміє працювати з блочним чекаутом. Потрібно використовувати стандартний шорткод [woocommerce_checkout]
+Так, починаючи з версії 1.11 ми додали таку можливість. Протестували на основних темах: Flatsome, Woodmart, Hello Elementor, Blocksy, Storefront, але повинно працювати на будь яких темах.
+
+= Чи потрібні особливі налаштування для роботи з checkout blocks? =
+
+Нічого особливого не потрібно, лише в Глобальних налаштуваннях плагіна UA Shipping оберіть як саме відображати додаткові поля.
 
 = Чи працює плагін з “наложкою”? =
 
