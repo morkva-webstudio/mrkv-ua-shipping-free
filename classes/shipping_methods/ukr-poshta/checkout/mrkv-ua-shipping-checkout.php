@@ -11,17 +11,11 @@ if(isset($this->active_shipping['ukr-poshta']['methods']['mrkv_ua_shipping_ukr-p
 		{
 			$mrkv_ua_shipping_up_warehouse_middlename_exclude = 'yes';
 		}
-		else{
-			if(isset($this->active_shipping['ukr-poshta']['settings']['checkout']['middlename']['required']) && $this->active_shipping['ukr-poshta']['settings']['checkout']['middlename']['required'] == 'on')
-			{
-				$mrkv_ua_shipping_up_warehouse_middlename_required = 'yes';
-			}
-		}
 	}
 }
 
 $mrkv_ua_shipping_args['up_middlename_exclude'] = $mrkv_ua_shipping_up_warehouse_middlename_exclude;
-$mrkv_ua_shipping_args['up_middlename_required'] = $mrkv_ua_shipping_up_warehouse_middlename_required;
+$mrkv_ua_shipping_args['up_middlename_required'] = 'yes';
 
 $mrkv_ua_shipping_args['ukr_city_area'] = array(
 	array('label' => __('Vinnytsia, Vinnytsia district', 'mrkv-ua-shipping'), 'value' => '1057'),

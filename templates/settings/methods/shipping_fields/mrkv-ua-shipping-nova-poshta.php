@@ -179,8 +179,8 @@
 				<div class="admin_ua_ship_morkva_settings_row">
 					<?php
 						$mrkv_ua_shipping_data = '';
-						echo wp_kses( $mrkv_global_option_generator->get_input_radio(__('Recipient', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[payer][cash_free]', 'Recipient', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_payer_cash_recipient', 'Recipient', 'disabled'), MRKV_UA_SHIPPING_ALLOW_TAGS);
-						echo wp_kses( $mrkv_global_option_generator->get_input_radio(__('Sender', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[payer][cash_free]', 'Sender', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_payer_cash_sender', 'Recipient', 'disabled'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+						echo wp_kses( $mrkv_global_option_generator->get_input_radio(__('Recipient', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[payer][cash_free]', 'Recipient', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_payer_cash_free_recipient', 'Recipient', 'disabled'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+						echo wp_kses( $mrkv_global_option_generator->get_input_radio(__('Sender', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[payer][cash_free]', 'Sender', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_payer_cash_free_sender', 'Recipient', 'disabled'), MRKV_UA_SHIPPING_ALLOW_TAGS);
 					?>
 				</div>
 			</div>
@@ -887,7 +887,7 @@
 
 					$mrkv_ua_shipping_description = __('Select the middlename field position on the checkout page', 'mrkv-ua-shipping');
 
-					echo wp_kses( $mrkv_global_option_generator->get_select_simple(__('Position of middlename in Checkout', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[checkout][middlename][position]', $mrkv_ua_shipping_middlename_position, $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_checkout_middlename_position' , __('Choose a position', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
+					echo wp_kses( $mrkv_global_option_generator->get_select_simple(__('Position of middlename in Checkout', 'mrkv-ua-shipping'). ' ' . __('(Classic)', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[checkout][middlename][position]', $mrkv_ua_shipping_middlename_position, $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_checkout_middlename_position' , __('Choose a position', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
 				?>
 			</div>
 		</div>

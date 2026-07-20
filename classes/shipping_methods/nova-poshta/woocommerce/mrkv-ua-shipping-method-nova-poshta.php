@@ -105,14 +105,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA'))
                     'type' => 'checkbox',
                     'default' => 'no',
                     'description' => '',
-                ),
-                'search_by_number' => array(
-                    'title' => __('Enable Search by warehouse number', 'mrkv-ua-shipping'),
-                    'label' => __('The warehouse is searched after entering the number', 'mrkv-ua-shipping'),
-                    'type' => 'checkbox',
-                    'default' => 'no',
-                    'description' => '',
-                ),
+                )
             );
         }
 

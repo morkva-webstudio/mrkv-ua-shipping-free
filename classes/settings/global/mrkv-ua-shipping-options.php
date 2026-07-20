@@ -230,13 +230,10 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		    }
 
 		    # --- Debug ---
-		    if ( isset( $input['debug'] ) && is_array( $input['debug'] ) ) {
-		        $debug = $input['debug'];
-		        $output['debug'] = [
-		            'log'   => isset( $debug['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
-		            'query' => isset( $debug['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
-		        ];
-		    }
+		    $output['debug'] = [
+				'log'   => isset( $input['debug']['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
+				'query' => isset( $input['debug']['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
+			];
 
 		    # --- Internal (international API) ---
 		    $output['internal_api_server'] = isset( $input['internal_api_server'] ) ? sanitize_text_field( $input['internal_api_server'] ) : 'production';
@@ -397,13 +394,10 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		    }
 
 		    # --- Debug ---
-		    if ( isset( $input['debug'] ) && is_array( $input['debug'] ) ) {
-		        $debug = $input['debug'];
-		        $output['debug'] = [
-		            'log'   => isset( $debug['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
-		            'query' => isset( $debug['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
-		        ];
-		    }
+		    $output['debug'] = [
+				'log'   => isset( $input['debug']['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
+				'query' => isset( $input['debug']['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
+			];
 
 		    $output = apply_filters('mrkv_ua_shipping_option_serialize', $output, 'ukr-poshta', $input );
 
@@ -430,13 +424,10 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		    }
 
 		    # --- Debug settings ---
-		    if ( isset( $input['debug'] ) && is_array( $input['debug'] ) ) {
-		        $debug = $input['debug'];
-		        $output['debug'] = [
-		            'log'   => isset( $debug['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
-		            'query' => isset( $debug['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
-		        ];
-		    }
+		    $output['debug'] = [
+				'log'   => isset( $input['debug']['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
+				'query' => isset( $input['debug']['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
+			];
 
 		    $output = apply_filters('mrkv_ua_shipping_option_serialize', $output, 'rozetka-delivery', $input );
 
@@ -486,13 +477,10 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 	        }
 
 	        // --- Debug settings ---
-	        if ( isset( $input['debug'] ) && is_array( $input['debug'] ) ) {
-	            $debug = $input['debug'];
-	            $output['debug'] = [
-	                'log'   => isset( $debug['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
-	                'query' => isset( $debug['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
-	            ];
-	        }
+	        $output['debug'] = [
+				'log'   => isset( $input['debug']['log'] ) ? sanitize_text_field( $debug['log'] ) : 'off',
+				'query' => isset( $input['debug']['query'] ) ? sanitize_text_field( $debug['query'] ) : 'off',
+			];
 
 	        $output = apply_filters('mrkv_ua_shipping_option_serialize', $output, 'nova-global', $input );
 

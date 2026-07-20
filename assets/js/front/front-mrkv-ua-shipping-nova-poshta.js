@@ -209,12 +209,11 @@ jQuery(window).on('load', function()
 						action: 'mrkv_ua_ship_nova_poshta_warehouse',
 						ref: city_ref,
 						warehouse_type: mrkv_ua_ship_helper.nova_warehouse_type,
-						search_by: mrkv_ua_ship_helper.nova_search_by_number === 'yes' ? 'yes' : '',
+						search_by: 'yes',
 						source_query: 'front',
 						name: params.term || '',
 						page: params.page || 1,
 						default_content: 'part',
-						search_by_number: mrkv_ua_ship_helper.nova_search_by_number,
 						nonce: mrkv_ua_ship_helper.nonce,
 					};
 				},

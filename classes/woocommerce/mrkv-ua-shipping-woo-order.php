@@ -327,6 +327,11 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDER'))
 					    						}
 					    					}
 
+											if($id == '_city' && !$default_value)
+											{
+												$default_value = $order->get_shipping_city();
+											}
+
 				            				$field_val['default'] = $default_value;
 				            			}
 
