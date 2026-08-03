@@ -788,10 +788,24 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 
 			$description = $this->convert_description($description);
-			$description = str_replace('#', '', $description);
+			$description = wp_strip_all_tags($description);
+			$description = html_entity_decode($description, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+			$search  = ['’', 'ʼ', '`', '«', '»', '“', '”', '#'];
+			$replace = ["'", "'", "'", '"', '"', '"', '"', ''];
+			$description = str_replace($search, $replace, $description);
+			$description = preg_replace('/[^\p{L}\p{N}\p{P}\s]/u', '', $description);
+			$description = preg_replace('/\s+/u', ' ', trim($description));
+			$maxLength = 100;
 
+			if (mb_strlen($description, 'UTF-8') > $maxLength) {
+				$description = mb_substr($description, 0, $maxLength, 'UTF-8');
+				$lastSpace = mb_strrpos($description, ' ', 0, 'UTF-8');
+				if ($lastSpace !== false && $lastSpace > 50) {
+					$description = mb_substr($description, 0, $lastSpace, 'UTF-8');
+				}
+			}
 
-			return substr($description, 0, 100);
+			return trim($description);
 		}
 
 		public function convert_description($description) 

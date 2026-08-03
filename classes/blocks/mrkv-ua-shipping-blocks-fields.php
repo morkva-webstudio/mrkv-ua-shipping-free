@@ -56,6 +56,9 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_FIELDS'))
         }
 
         public function mrkv_blocks_register_dynamic_fields() {
+            if (!empty( $_SERVER['REQUEST_URI'] ) && url_to_postid( $_SERVER['REQUEST_URI'] ) > 0 && wc_get_page_id( 'myaccount' ) == url_to_postid( $_SERVER['REQUEST_URI'] ) ) {
+                return;
+            }
             if ( is_admin() ) {
                 global $pagenow;
                 if ( in_array( $pagenow, array( 'post.php', 'post-new.php' ), true ) ) {
