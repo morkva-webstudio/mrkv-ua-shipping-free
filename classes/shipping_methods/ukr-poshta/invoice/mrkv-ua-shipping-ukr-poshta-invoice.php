@@ -497,17 +497,9 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 	            	$weight += $item_weight;
 				}
 
-				$weight_unit = get_option('woocommerce_weight_unit');
-				$weight_coef = 1;
-				if ( 'g' == $weight_unit ) $weight_coef = 1;
-	            if ( 'kg' == $weight_unit ) $weight_coef = 1000;
-	            if ( 'lbs' == $weight_unit ) $weight_coef = 453.59;
-	            if ( 'oz' == $weight_unit ) $weight_coef = 28.34;
-
-				$weight = $weight_coef * $weight;
-				$weight = number_format($weight, 2);
-
-				return max($default_weight, $weight);
+				$calculated_weight = wc_get_weight( (float) $weight, 'g' );
+				$max_weight = max( (float) $default_weight, $calculated_weight );
+				return number_format( $max_weight, 2, '.', '' );
 			}
 		}
 

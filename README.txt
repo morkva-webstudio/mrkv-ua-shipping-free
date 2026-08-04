@@ -3,7 +3,7 @@ Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.11.2
+Stable tag: 1.11.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,9 @@ https://youtu.be/47-VrH_QJAE
 
 
 == Changelog ==
+
+= 1.11.3 =
+* [fix] виправили вагу доставки Укрпошта
 
 = 1.11.2 =
 * [fix] виправили вивід мета полів у адресах акаунта
