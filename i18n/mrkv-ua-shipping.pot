@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Morkva UA Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 07:12+0000\n"
+"POT-Creation-Date: 2026-08-06 05:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -439,7 +439,7 @@ msgstr ""
 
 #: constants-mrkv-ua-shipping-methods.php:126
 #: classes/shipping_methods/mrkv_ua_shipping_translate.php:109
-#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:246
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:250
 msgid "Choose the poshtomat"
 msgstr ""
 
@@ -458,7 +458,7 @@ msgstr ""
 #: classes/shipping_methods/mrkv_ua_shipping_translate.php:521
 #: classes/shipping_methods/mrkv_ua_shipping_translate.php:556
 #: classes/shipping_methods/ukr-poshta/ajax/mrkv-ua-shipping-methods-ajax-ukr.php:101
-#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:247
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:251
 msgid "Choose the warehouse"
 msgstr ""
 
@@ -1394,9 +1394,9 @@ msgstr ""
 #: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:86
 #: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:142
 #: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:222
-#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:341
-#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:398
-#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:456
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:345
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:402
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php:460
 msgid "Invalid nonce."
 msgstr ""
 
@@ -1637,7 +1637,7 @@ msgstr ""
 msgid "morkva"
 msgstr ""
 
-#: classes/blocks/mrkv-ua-shipping-blocks-fields.php:69
+#: classes/blocks/mrkv-ua-shipping-blocks-fields.php:71
 msgid "morkva Order Location"
 msgstr ""
 
@@ -1956,12 +1956,12 @@ msgstr ""
 #: classes/shipping_methods/mrkv-ua-shipping-methods-ajax.php:431
 #: classes/shipping_methods/mrkv-ua-shipping-methods-ajax.php:446
 #: classes/shipping_methods/mrkv-ua-shipping-methods-ajax.php:461
-#: classes/shipping_methods/ukr-poshta/invoice/mrkv-ua-shipping-ukr-poshta-invoice.php:643
-#: classes/shipping_methods/ukr-poshta/invoice/mrkv-ua-shipping-ukr-poshta-invoice.php:658
-#: classes/shipping_methods/ukr-poshta/invoice/mrkv-ua-shipping-ukr-poshta-invoice.php:673
-#: classes/shipping_methods/nova-poshta/invoice/mrkv-ua-shipping-nova-poshta-invoice.php:809
-#: classes/shipping_methods/nova-poshta/invoice/mrkv-ua-shipping-nova-poshta-invoice.php:824
-#: classes/shipping_methods/nova-poshta/invoice/mrkv-ua-shipping-nova-poshta-invoice.php:839
+#: classes/shipping_methods/ukr-poshta/invoice/mrkv-ua-shipping-ukr-poshta-invoice.php:635
+#: classes/shipping_methods/ukr-poshta/invoice/mrkv-ua-shipping-ukr-poshta-invoice.php:650
+#: classes/shipping_methods/ukr-poshta/invoice/mrkv-ua-shipping-ukr-poshta-invoice.php:665
+#: classes/shipping_methods/nova-poshta/invoice/mrkv-ua-shipping-nova-poshta-invoice.php:823
+#: classes/shipping_methods/nova-poshta/invoice/mrkv-ua-shipping-nova-poshta-invoice.php:838
+#: classes/shipping_methods/nova-poshta/invoice/mrkv-ua-shipping-nova-poshta-invoice.php:853
 msgid "pcs."
 msgstr ""
 

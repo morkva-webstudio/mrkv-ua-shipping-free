@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Morkva UA Shipping\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-01 09:00+0300\n"
-"PO-Revision-Date: 2026-07-14 07:20+0000\n"
+"PO-Revision-Date: 2026-08-06 05:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"X-Loco-Version: 2.8.0; wp-6.9.4; php-8.4.21\n"
+"X-Loco-Version: 2.8.0; wp-7.0.2; php-8.4.24\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 "X-Loco-Fallback: uk\n"
@@ -2213,7 +2213,9 @@ msgstr "Видалити всі елементи"
 
 #: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php:860
 msgid "Remove the patronymic field from the checkout page"
-msgstr "Відображати поле «по-батькові» на сторінці оформлення замовлення"
+msgstr ""
+"Відображати поле «по-батькові» на сторінці оформлення замовлення (лише для "
+"адресної доставки)"
 
 #: classes/woocommerce/mrkv-ua-shipping-woo-order.php:254
 #: classes/woocommerce/mrkv-ua-shipping-woo-order.php:255

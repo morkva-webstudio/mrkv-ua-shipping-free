@@ -143,6 +143,8 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			}
 
 			$key_search = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$key_search = str_replace($quote_symbols, "'", $key_search);
 
 			if (mb_strlen($key_search) < 2) {
 				echo wp_json_encode(array());
@@ -224,6 +226,8 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 			$city_ref         = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
 			$key_search       = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$key_search = str_replace($quote_symbols, "'", $key_search);
 			$warehouse_type   = isset($_POST['warehouse_type']) ? sanitize_text_field(wp_unslash($_POST['warehouse_type'])) : '';
 			$source_query     = isset($_POST['source_query']) ? sanitize_text_field(wp_unslash($_POST['source_query'])) : '';
 			$search_by        = isset($_POST['search_by']) ? sanitize_text_field(wp_unslash($_POST['search_by'])) : '';
@@ -231,16 +235,20 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			$page  = isset($_POST['page']) ? absint($_POST['page']) : 1;
 			$limit = 20; 
 			$cart_weight = 0;
-			if ($source_query == 'front' && function_exists('WC') && WC()->cart) {
+			if ($source_query === 'front' && function_exists('WC') && WC()->cart) {
 				$volume_weight = 0;
-				$dimension_unit = get_option('woocommerce_dimension_unit');
+				$dimension_unit = get_option( 'woocommerce_dimension_unit' );
+
 				foreach (WC()->cart->get_cart() as $cart_item) {
 					$p = $cart_item['data'];
-					$volume_weight += (($p->get_length() ?: 0) * ($p->get_width() ?: 0) * ($p->get_height() ?: 0) / 4000) * $cart_item['quantity'];
+					$length = wc_get_dimension((float) $p->get_length(), 'cm', $dimension_unit);
+					$width  = wc_get_dimension((float) $p->get_width(), 'cm', $dimension_unit);
+					$height = wc_get_dimension((float) $p->get_height(), 'cm', $dimension_unit);
+					$volume_weight += (($length * $width * $height) / 4000) * $cart_item['quantity'];
 				}
-				$weight_unit = get_option('woocommerce_weight_unit');
-				$weight_coef = array('g' => 0.001, 'kg' => 1, 'lbs' => 0.45359, 'oz' => 0.02834)[$weight_unit] ?? 1;
-				$cart_weight = max((WC()->cart->cart_contents_weight * $weight_coef), $volume_weight);
+
+				$actual_weight_kg = wc_get_weight(WC()->cart->get_cart_contents_weight(), 'kg');
+				$cart_weight = max($actual_weight_kg, $volume_weight);
 			}
 
 			$label = ($warehouse_type && $warehouse_type != 'none') ? __('Choose the poshtomat', 'mrkv-ua-shipping') : 
@@ -285,7 +293,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			}
 
 			if ($warehouse_type == 'none') {
-				$mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] = '841339c7-591a-42e2-8233-7a0a00f0ed6f';
+				$mrkv_ua_shipping_args['methodProperties']['POSTerminal'] = '1';
 			} elseif ($warehouse_type) {
 				$mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] = $warehouse_type;
 			}
@@ -403,6 +411,8 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			$mrkv_object_nova_poshta = new MRKV_UA_SHIPPING_API_NOVA_POSHTA(get_option('nova-poshta_m_ua_settings'));
 
 			$key_search = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$key_search = str_replace($quote_symbols, "'", $key_search);
 			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
 
 			$mrkv_ua_shipping_args = array(
