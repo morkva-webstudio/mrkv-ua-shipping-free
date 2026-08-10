@@ -86,6 +86,18 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		    # --- API Key ---
 		    $output['api_key'] = isset( $input['api_key'] ) ? sanitize_text_field( $input['api_key'] ) : '';
 
+			if ( ! empty( $output['api_key'] ) && empty( $current['api_key'] ) ) {
+				$active_plugins = get_option( 'm_ua_active_plugins', [] );
+				if ( ! is_array( $active_plugins ) ) {
+					$active_plugins = [];
+				}
+
+				if ( empty( $active_plugins['nova-poshta']['enabled'] ) || $active_plugins['nova-poshta']['enabled'] !== 'on' ) {
+					$active_plugins['nova-poshta']['enabled'] = 'on';
+					update_option( 'm_ua_active_plugins', $active_plugins );
+				}
+			}
+
 		    # --- Sender ---
 		    if ( isset( $input['sender'] ) && is_array( $input['sender'] ) ) {
 		        $sender = $input['sender'];
