@@ -143,7 +143,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			}
 
 			$key_search = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»', 'ʼ', 'ʹ', 'ʺ', 'ʽ', 'ʻ', 'ʿ', 'ˈ', 'ˊ', 'ˋ', 'ˌ', 'ˍ', 'ˎ', 'ˏ', 'ˑ', '˒', '˓', '˘', '˙', '˚', '˜', '˝'];
 			$key_search = str_replace($quote_symbols, "'", $key_search);
 
 			if (mb_strlen($key_search) < 2) {
@@ -226,7 +226,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 			$city_ref         = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
 			$key_search       = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»', 'ʼ', 'ʹ', 'ʺ', 'ʽ', 'ʻ', 'ʿ', 'ˈ', 'ˊ', 'ˋ', 'ˌ', 'ˍ', 'ˎ', 'ˏ', 'ˑ', '˒', '˓', '˘', '˙', '˚', '˜', '˝'];
 			$key_search = str_replace($quote_symbols, "'", $key_search);
 			$warehouse_type   = isset($_POST['warehouse_type']) ? sanitize_text_field(wp_unslash($_POST['warehouse_type'])) : '';
 			$source_query     = isset($_POST['source_query']) ? sanitize_text_field(wp_unslash($_POST['source_query'])) : '';
@@ -411,7 +411,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			$mrkv_object_nova_poshta = new MRKV_UA_SHIPPING_API_NOVA_POSHTA(get_option('nova-poshta_m_ua_settings'));
 
 			$key_search = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»', 'ʼ', 'ʹ', 'ʺ', 'ʽ', 'ʻ', 'ʿ', 'ˈ', 'ˊ', 'ˋ', 'ˌ', 'ˍ', 'ˎ', 'ˏ', 'ˑ', '˒', '˓', '˘', '˙', '˚', '˜', '˝'];
 			$key_search = str_replace($quote_symbols, "'", $key_search);
 			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
 

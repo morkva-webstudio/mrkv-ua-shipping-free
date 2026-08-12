@@ -152,7 +152,7 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_ADDRESS'))
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
 
-            if ( 'woocommerce_update_order_review' === $action ) {
+            if (is_checkout() || is_cart() || 'woocommerce_update_order_review' === $action ) {
                 $should_calculate = true;
             }
 

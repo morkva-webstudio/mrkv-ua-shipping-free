@@ -3,7 +3,7 @@ Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.11.5
+Stable tag: 1.12.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,13 @@ https://youtu.be/47-VrH_QJAE
 
 
 == Changelog ==
+
+= 1.12.0 =
+* [new] додали перевірку спеціальних символів при пошуку відділень та міст
+* [new] змінили посилання на відео АРІ ключа НП
+* [new] додали запис ref відділення Rozetka
+* [fix] виправили розрахунок вартості доставки
+* [fix] виправили завантаження стилів selec2 для блочного чекаута
 
 = 1.11.5 =
 * [new] додали активацію служби доставки при першому збереженні апі в налаштуваннях

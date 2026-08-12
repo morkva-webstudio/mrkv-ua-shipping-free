@@ -47,7 +47,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
 			$key_search = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»', 'ʼ', 'ʹ', 'ʺ', 'ʽ', 'ʻ', 'ʿ', 'ˈ', 'ˊ', 'ˋ', 'ˌ', 'ˍ', 'ˎ', 'ˏ', 'ˑ', '˒', '˓', '˘', '˙', '˚', '˜', '˝'];
 			$key_search = str_replace($quote_symbols, "'", $key_search);
 
 	        # Send request

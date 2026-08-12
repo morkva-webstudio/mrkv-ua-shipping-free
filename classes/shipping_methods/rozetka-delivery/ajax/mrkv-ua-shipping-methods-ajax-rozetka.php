@@ -33,7 +33,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_RZTK'))
 			$mrkv_object_rztk_delivery = new MRKV_UA_SHIPPING_API_ROZETKA_DELIVERY(get_option('rozetka-delivery_m_ua_settings'));
 
 			$key_search = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»'];
+			$quote_symbols = ['‘', '’', '“', '”', '`', '´', '"', '‹', '›', '«', '»', 'ʼ', 'ʹ', 'ʺ', 'ʽ', 'ʻ', 'ʿ', 'ˈ', 'ˊ', 'ˋ', 'ˌ', 'ˍ', 'ˎ', 'ˏ', 'ˑ', '˒', '˓', '˘', '˙', '˚', '˜', '˝'];
 			$key_search = str_replace($quote_symbols, "'", $key_search);
 
 			$page  = 1;
@@ -125,7 +125,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_RZTK'))
        			foreach($all_departments as $entry)
        			{
        				$warehouse[] = array(
-	        			'value' => $entry['name'],
+	        			'value' => $entry['id'],
 	        			'label' => $entry['name'],
 	        		);
        			}

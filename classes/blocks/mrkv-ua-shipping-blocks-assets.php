@@ -212,6 +212,14 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
             ) );
 
             wp_enqueue_style( 'front-mrkv-ua-shipping', MRKV_UA_SHIPPING_ASSETS_URL . '/css/blocks/blocks-mrkv-ua-shipping.css', array(), MRKV_UA_SHIPPING_PLUGIN_VERSION );
+            if ( ! wp_style_is( 'select2', 'enqueued' ) && ! wp_style_is( 'selectWoo', 'enqueued' ) ) {
+                wp_enqueue_style( 
+                    'front-mrkv-ua-shipping-select2', 
+                    MRKV_UA_SHIPPING_ASSETS_URL . '/css/global/select2.min.css', 
+                    array(), 
+                    MRKV_UA_SHIPPING_PLUGIN_VERSION 
+                );
+            }
             wp_enqueue_script( 'front-mrkv-ua-shipping-select2', MRKV_UA_SHIPPING_ASSETS_URL . '/js/global/select2.min.js', array( 'jquery' ), MRKV_UA_SHIPPING_PLUGIN_VERSION, true );
 
             $mrkv_ua_shipping_args = array(

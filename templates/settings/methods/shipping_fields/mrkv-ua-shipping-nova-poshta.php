@@ -19,7 +19,7 @@
 				$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-green">' . __('API key correct','mrkv-ua-shipping') . '</div>';
 			}
 
-			$mrkv_ua_shipping_description = __('Not sure where to get the key? Take a look', 'mrkv-ua-shipping') . ' <a target="blanc" href="http://my.novaposhta.ua/settings/index#apikeys">' . __('this video', 'mrkv-ua-shipping') . '</a>';
+			$mrkv_ua_shipping_description = __('Not sure where to get the key? Take a look', 'mrkv-ua-shipping') . ' <a target="blanc" href="https://docs.morkva.co.ua/uk/plugins/iak-znaiti-zghienieruvati-kliuch-ari-novoyi-poshti">' . __('this video', 'mrkv-ua-shipping') . '</a>';
 
 			echo wp_kses( $mrkv_global_option_generator->get_input_text($mrkv_ua_shipping_label, MRKV_OPTION_OBJECT_NAME . '[api_key]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_api_key' , '', __('Enter the key...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
 		?>

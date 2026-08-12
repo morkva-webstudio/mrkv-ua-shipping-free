@@ -20,6 +20,9 @@
         text-transform: inherit;
         width: 100% !important;
 }
+.wc-block-components-text-input:has(input[aria-label*="hidden"]) {
+    display: none !important;
+}
 [class*="wc-block-components-select-input-mrkv-ua-shipping"] .select2, [class*="wc-block-components-select-input-mrkv-ua-shipping"]{
     width: 100% !important;
     flex: 1 0 100% !important;
