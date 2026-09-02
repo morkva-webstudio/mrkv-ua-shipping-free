@@ -61,7 +61,6 @@
 						<div class="col-mrkv-5">
 							<div class="admin_ua_ship_morkva_settings_line">
 								<?php
-									require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/settings/global/mrkv-ua-shipping-option-fields.php';
 									$mrkv_global_option_generator = new MRKV_UA_SHIPPING_OPTION_FIELDS();
 									$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_active_plugins['checkout_block']['position']) ? $mrkv_ua_shipping_active_plugins['checkout_block']['position'] : 'order';
 									$mrkv_ua_shipping_senders_type_list = array(

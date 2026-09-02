@@ -419,8 +419,6 @@
 		<?php 
 			$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['internal_api_key']) ? MRKV_SHIPPING_SETTINGS['internal_api_key'] : '';
 			$mrkv_ua_shipping_label = __('API Key', 'mrkv-ua-shipping');
-
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-post.php';
 			$mrkv_ua_shipping_api_internal = new MRKV_UA_SHIPPING_API_NOVA_POST(MRKV_SHIPPING_SETTINGS);
 
 			if(is_string($mrkv_ua_shipping_api_internal->active_api))

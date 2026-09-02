@@ -97,9 +97,6 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDERS'))
 			}
 
 			$api_class = MRKV_UA_SHIPPING_LIST[$key]['api_class'];
-
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . $key 
-							. '/api/mrkv-ua-shipping-api-' . $key . '.php';
 			$mrkv_global_shipping_object = new $api_class($shipping_settings);
 			$invoices_result = $mrkv_global_shipping_object->get_status_documents($mrkv_ua_ship_invoice);
 

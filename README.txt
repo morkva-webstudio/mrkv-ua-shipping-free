@@ -1,9 +1,9 @@
 === morkva UA Shipping ===
 Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.12.0
+Stable tag: 1.12.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,13 @@ https://youtu.be/47-VrH_QJAE
 
 
 == Changelog ==
+
+= 1.12.1 =
+* [new] прибрали вилучення поштоматів з переліку відділень НП
+* [new] оптимізували кешування запитів
+* [new] додали автоматичне завантаження файлів
+* [new] оптимізували завантаження файлів плагіну
+* [new] оптимізували файли стилів та функцій
 
 = 1.12.0 =
 * [new] додали перевірку спеціальних символів при пошуку відділень та міст

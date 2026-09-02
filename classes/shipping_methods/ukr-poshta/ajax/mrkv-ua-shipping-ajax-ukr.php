@@ -43,7 +43,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 		        wp_die();
 		    }
 
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
 			$key_search = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
@@ -86,7 +85,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 		        wp_die();
 		    }
 
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
 			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
@@ -129,7 +127,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 		        wp_die();
 		    }
 
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
 			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
@@ -167,7 +164,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 		        wp_die();
 		    }
 
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
 			$street_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
@@ -206,7 +202,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 		        wp_die();
 		    }
 
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
 			$warehouse_name = isset($_POST['warehouse_name']) ? sanitize_text_field(wp_unslash($_POST['warehouse_name'])) : '';
@@ -229,7 +224,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 		        wp_die();
 		    }
 
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/ukr-poshta/api/mrkv-ua-shipping-api-ukr-poshta.php';
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
 			$postcode = isset($_POST['postcode']) ? sanitize_text_field(wp_unslash($_POST['postcode'])) : '';

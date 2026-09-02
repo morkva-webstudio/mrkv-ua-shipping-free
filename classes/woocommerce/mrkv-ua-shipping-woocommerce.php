@@ -1,12 +1,6 @@
 <?php
 # Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit; 
-
-# Include woo orders data
-require_once 'mrkv-ua-shipping-woo-orders.php';
-require_once 'mrkv-ua-shipping-woo-order.php';
-require_once 'mrkv-ua-shipping-woo-product.php';
-
 # Check if class exist
 if (!class_exists('MRKV_UA_SHIPPING_WOOCOMMERCE'))
 {

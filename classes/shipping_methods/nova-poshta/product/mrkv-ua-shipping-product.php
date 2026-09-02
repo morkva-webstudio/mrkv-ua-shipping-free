@@ -21,9 +21,7 @@
 
     if(($mrkv_ua_shipping_classes_enabled && !empty($mrkv_ua_shipping_tire_classes) && in_array($mrkv_ua_shipping_shipping_class_id, $mrkv_ua_shipping_tire_classes)) || ($mrkv_ua_shipping_global_cargo_type == 'TiresWheels' && !$mrkv_ua_shipping_exists))
     {
-        require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-poshta.php';
         $mrkv_object_nova_poshta = new MRKV_UA_SHIPPING_API_NOVA_POSHTA($settings_shipping);
-        require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-calculate-nova-poshta.php';
         $mrkv_calculate_nova_poshta = new MRKV_UA_SHIPPING_CALCULATE_NOVA_POSHTA($mrkv_object_nova_poshta);
         $mrkv_ua_shipping_nova_poshta_tires = $mrkv_calculate_nova_poshta->get_tiregroup_list();
         $mrkv_tire_type = get_post_meta($post->ID, '_mrkv_tire_type', true);

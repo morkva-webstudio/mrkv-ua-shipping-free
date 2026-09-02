@@ -98,13 +98,6 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA'))
                     'type' => 'text',
                     'placeholder' => __('FREE to Nova Poshta Warehouse', 'mrkv-ua-shipping'),
                     'description' => '',
-                ),
-                'exclude_poshtomat' => array(
-                    'title' => __('Show only branches', 'mrkv-ua-shipping'),
-                    'label' => __('If selected, the poshtomat will be excluded from the list', 'mrkv-ua-shipping'),
-                    'type' => 'checkbox',
-                    'default' => 'no',
-                    'description' => '',
                 )
             );
         }

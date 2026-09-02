@@ -208,18 +208,13 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 
 			$message .= "Orders: " . wp_json_encode( $orders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\r\n";
 
-			
-
 			if(is_array($orders) && empty($orders))
 			{
 				do_action('mrkv_ua_shipping_log_cron', $message);
 				file_put_contents($log_file_offset, '');
 				file_put_contents($log_file_date, current_time('mysql'));
 				return;
-			}
-
-
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-poshta.php';				
+			}				
 		
 			$api_class = MRKV_UA_SHIPPING_LIST['nova-poshta']['api_class'];
 			$nova_api = new $api_class($settings);
@@ -482,8 +477,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 					);
 				}
 
-				require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-poshta.php';				
-			
 				$api_class = MRKV_UA_SHIPPING_LIST['nova-poshta']['api_class'];
 				$nova_api = new $api_class($settings);
 

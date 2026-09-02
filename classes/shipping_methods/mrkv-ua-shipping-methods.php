@@ -1,16 +1,6 @@
 <?php
 # Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
-
-# Include ajax shipping
-require_once 'mrkv-ua-shipping-methods-ajax.php';
-# Include checkout settings shipping
-require_once 'mrkv-ua-shipping-methods-checkout.php';
-# Include shipping cron
-require_once 'mrkv-ua-shipping-methods-cron.php';
-# Include order settings shipping
-require_once 'mrkv-ua-shipping-methods-order.php';
-
 # Check if class exist
 if (!class_exists('MRKV_UA_SHIPPING_METHODS'))
 {
@@ -78,10 +68,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS'))
 					{
 						define('MRKV_UA_SHIPPING_SETTINGS_SLUG', $slug);
 
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/settings/global/mrkv-ua-shipping-option-fields.php';
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . MRKV_UA_SHIPPING_SETTINGS_SLUG 
-							. '/api/mrkv-ua-shipping-api-' . MRKV_UA_SHIPPING_SETTINGS_SLUG . '.php';
-
 						global $mrkv_global_option_generator;
 						$mrkv_global_option_generator = new MRKV_UA_SHIPPING_OPTION_FIELDS();
 						define('MRKV_OPTION_OBJECT_NAME', MRKV_UA_SHIPPING_SETTINGS_SLUG . '_m_ua_settings');
@@ -90,9 +76,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS'))
 						$api_class = MRKV_UA_SHIPPING_LIST[MRKV_UA_SHIPPING_SETTINGS_SLUG]['api_class'];
 						global $mrkv_global_shipping_object;
 						$mrkv_global_shipping_object = new $api_class(MRKV_SHIPPING_SETTINGS);
-
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . $slug . '/settings/mrkv-ua-shipping-settings-' . $slug . '.php';
-
 						$shipping_setting_class = MRKV_UA_SHIPPING_LIST[$slug]['settings_class'];
 
 						new $shipping_setting_class();
@@ -104,9 +87,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS'))
 
 						if(MRKV_UA_SHIPPING_SETTINGS_PAGE_SLUG == 'invoices')
 						{
-							require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . MRKV_UA_SHIPPING_SETTINGS_SLUG 
-							. '/api/mrkv-ua-shipping-api-' . MRKV_UA_SHIPPING_SETTINGS_SLUG . '.php';
-
 							define('MRKV_OPTION_OBJECT_NAME', MRKV_UA_SHIPPING_SETTINGS_SLUG . '_m_ua_settings');
 							define('MRKV_SHIPPING_SETTINGS', get_option(MRKV_OPTION_OBJECT_NAME));
 						

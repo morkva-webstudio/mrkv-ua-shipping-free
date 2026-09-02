@@ -1,16 +1,6 @@
 <?php
 # Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit; 
-
-# Include nova post menu
-require_once 'nova-poshta/ajax/mrkv-ua-shipping-methods-ajax-nova.php';
-# Include nova global ajax
-require_once 'nova-global/ajax/mrkv-ua-shipping-methods-ajax-nova-global.php';
-# Include nova post menu
-require_once 'ukr-poshta/ajax/mrkv-ua-shipping-methods-ajax-ukr.php';
-# Include rozetka ajax
-require_once 'rozetka-delivery/ajax/mrkv-ua-shipping-methods-ajax-rozetka.php';
-
 # Check if class exist
 if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 {
@@ -515,14 +505,11 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 					if($order)
 					{
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . $current_ship_key . '/api/mrkv-ua-shipping-api-' . $current_ship_key . '.php';
 						$api_class = MRKV_UA_SHIPPING_LIST[$current_ship_key]['api_class'];
 
 						$settings_shipping = apply_filters('mrkv_ua_shipping_invoice_settings', get_option($current_ship_key . '_m_ua_settings'), $order, $current_ship_key, 'handle');
 
 						$mrkv_object_shipping = new $api_class($settings_shipping);
-
-						require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . $current_ship_key . '/invoice/mrkv-ua-shipping-' . $current_ship_key . '-invoice.php';
 						$invoice_class = MRKV_UA_SHIPPING_LIST[$current_ship_key]['invoice_class'];
 						$mrkv_object_invoice = new $invoice_class($order, $_POST, $mrkv_object_shipping, $settings_shipping);
 
@@ -680,7 +667,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 				if($order->get_meta('mrkv_ua_ship_invoice_ref') && $key == 'nova-poshta')
 				{
-					require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-poshta.php';
 					$api_class = MRKV_UA_SHIPPING_LIST['nova-poshta']['api_class'];
 					$settings_shipping = get_option('nova-poshta_m_ua_settings');
 					$mrkv_object_shipping = new $api_class($settings_shipping);
@@ -760,7 +746,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 				if(!empty($removed_refs))
 				{
-					require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-poshta.php';
 					$api_class = MRKV_UA_SHIPPING_LIST['nova-poshta']['api_class'];
 					$settings_shipping = get_option('nova-poshta_m_ua_settings');
 					$mrkv_object_shipping = new $api_class($settings_shipping);

@@ -26,7 +26,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA_GLOBAL'))
 		        wp_die();
 		    }
 
-		    require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-global/api/mrkv-ua-shipping-api-nova-global.php';
 			$mrkv_object_nova_global = new MRKV_UA_SHIPPING_API_NOVA_GLOBAL(get_option('nova-global_m_ua_settings'));
 
 			$warehouse_types = isset($_POST['warehouse_types']) && is_array($_POST['warehouse_types']) ? map_deep(wp_unslash($_POST['warehouse_types']), 'sanitize_text_field') : array();

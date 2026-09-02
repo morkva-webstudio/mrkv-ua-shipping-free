@@ -1,10 +1,6 @@
 <?php
 # Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit; 
-
-# Include checkout settings shipping validation
-require_once 'mrkv-ua-shipping-methods-checkout-validation.php'; 
-
 # Check if class exist
 if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 {
@@ -81,8 +77,8 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 		{
 			# Custom style and script
 	        wp_enqueue_style('front-mrkv-ua-shipping', MRKV_UA_SHIPPING_ASSETS_URL . '/css/front/front-mrkv-ua-shipping.css', array(), MRKV_UA_SHIPPING_PLUGIN_VERSION);
-	        wp_enqueue_script('front-mrkv-ua-shipping-select2', MRKV_UA_SHIPPING_ASSETS_URL . '/js/global/select2.min.js', array('jquery'), MRKV_UA_SHIPPING_PLUGIN_VERSION, true);
-	        wp_enqueue_script('front-mrkv-ua-shipping', MRKV_UA_SHIPPING_ASSETS_URL . '/js/front/front-mrkv-ua-shipping.js', array('jquery','jquery-ui-autocomplete'), MRKV_UA_SHIPPING_PLUGIN_VERSION, true);
+	        wp_enqueue_script('front-mrkv-ua-shipping-select2', MRKV_UA_SHIPPING_ASSETS_URL . '/js/global/select2.min.js', array('jquery'), MRKV_UA_SHIPPING_PLUGIN_VERSION, ['in_footer' => true,'strategy'  => 'defer']);
+	        wp_enqueue_script('front-mrkv-ua-shipping', MRKV_UA_SHIPPING_ASSETS_URL . '/js/front/front-mrkv-ua-shipping.js', array('jquery','jquery-ui-autocomplete'), MRKV_UA_SHIPPING_PLUGIN_VERSION, ['in_footer' => true,'strategy'  => 'defer']);
 
 	        $mrkv_ua_shipping_args = array(
 	        	'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -109,7 +105,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT'))
 	        		# Include settings checkout by shipping
 					include $method_key . '/checkout/mrkv-ua-shipping-checkout.php';
 
-					wp_enqueue_script('front-mrkv-ua-shipping-' . $method_key, MRKV_UA_SHIPPING_ASSETS_URL . '/js/front/front-mrkv-ua-shipping-' . $method_key .'.js', array('jquery','jquery-ui-autocomplete', 'front-mrkv-ua-shipping-select2'), MRKV_UA_SHIPPING_PLUGIN_VERSION, true);
+					wp_enqueue_script('front-mrkv-ua-shipping-' . $method_key, MRKV_UA_SHIPPING_ASSETS_URL . '/js/front/front-mrkv-ua-shipping-' . $method_key .'.js', array('jquery','jquery-ui-autocomplete', 'front-mrkv-ua-shipping-select2'), MRKV_UA_SHIPPING_PLUGIN_VERSION, ['in_footer' => true,'strategy'  => 'defer']);
 
 					wp_localize_script('front-mrkv-ua-shipping-' . $method_key, 'mrkv_ua_ship_helper', $mrkv_ua_shipping_args);
 	        	}

@@ -13,8 +13,7 @@
         </h2>
         <p><?php echo esc_html__('Check the necessary fields that will be used to create the invoice', 'mrkv-ua-shipping'); ?></p>
         <hr class="mrkv-ua-ship__hr">
-        <?php 
-            require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/settings/global/mrkv-ua-shipping-option-fields.php';
+        <?php
             global $mrkv_global_option_generator;
             $mrkv_global_option_generator = new MRKV_UA_SHIPPING_OPTION_FIELDS();
         ?>

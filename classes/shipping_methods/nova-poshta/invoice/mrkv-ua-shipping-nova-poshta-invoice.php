@@ -125,7 +125,6 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 
 			$recipient_phone = $this->get_recipient_phone();
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-recipient-nova-poshta.php';
 			$mrkv_recipient_object = new MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA($this->shipping_api);
 			$recipient = $mrkv_recipient_object->get_recipient_ref($recipient_first_name, $recipient_middle_name, $recipient_last_name, $recipient_phone);
 			$recipient_contact_ref = $mrkv_recipient_object->contact_recipient_ref;
@@ -901,7 +900,6 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 
 		private function get_sender_address_ref_inline()
 		{
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-sender-nova-poshta.php';
 			$mrkv_sender_object_nova_poshta = new MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA($this->shipping_api);
 
 			$sender_street_ref = (isset($this->settings_shipping['sender']['street']['ref']) && $this->settings_shipping['sender']['street']['ref']) 

@@ -1,0 +1,1145 @@
+/** ADMIN STYLES **/
+
+/** GLOBAL **/
+.mrkv-btn-sidebar-main.button.button-primary{
+    background-color: #ed6230;
+    border: 1px solid #ed6230;
+    color: #fff;
+    font-size: 14px;
+    padding: 2px 12px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+.mrkv-btn-sidebar-main img{
+    filter: brightness(100);
+}
+.mrkv-btn-sidebar-black.button{
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #fff !important;
+    border-radius: 10px !important;
+    border: 1px solid #ed6230;
+    color: #000 !important;
+    border-color: #ed6230 !important;
+    width: fit-content;
+    padding: 2px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+.mrkv-btn-sidebar-main.button.button-primary:hover{
+    color: #000 !important;
+    border:1px solid #ed6230 !important;
+    background-color: #fff !important;
+    opacity: 1 !important;
+}
+.mrkv-btn-sidebar-main.button.button-primary:hover img{
+    filter: brightness(0);
+}
+
+.mrkv-btn-sidebar-black.button:hover{
+    color:#fff !important;
+    background-color: #ed6230 !important;
+    border-color: #ed6230 !important;
+    opacity: 1 !important;
+}
+.admin_ua_ship_morkva_settings_line .select2-container .select2-selection--multiple .select2-selection__rendered{
+ display: inline-block;
+}
+.mrkv_ua_shipping_email_notify{
+	display: none;
+    position: absolute;
+    top: -26px;
+    padding: 3px 20px;
+    border-radius: 10px;
+    font-weight: 400;
+    width: max-content;
+    font-size: 11px;
+    z-index: 1;
+    background: #baefba;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+.admin_mrkv_ua_shipping_page{
+	background-color: #eff1f7;
+}
+.admin_mrkv_ua_shipping_page__inner{
+	padding: 30px;
+}
+#wpcontent{
+	padding-left: 0;
+}
+#wpbody{
+	background-color: #eff1f7;
+}
+.mrkv_block_rounded{
+	background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+.admin_mrkv_ua_shipping_page__inner{
+	display: flex;
+	align-items: stretch;
+	gap: 0 30px;
+	flex-wrap: wrap;
+}
+.col-mrkv-10{
+	width: 100%;
+}
+.col-mrkv-7{
+	width: calc(70% - 15px);
+}
+.col-mrkv-3{
+	width: calc(30% - 15px);
+}
+.col-mrkv-5{
+	width: calc(50% - 15px);
+}
+.col-mrkv-2-5{
+	width: calc(25% - 15px);
+}
+.col-mrkv-45{
+	width: calc(45% - 15px);
+}
+.col-mrkv-1{
+	width: calc(10% - 15px);
+}
+.mrk-vertical-align{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: #000;
+    justify-content: center;
+}
+.admin_mrkv_ua_shipping_page h2{
+	margin-top: 0;
+    font-weight: 700;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+}
+.admin_mrkv_ua_shipping_page h2 img{
+	height: 25px;
+	padding-top: 1px;
+}
+.admin_mrkv_ua_shipping_page h3{
+	margin-top: 0;
+    font-weight: 700;
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+}
+.admin_mrkv_ua_shipping_page h4{
+	color: #000;
+	font-weight: 700;
+}
+.admin_mrkv_ua_shipping_page h3 img{
+	height: 20px;
+	padding-top: 1px;
+}
+.admin_ua_ship_morkva_settings_row{
+	display: flex;
+	gap: 30px;
+}
+.admin_ua_ship_morkva_settings_row > label{
+	font-weight: 400 !important;
+}
+
+/** SETTINGS PAGE **/
+.admin_mrkv_ua_shipping__list__li{
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	border-top: 1px solid #f2f2f2;
+}
+.admin_mrkv_ua_shipping__list > .admin_mrkv_ua_shipping__list__li:last-child{
+	border-bottom: 1px solid #f2f2f2;
+}
+.admin_mrkv_ua_shipping__list__li img{
+	width: 100px;
+}
+.admin_mrkv_ua_shipping__list__li__name{
+	display: block;
+	font-weight: bold;
+}
+.admin_mrkv_ua_shipping_page #submit{
+	background-color: #ed6230;
+	border: unset;
+	color: #fff;
+    font-size: 16px;
+    padding: 2px 50px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+.admin_mrkv_ua_shipping_page #submit:hover{
+	background-color: #c34f26;
+}
+.admin_mrkv_ua_shipping_page #submit:focus{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230;
+}
+.admin_mrkv_ua_shipping_page .submit{
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+.admin_mrkv_ua_shipping__info .notice{
+    border: unset;
+    margin: 0;
+    border-radius: 10px;
+    box-shadow: unset;
+    padding: 1px 30px 1px 26px;
+    margin-bottom: 30px;
+}
+.admin_mrkv_ua_shipping__info .notice p{
+	display: flex;
+}
+.admin_mrkv_ua_shipping__info .notice-success p:before{
+	content: url('../../images/global/notice-success.svg');
+	margin-right: 10px;
+	height: 20px;
+}
+.admin_mrkv_ua_shipping_page input[type="checkbox"]{
+	display: none;
+}
+.admin_mrkv_ua_shipping__checkbox__input{
+	position: relative;
+    width: 30px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 5px;
+    min-width: 28px;
+}
+.admin_mrkv_ua_shipping_slider{
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+.admin_mrkv_ua_shipping_page input[type="checkbox"]:checked + label .admin_mrkv_ua_shipping_slider{
+	background-color: #ed6230;
+}
+.mrkv-up-ship-tooltip{
+	display: flex;
+	position: absolute;
+    left: calc(100% + 5px);
+    bottom: 5px;
+}
+.mrkv-up-ship-tooltip img{
+    width: 15px;
+    height: 15px;
+}
+.mrkv-up-ship-tooltip__data{
+	position: absolute;
+	bottom: calc(100% + 5px);
+	left: -20px;
+	display: none;
+	background-color: #fff;
+	border: 1px solid #ed6230;
+	border-radius: 10px;
+	padding: 3px 10px;
+	width: 300px;
+}
+.mrkv-up-ship-tooltip__data:before{
+	content: '';
+	border-left: 5px solid transparent;
+  	border-right: 5px solid transparent;
+  	border-top: 5px solid #ed6230;
+  	position: absolute;
+  	top: 100%;
+  	left: 21px;
+}
+.mrkv-up-ship-tooltip:hover .mrkv-up-ship-tooltip__data{
+	display: block;
+}
+.admin_ua_ship_morkva_settings_line .ui-autocomplete-input:focus{
+	
+}
+.ui-menu{
+    box-shadow: unset;
+    border-radius: 10px !important;
+    border-top: unset;
+    border-color: #ed6230;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.admin_ua_ship_morkva_one_data{
+	display: flex;
+	align-items: center;
+	gap: 30px;
+}
+
+.admin_mrkv_ua_shipping_slider:before{
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.admin_mrkv_ua_shipping_page input[type="checkbox"]:checked + label .admin_mrkv_ua_shipping_slider:before{
+	-webkit-transform: translateX(14px);
+    -ms-transform: translateX(14px);
+    transform: translateX(14px);
+}
+.admin_mrkv_ua_shipping__btn{
+	width: 100%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    margin-bottom: 20px !important;
+    border: 1px solid #ed6230;
+    border-radius: 10px !important;
+    text-decoration: unset !important;
+    color: #ed6230 !important;
+    background-color: transparent !important;
+    font-size: 16px !important;
+    font-weight: 600;
+    border-color: #ed6230 !important;
+    position: relative;
+}
+.admin_mrkv_ua_shipping__btn:hover{
+	background-color: #ed6230 !important;
+	color: #fff !important;
+}
+.admin_mrkv_ua_shipping__btn:focus{
+	box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230 !important;
+}
+.admin_mrkv_ua_shipping__btn img{
+    margin-left: 4px;
+    width: 22px;
+}
+.admin_mrkv_ua_shipping__btn:hover img{
+	filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(138deg) brightness(305%) contrast(102%);
+}
+.admin_mrkv_ua_shipping_page a{
+	color: #ed6230;
+}
+.admin_mrkv_ua_shipping_page a:hover{
+	opacity: .8;
+}
+.admin_mrkv_ua_shipping_page a:focus{
+	box-shadow: unset;
+}
+
+/** HEADER **/
+.admin_mrkv_ua_shipping__header{
+	margin-bottom: 0;
+	border-radius: 0 0 10px 10px;
+}
+.admin_mrkv_ua_shipping__header__content{
+	display: flex;
+	align-items: center;
+	gap: 25px;
+}
+.admin_mrkv_ua_shipping__header_img{
+	display: flex;
+	background-color: #ed6230;
+	border-radius: 10px;
+	align-items: center;
+	justify-content: center;
+	padding: 6px;
+}
+.admin_mrkv_ua_shipping__header__content a{
+	font-size: 16px;
+	color: #000;
+	text-decoration: unset;
+}
+.admin_mrkv_ua_shipping__header__content a:hover,
+.admin_mrkv_ua_shipping__header__content a.active{
+	color: #ed6230;
+	opacity: 1;
+}
+.admin_mrkv_ua_shipping_morkva-logo img{
+	width: 130px;
+}
+.admin_mrkv_ua_shipping_morkva-logo{
+	margin-left: auto;
+}
+#ukr-poshta_m_ua_settings_shipment_description + .mrkv-ua-ship-description{
+    position: initial;
+}
+
+/** SHIPIING TAB **/
+.admin_mrkv_ua_shipping__tabs_main__inner{
+	display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.mrkv_up_ship_tab_btn{
+    background: #f2f2f299;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: unset;
+    color: #000 !important;
+}
+.mrkv_up_ship_tab_btn:hover,
+.mrkv_up_ship_tab_btn.active{
+	background: #ed6230;border-radius: 10px;
+	color: #fff !important;
+	opacity: 1 !important;
+}
+.mrkv_up_ship_shipping_tab_block{
+	display: none;
+}
+.mrkv_up_ship_shipping_tab_block.active{
+	display: block;
+}
+.admin_mrkv_ua_shipping__tabs{
+	position: relative;
+}
+.admin_mrkv_ua_shipping__tabs h2 img{
+	position: absolute;
+	width: 100px;
+    right: 30px;
+    top: 20px;
+    height: auto;
+}
+.admin_ua_ship_morkva_settings_row_wrap{
+	flex-wrap: wrap;
+	gap: 0 30px;
+}
+#domestic_settings > h2 + p + hr + h3,
+#domestic_v2_settings > h2 + p + hr + h3,
+#international_settings > h2 + p + hr + h3{
+	margin-top: 0;
+}
+.admin_ua_ship_morkva_settings_line label{
+	display: block;
+	font-weight: bold;
+	margin-bottom: 10px;
+	position: relative;
+	width: fit-content;
+	color: #000;
+}
+.admin_ua_ship_morkva_settings_line input[type="text"]{
+	max-width: 600px;
+    width: 100%;
+    border-radius: 10px;
+    border-color: #c5c5c5;
+}
+.admin_ua_ship_morkva_settings_line input[type="number"]{
+	border-radius: 10px;
+    border-color: #c5c5c5;
+    max-width: 100px;
+    width: 100%;
+    text-align: center;
+}
+.admin_ua_ship_morkva_one_data > div{
+	max-width: 370px;
+}
+.adm_morkva_row_size{
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+.admin_ua_ship_morkva_settings_line input[type="number"]:focus{
+	border-color: #ed6230;
+    box-shadow: unset;
+}
+.admin_ua_ship_morkva_settings_line .mrkv-checkbox-line{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.admin_ua_ship_morkva_settings_line textarea{
+	width: 100%;
+	height: 250px;
+	border-radius: 10px;
+	border-radius: 10px;
+    border-color: #c5c5c5;
+    padding: 20px;
+}
+.admin_ua_ship_morkva_settings_row_btns{
+	flex-wrap: wrap;
+	gap: 10px;
+}
+.adm-textarea-btn:before{
+	content: url('../../images/global/circle-plus-icon.svg');
+	height: 22px;
+}
+.adm-textarea-btn{
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	background-color: #fff !important;
+	border-radius: 10px !important;
+	border: 1px solid #ed6230;
+	color: #000 !important;
+	border-color: #ed6230 !important;
+	height: 40px;
+}
+.adm-textarea-btn:hover{
+	background-color: #ed62300d !important;
+}
+.adm_morkva_row_size__col > span{
+	display: block;
+	margin-bottom: 5px;
+	text-align: center;
+}
+.admin_ua_ship_morkva_settings_line textarea + p{
+	position: absolute;
+	right: 0;
+    top: -14px;
+    border-radius: 10px;
+    background: #baefba;
+    padding: 3px 15px;
+}
+.admin_ua_ship_morkva_settings_line textarea:focus{
+	border-color: #ed6230;
+    box-shadow: unset;
+}
+.admin_ua_ship_morkva_settings_line input[type="text"]:focus{
+    border-color: #ed6230;
+    box-shadow: unset;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"]{
+	display: none;
+}
+.admin_ua_ship_morkva_settings_line .admin_ua_ship_morkva_settings_line{
+	margin-top: 10px;
+	margin-bottom: 0;
+}
+.admin_ua_ship_morkva_settings_line .admin_ua_ship_morkva_settings_line input{
+	margin-bottom: 0 !important;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"] + label{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	transition: all .7s;
+	position: relative;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"] + label:before{
+	content: '';
+	width: 12px;
+	height: 12px;
+	border-radius: 100%;
+	background-color: #ccc;
+	display: block;
+	border: 3px solid #ccc;
+	transition: all .7s;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"]:checked + label:before{
+	background-color: #ed6230;
+	border-color: #ed6230;
+}
+.mrkv-ua-ship-description{
+	margin-top: 5px;
+}
+.mrkv-ua-ship__hr{
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.admin_ua_ship_morkva_settings_line{
+	margin-bottom: 20px;
+	position: relative;
+}
+.admin_ua_ship_morkva__notification{
+	position: absolute;
+	left: calc(100% + 15px);
+	top: -3px;
+	padding: 3px 20px;
+    border-radius: 10px;
+    font-weight: 400;
+    width: max-content;
+    font-size: 11px;
+}
+.mrkv-notification-red{
+	background: #efbdba;
+}
+.mrkv-notification-green{
+    background: #baefba;
+}
+.admin_ua_ship_morkva_settings_line select{
+	max-width: 600px;
+    width: 100%;
+    border-radius: 10px;
+    border-color: #c5c5c5;
+}
+.admin_ua_ship_morkva_settings_line select:focus{
+	border-color: #ed6230;
+    box-shadow: unset;
+}
+.admin_ua_ship_morkva_settings_line select:hover{
+	color: #ed6230;
+}
+.admin_ua_ship_morkva_settings_line input[type="text"]:disabled{
+	background-color: #f2f2f299;
+	color: #000;
+	cursor: no-drop;
+}
+.admin_ua_ship_morkva_settings_line__inner.active{
+    border-color: #ed6230;
+}
+.admin_ua_ship_morkva_settings_line__inner.active:before{
+    border-bottom: 10px solid #ed6230;
+}
+.admin_ua_ship_morkva_settings_line .select2-selection.select2-selection--multiple{
+	background: #fff;
+}
+.admin_ua_ship_morkva_settings_line .select2-container--default.select2-container--focus .select2-selection--multiple{
+	border: 1px solid #ed6230;
+}
+.admin_ua_ship_morkva_settings_line .select2-selection.select2-selection--multiple{
+	padding: 13px;
+}
+.admin_ua_ship_morkva_settings_line .select2-selection.select2-selection--multiple .select2-selection__choice{
+	font-size: 11px;
+    padding-right: 7px;
+}
+.select2-results__option:hover{
+	background-color: #ed6230;
+	color: #fff;
+	cursor: pointer;
+}
+.select2-container--default .select2-results>.select2-results__options::-webkit-scrollbar,
+.ui-menu::-webkit-scrollbar {
+  width: 7px;
+}
+.select2-container--default .select2-results>.select2-results__options::-webkit-scrollbar-track,
+.ui-menu::-webkit-scrollbar-track {
+  background-color: #f2f2f2;
+}
+.select2-container--default .select2-results>.select2-results__options::-webkit-scrollbar-thumb,
+.ui-menu::-webkit-scrollbar-thumb {
+  background-color: #ed6230;
+  border-radius: 10px;
+}
+.select2-dropdown{
+	border-radius: 0 0 10px 10px !important;
+}
+.admin_ua_ship_morkva_settings_line .select2-container--default .select2-selection--single{
+    border-radius: 10px;
+    border-color: #c5c5c5;
+}
+.select2-search__field:focus{
+	box-shadow: 0 0 0 1px #ed6230 !important;
+	border:unset !important;
+}
+.select2-selection.select2-selection--multiple .select2-search__field:focus{
+	box-shadow: unset !important;
+	border:unset !important;
+}
+.admin_ua_ship_morkva_settings_line__inner{
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    position: relative;
+}
+.admin_ua_ship_morkva_settings_line__inner:before{
+	content: '';
+	border-left: 10px solid transparent;
+  	border-right: 10px solid transparent;
+  	border-bottom: 10px solid #d3d3d3;
+  	position: absolute;
+  	top: -10px;
+  	left: 20px;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"]:checked ~ .admin_ua_ship_morkva_settings_line__inner,
+.admin_ua_ship_morkva_settings_line input[type="checkbox"]:checked ~ .admin_ua_ship_morkva_settings_line__inner{
+	border-color: #ed6230;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"]:checked ~ .admin_ua_ship_morkva_settings_line__inner:before,
+.admin_ua_ship_morkva_settings_line input[type="checkbox"]:checked ~ .admin_ua_ship_morkva_settings_line__inner:before{
+	border-bottom: 10px solid #ed6230;
+}
+.inner-align p{
+	margin-top: 0;
+	margin-bottom: 0;
+}
+.inner-align .admin_ua_ship_morkva_settings_row{
+	margin-bottom: 20px;
+	align-items: center;
+}
+.ukr-poshta_m_ua_settings_sender_type_block,
+.ukr-poshta_m_ua_settings_sender_type_block_v2{
+	display: none;
+}
+.ukr-poshta_m_ua_settings_sender_type_block.active,
+.ukr-poshta_m_ua_settings_sender_type_block_v2.active{
+	display: block;
+}
+.admin_ua_ship_morkva_settings_row_btns h4{
+	margin-bottom: 0;
+	margin-top: 0;
+	display: flex;
+	align-items: center;
+}
+.admin_ua_ship_morkva_settings_line_p_info p{
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.admin_ua_ship_morkva_settings_line_p_info img{
+	width: 25px;
+	padding-top: 4px;
+}	
+.mrkv-checkbox-cancel{
+	padding: 3px 20px;
+    border-radius: 10px;
+    font-weight: 400;
+    width: max-content;
+    font-size: 11px;
+    background: #efbdba;
+}
+.mrkv_log_file_content{
+    text-align: left;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #d9d9d9;
+    height: 500px;
+    overflow-y: auto;
+    background-color: #f2f2f24f;
+}
+.mrkv_btn_log_clean{
+	display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #fff !important;
+    border-radius: 10px !important;
+    border: 1px solid #ed6230;
+    color: #000 !important;
+    border-color: #ed6230 !important;
+    height: 40px;
+    width: 130px;
+    cursor: pointer;
+}
+.mrkv_btn_log_clean:hover{
+	background-color: #ed62300d !important;
+}
+.mrkv_ua_shipping__links_main__menu{
+	display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.mrkv_ua_shipping__links_main__menu a{
+    color: #000;
+    text-decoration: unset;
+    background: #f2f2f299;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+.mrkv_ua_shipping__links_main__menu a:hover{
+	background: #ed6230;
+    color: #fff;
+    opacity: 1;
+}
+.mrkv_ua_shipping__links_main__menu a.active{
+	background: #ed6230;
+    color: #fff;
+}
+.mrkv-links-head{
+	display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
+.mrkv-links-head img{
+	width: 20px;
+}
+.admin_mrkv_ua_shipping_page__links{
+	padding: 0 30px;
+}
+.admin_mrkv_ua_shipping__links_main{
+	
+    margin-top: 30px;
+    margin-bottom: 0;
+}
+.admin_mrkv_ua_shipping__block{
+	position: relative;
+}
+.mrkv-shipping-logo{
+    position: absolute;
+    right: 30px;
+}
+
+.mrkv_invoices__table__body > p{
+	text-align: center;
+}
+.mrkv_invoices__table__header{
+	
+	padding: 10px 30px;
+}
+.mrkv_list_invoices_total li{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mrkv_list_invoices_total li span{
+	font-size: 15px;
+}
+.mrkv_list_invoices_total li span:last-child{
+	color: #ed6230;
+}
+.mrkv_invoices_update_statuses{
+	background-color: #ed6230 !important;
+    border: unset !important;
+    color: #fff !important;
+    font-size: 16px !important;
+    padding: 2px 50px !important;
+    font-weight: 600;
+    border-radius: 10px !important;
+    width: 100%;
+}
+.mrkv_invoices_update_statuses:hover{
+	background-color: #c34f26 !important;
+}
+.mrkv_invoices_update_statuses:focus{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230 !important;
+}
+.admin_mrkv_ua_shipping_groups{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.admin_mrkv_ua_shipping_groups img{
+	height: 16px;
+}
+.admin_mrkv_ua_shipping_groups a{
+	text-decoration: unset;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 5px 5px;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid #c5c5c5;
+    cursor: pointer;
+    color: #000;
+    position: relative;
+    font-size: 11px;
+}
+.admin_mrkv_ua_shipping_groups a:hover{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230;
+}
+.mrkv_invoices__table__header_invoice, .mrkv_invoices__table__body_row{
+	display: flex;
+    align-items: center;
+}
+.mrkv_invoices__table_data_val_main__line{
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	flex-wrap: wrap;
+}
+.mrkv_invoices__table__body_row{
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	border-top: 1px solid #f2f2f2;
+	padding: 13px 0;
+}
+.mrkv_invoices__table_data_val{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.mrkv_invoices__table_data_val label, .mrkv_invoices__table_data_val_status label{
+	font-weight: bold;
+}
+.mrkv_ua_shipping_action_line_invoice a{
+	text-decoration: unset;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 5px 8px;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid #c5c5c5;
+    cursor: pointer;
+    color: #000;
+    position: relative;
+    font-size: 11px;
+}
+.mrkv_ua_shipping_action_line_invoice a:hover{
+	box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230;
+}
+.mrkv_ua_shipping_action_line_invoice img{
+	height: 19px;
+}
+.mrkv_ua_shipping_action_line_invoice{
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-left: auto;
+}
+.mrkv_invoices__table_data_val_all label{
+	margin-bottom: 0;
+}
+.mrkv_ua_ship_pagination a{
+    width: 35px;
+    height: 35px;
+    text-decoration: unset;
+    border: 1px solid #c5c5c5;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+}
+.mrkv_ua_ship_pagination a:hover{
+	color: #fff;
+	background: #ed6230;
+	border-color: #ed6230;
+}
+.mrkv_ua_ship_pagination span{
+	background-color: #ed6230;
+	width: 35px;
+    height: 35px;
+    text-decoration: unset;
+    border: 1px solid #ed6230;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+
+}
+.mrkv_ua_ship_pagination ul{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    list-style: none;
+    border-top: 1px solid #f2f2f2;
+    margin-top: 0;
+    padding-top: 20px;
+}
+.mrkv_ua_ship_search_form{
+	display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.mrkv_ua_ship_search_form button{
+    border: unset;
+    border-radius: 10px;
+    background: #ed6230;
+    padding: 5px 10px;
+}
+.mrkv_ua_ship_search_form button img{
+	height: 16px;
+}
+.mrkv_ua_ship_send_invoice_email, .mrkv_ua_ship_send_remove_ttn, .mrkv_ua_ship_send_invoice_email_all, .mrkv_ua_ship_send_remove_ttn_all{
+	position: relative;
+}
+.mrkv_ua_ship_create_invoice__loader{
+	display: none;
+	position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+	animation: rotate 1s linear infinite
+}
+.mrkv_ua_ship_create_invoice__loader:before{
+	content: "";
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0px;
+  border-radius: 50%;
+  animation: prixClipFix 2s linear infinite ;
+	border: 2px solid #000;
+}
+
+@keyframes rotate {
+  100%   {transform: rotate(360deg)}
+}
+
+@keyframes prixClipFix {
+    0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+    25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+    50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+    75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+    100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+}
+.admin_mrkv_ua_shipping__invoices .mrkv_ua_shipping_action_line_invoice form button{
+    border: unset;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+.admin_mrkv_ua_shipping_groups button{
+	    padding: 0;
+    background: transparent;
+    border: unset;
+    display: flex;
+    gap: 8px;
+    cursor: pointer;
+}
+.admin_ua_ship_morkva_one_data strong{
+	color: #000;
+}
+.mrkv-field-disabled h4{
+	color: #9b9b9b;
+	margin-bottom: 5px;
+}
+.mrkv-field-disabled label{
+	opacity: .5;
+}
+.mrkv-field-disabled .mrkv-ua-ship-description{
+	color: #9b9b9b;
+}
+.mrkv-ua-ship-only-pro{
+	margin-top: 0;
+    margin-bottom: 5px;
+    color: #ed6230;
+    font-weight: bold;
+    display: block;
+}
+.mrkv-field-disabled .mrkv-ua-ship-description{
+	background: transparent;
+}
+.mrkv-field-disabled input, .mrkv-field-disabled textarea{
+	background-color: #f0f0f1;
+	opacity: .7;
+}
+.mrkv-field-disabled .adm-textarea-btn{
+	opacity: .5;
+}
+.mrkv_invoices__table__body.mrkv-field-disabled .mrkv-ua-ship-only-pro{
+	text-align: center;
+}
+.admin_mrkv_ua_shipping__invoices__table__actions{
+	opacity: .5;
+}
+.mrkv-field-disabled .select2{
+	opacity: .7;
+}
+
+@media(max-width: 768px){
+	.admin_mrkv_ua_shipping__header__content{
+		flex-wrap: wrap;
+		gap: 15px;
+	}
+	.mrkv_block_rounded{
+		padding: 20px;
+		margin-bottom: 20px;
+		border-radius: 10px;
+	}
+	.mrkv_up_ship_tab_btn{
+		font-size: 12px;
+        padding: 5px 15px;
+	}
+	.admin_mrkv_ua_shipping__tabs_main__inner{
+		gap: 10px;
+	}
+	.admin_mrkv_ua_shipping_page__inner{
+		gap: 0;
+		padding: 0px 10px 10px 0;
+	}
+	.col-mrkv-7, .col-mrkv-3{
+		width: 100%;
+	}
+	.admin_mrkv_ua_shipping_page__header{
+		padding-right: 10px;
+	}
+	.admin_mrkv_ua_shipping_page #submit{
+		width: 100%;
+	}
+	.admin_mrkv_ua_shipping__header_img img{
+		width: 15px;
+	}
+	.admin_mrkv_ua_shipping__header__content a{
+		font-size: 13px;
+	}
+	.admin_mrkv_ua_shipping_morkva-logo{
+		display: none;
+	}
+	.admin_mrkv_ua_shipping__list__li{
+		flex-wrap: wrap;
+		padding-top: 25px;
+	}
+	.admin_mrkv_ua_shipping__tabs h2 img{
+		width: 60px;
+		top: 30px;
+		right: 20px;
+	}
+	.admin_mrkv_ua_shipping__header{
+		margin-bottom: 10px;
+	}
+	.col-mrkv-5{
+		width: 100%;
+	}
+	.admin_ua_ship_morkva_settings_row{
+		flex-wrap: wrap;
+		gap: 0;
+	}
+	h4 + .admin_ua_ship_morkva_settings_row{
+		gap: 20px;
+	}
+	.admin_ua_ship_morkva_settings_line textarea + p{
+	    position: initial;
+	}
+	.adm-textarea-btn:before{
+		height: 32px;
+	}
+	.admin_ua_ship_morkva_settings_row_btns{
+		gap: 10px;
+	}
+	.mrkv_row_reverse{
+		flex-direction: column-reverse;
+	}
+	.admin_mrkv_ua_shipping_page__links{
+        padding: 0 10px 0 0;
+	}
+	.mrkv_ua_shipping__links_main__menu{
+	    flex-wrap: wrap;
+    	gap: 10px;
+	}
+	.mrkv-links-head{
+		font-size: 12px;
+		gap: 5px;
+	}
+	.mrkv-links-head img{
+		width: 15px;
+	}
+	.mrkv_ua_shipping__links_main__menu a{
+		font-size: 12px;
+        padding: 5px 15px;
+	}
+	.admin_ua_ship_morkva_one_data{
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+	.col-mrkv-45, .col-mrkv-1{
+		width: 100%;
+	}
+	.mrk-vertical-align{
+	    height: auto;
+    	margin-top: 0px;
+	}
+}

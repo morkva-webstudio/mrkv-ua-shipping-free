@@ -19,31 +19,6 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
             add_action( 'enqueue_block_editor_assets', [ $this, 'mrkv_enqueue_admin_checkout_assets' ] );
         }
 
-        private function is_poshtomat_active_in_any_instance() {
-            $zones = \WC_Shipping_Zones::get_zones();
-            
-            $default_zone = new \WC_Shipping_Zone( 0 );
-            $zones[]      = $default_zone->get_data();
-
-            foreach ( $zones as $zone_data ) {
-                $zone = new \WC_Shipping_Zone( $zone_data['id'] ?? 0 );
-                $shipping_methods = $zone->get_shipping_methods( true ); 
-
-                foreach ( $shipping_methods as $instance_id => $method ) {
-                    if ( $method->id === 'mrkv_ua_shipping_nova-poshta' ) {
-                        $settings = get_option( 'woocommerce_mrkv_ua_shipping_nova-poshta_' . $instance_id . '_settings' );
-                        $exclude_poshtomat = isset( $settings['exclude_poshtomat'] ) && $settings['exclude_poshtomat'] === 'yes';
-
-                        if ( $exclude_poshtomat ) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private static function is_cod_enabled() {
             if ( ! class_exists( 'WooCommerce' ) || ! WC()->payment_gateways ) {
                 return false;
@@ -195,12 +170,6 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
                 }
             }
 
-            if ( $this->is_poshtomat_active_in_any_instance() ) {
-                if ( isset( $mrkv_ua_shipping_method_list['nova-poshta']['method']['mrkv_ua_shipping_nova-poshta']['checkout_fields']['_warehouse'] ) ) {
-                    $mrkv_ua_shipping_method_list['nova-poshta']['method']['mrkv_ua_shipping_nova-poshta']['checkout_fields']['_warehouse']['label'] = __( 'Warehouse', 'mrkv-ua-shipping' );
-                }
-            }
-
             wp_localize_script( 'mrkv-ua-shipping-checkout-blocks-extension', 'mrkvShippingConfig', array(
                 'list'                 => $mrkv_ua_shipping_method_list,
                 'provider_location'    => $providers_locations,
@@ -220,7 +189,7 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
                     MRKV_UA_SHIPPING_PLUGIN_VERSION 
                 );
             }
-            wp_enqueue_script( 'front-mrkv-ua-shipping-select2', MRKV_UA_SHIPPING_ASSETS_URL . '/js/global/select2.min.js', array( 'jquery' ), MRKV_UA_SHIPPING_PLUGIN_VERSION, true );
+            wp_enqueue_script( 'front-mrkv-ua-shipping-select2', MRKV_UA_SHIPPING_ASSETS_URL . '/js/global/select2.min.js', array( 'jquery' ), MRKV_UA_SHIPPING_PLUGIN_VERSION, ['in_footer' => true,'strategy'  => 'defer'] );
 
             $mrkv_ua_shipping_args = array(
                 'ajax_url'      => admin_url( 'admin-ajax.php' ),
@@ -243,8 +212,8 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
             foreach ( $active_methods as $method_key ) {
                 include MRKV_UA_SHIPPING_PLUGIN_PATH_SHIP . '/' . $method_key . '/checkout/mrkv-ua-shipping-checkout.php';
 
-                wp_enqueue_script( 'front-mrkv-ua-shipping-' . $method_key, MRKV_UA_SHIPPING_ASSETS_URL . '/js/blocks/mrkv-ua-shipping-blocks-' . $method_key . '.js', array( 'jquery', 'jquery-ui-autocomplete', 'front-mrkv-ua-shipping-select2' ), MRKV_UA_SHIPPING_PLUGIN_VERSION, true );
-                wp_localize_script( 'front-mrkv-ua-shipping-' . $method_key, 'mrkv_ua_ship_helper', $mrkv_ua_shipping_args );
+                wp_enqueue_script( 'blocks-mrkv-ua-shipping-' . $method_key, MRKV_UA_SHIPPING_ASSETS_URL . '/js/blocks/mrkv-ua-shipping-blocks-' . $method_key . '.js', array( 'jquery', 'jquery-ui-autocomplete', 'front-mrkv-ua-shipping-select2' ), MRKV_UA_SHIPPING_PLUGIN_VERSION, ['in_footer' => true,'strategy'  => 'defer'] );
+                wp_localize_script( 'blocks-mrkv-ua-shipping-' . $method_key, 'mrkv_ua_ship_helper', $mrkv_ua_shipping_args );
             }
         }
 

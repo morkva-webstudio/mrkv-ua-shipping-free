@@ -2,13 +2,6 @@
 # Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit; 
 
-# Include nova post menu
-require_once 'settings/mrkv-ua-shipping-settings.php'; 
-# Include nova post menu
-require_once 'shipping_methods/mrkv-ua-shipping-methods.php'; 
-# Include woocommerce settings
-require_once 'woocommerce/mrkv-ua-shipping-woocommerce.php'; 
-
 # Check if class exist
 if (!class_exists('MRKV_UA_SHIPPING_RUN'))
 {

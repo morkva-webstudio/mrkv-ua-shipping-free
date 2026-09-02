@@ -44,7 +44,6 @@ if (!class_exists('MRKV_UA_SHIPPING_NOTIFICATION'))
 
 		public function mrkv_is_api_working($key_shipping)
 		{
-			require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/' . $key_shipping . '/api/mrkv-ua-shipping-api-' . $key_shipping . '.php';
 			$mrkv_object_api = new MRKV_UA_SHIPPING_API_NOVA_POSHTA(get_option($key_shipping . '_m_ua_settings'));
 
 			if(is_string($mrkv_object_api->active_api))

@@ -1,0 +1,790 @@
+.mrkv-ua-ship-description{
+    display: inline-block;
+}
+.mrkv-ua-shipping-desc-validation{
+    display: inline-block;
+    margin-left: 20px;
+    background: #baefba;
+    padding: 3px 20px;
+    border-radius: 10px;
+    font-weight: 400;
+    width: max-content;
+    font-size: 11px;
+}
+.mrkv-ua-shipping-desc-validation.red{
+    background: #efbdba;
+}
+.mrkv-ua-ship-latin-error{
+    color: red;
+    padding-left: 10px;
+    font-size: 11px;
+}
+.mrkv-ua-ship-latin-error:before{
+    content: '(';
+}
+.mrkv-ua-ship-latin-error:after{
+    content: ')';
+}
+.mrkv-ua-ship-latin-error-input{
+    background: #ffb6b6 !important;
+}
+.mrkv_ua_ship_ttn_copy{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+.mrkv_ua_ship_global__invoice{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.mrkv_ua_ship_global_invoice-link{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.mrkv_ua_ship_global_invoice-link:hover{
+    color: #ed6230;
+}
+.mrkv_ua_ship_global_invoice-link:focus{
+    box-shadow: 0 0 0 2px #ed6230;
+}
+.mrkv_ua_ship_global_invoice-link img{
+    width: 15px;
+}
+.print-ttn-mrkv-ua-ship, .print-sticker-mrkv-ua-ship{
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    margin-bottom: 20px !important;
+    border: 1px solid #ed6230;
+    border-radius: 10px !important;
+    text-decoration: unset !important;
+    color: #ed6230 !important;
+    background-color: transparent !important;
+    font-size: 16px !important;
+    font-weight: 600;
+    border-color: #ed6230 !important;
+    position: relative;
+    margin-bottom: 0 !important;
+    padding: 0 30px;
+}
+.print-ttn-mrkv-ua-ship:hover, .print-sticker-mrkv-ua-ship:hover{
+    background-color: #ed6230 !important;
+    color: #fff !important;
+}
+.mrkv-ua-shupping-change-method.button{
+    background-color: #ed6230 !important;
+    border: unset !important;
+    color: #fff !important;
+    font-size: 12px !important;
+    padding: 2px 50px !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    width: 100%;
+    text-align: center;
+    margin-top: 15px !important;
+    position: relative;
+}
+.mrkv-ua-shupping-change-method.button.disabled{
+    background-color: #0000004a !important;
+    cursor: not-allowed;
+    color: #000 !important;
+}
+.mrkv-ua-shipping-line-choose-method > .select2{
+    width: 100% !important;
+}
+.mrkv-ua-shupping-change-method:hover{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230 !important;
+}
+.mrkv_ua_shipping_email_notify{
+    display: none;
+    position: absolute;
+    top: -26px;
+    padding: 3px 20px;
+    border-radius: 10px;
+    font-weight: 400;
+    width: max-content;
+    font-size: 11px;
+    z-index: 1;
+    background: #baefba;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+.mrkv_ua_ship_global_orders_li{
+	display: flex;
+	margin-left: auto;
+	display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 8px;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid #f2f2f2;
+    margin-right: auto;
+}
+.mrkv_ua_ship_global_orders_li:not(:has(img)){
+    padding: 8px 13px;
+}
+.mrkv_ua_ship_global_orders_li img{
+	width: 15px;
+}
+.mrkv_ua_ship_global_create__invoice{
+	display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 8px 15px;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid #f2f2f2;
+    cursor: pointer;
+    color: #000;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+.mrkv_ua_ship_global_create__invoice:hover{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230;
+}
+.mrkv_ua_shipping_change_field_address{
+    position: relative;
+}
+.mrkv_ua_ship_global_create__invoice .mrkv_ua_ship_create_invoice__loader, 
+.mrkv_ua_shipping_change_field_address .mrkv_ua_ship_create_invoice__loader{
+    position: absolute;
+    width: 15px;
+    height: 15px;
+}
+#mrkv_ua_invoice, #mrkv_ua_shipping{
+    text-align: center;
+}
+.mrkv_ua_ship_global_create__invoice .mrkv_ua_ship_create_invoice__loader::before,
+.mrkv_ua_shipping_change_field_address .mrkv_ua_ship_create_invoice__loader:before{
+    border: 2px solid #000;
+}
+.mrkv_ua_shipping_change_field_address .mrkv_ua_ship_create_invoice__loader{
+    top: 25%;
+    left: 48%;
+    transform: translate(-50%, -50%) !important;
+}
+.mrkv_ua_ship_global_create__invoice img{
+    width: 20px !important;
+}
+
+#mrkv_ua_ship_create_invoice, #mrkv_ua_ship_create_invoice_failed, #mrkv_ua_ship_create_invoice_completed {
+  display: none; 
+  position: fixed; 
+  z-index: 10000; 
+  left: 160px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: calc(100% - 160px); 
+  overflow: auto; 
+  background-color: rgb(0,0,0); 
+  background-color: #eff1f7; 
+  padding-top: 85px;
+  padding-bottom: 150px;
+}
+
+/* Modal Content */
+.mrkv_ua_ship_modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  position: relative;
+}
+
+/* The Close Button */
+.mrkv_ua_ship_close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: -50px;
+  top: -40px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px;
+}
+.mrkv_ua_ship_close:hover{
+	background: #ed6230;
+}
+.mrkv_ua_ship_close:hover img{
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(44deg) brightness(302%) contrast(101%);
+}
+.mrkv_ua_ship_close:hover,
+.mrkv_ua_ship_close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.mrkv_ua_ship_modal-content h2{
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+}
+.mrkv_ua_ship_modal-content h2 img{
+    height: 25px;
+    padding-top: 1px;
+}
+.mrkv_ua_ship_create_invoice__action{
+    background-color: #ed6230;
+    border: unset;
+    color: #fff;
+    font-size: 16px;
+    padding: 11px 50px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    width: fit-content;
+}
+.mrkv_ua_ship_create_invoice__action:hover{
+    background-color: #c34f26;
+}
+.mrkv_ua_ship_create_invoice__action:focus{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230;
+}
+.mrkv_ua_ship_create_invoice__changed{
+	display: none;
+}
+.mrkv_ua_ship_create_invoice__changed.active{
+	display: block;
+}
+.mrkv_ua_ship_create_invoice__loader {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: relative;
+  animation: rotate 1s linear infinite
+}
+.mrkv_ua_ship_create_invoice__loader::before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0px;
+  border-radius: 50%;
+  border: 3px solid #000;
+  animation: prixClipFix 2s linear infinite ;
+}
+
+@keyframes rotate {
+  100%   {transform: rotate(360deg)}
+}
+
+@keyframes prixClipFix {
+    0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+    25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+    50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+    75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+    100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+}
+.mrkv_ua_ship_create_invoice__footer{
+	display: flex;
+    align-items: center;
+    gap: 30px;
+}
+.mrkv_ua_ship_create_invoice__footer img{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    height: 30px;
+}
+.mrkv-ua-ship__hr{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.admin_ua_ship_morkva_settings_row{
+	display: flex;
+	gap: 30px;
+	margin-bottom: 30px;
+}
+.col-mrkv-5{
+	width: calc(50% - 15px);
+}
+.mrkv_ua_ship_modal-content h3{
+	font-weight: 700;
+    margin-top: 0px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+}
+.mrkv_ua_ship_modal-content h3 img{
+	height: 20px;
+    padding-top: 1px;
+}
+.admin_ua_ship_morkva_settings_line label{
+	display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: relative;
+    width: fit-content;
+    color: #000;
+    position: relative;
+}
+.admin_ua_ship_morkva_settings_line input[type="text"]{
+    max-width: 600px;
+    width: 100%;
+    border-radius: 10px;
+    border-color: #c5c5c5;
+    box-shadow: unset;
+    color: #000;
+}
+.admin_ua_ship_morkva_settings_line input[type="text"]:disabled{
+	background: #f9f9f9;
+}
+.admin_ua_ship_morkva_settings_line{
+	margin-bottom: 15px;
+}
+.admin_ua_ship_morkva_settings_row_mb-0{
+	margin-bottom: 0;
+}
+.admin_ua_ship_morkva_settings_row .admin_ua_ship_morkva_settings_row{
+	margin-bottom: 0;
+}
+
+.admin_ua_ship_morkva_settings_row input[type="checkbox"]{
+	display: none;
+}
+.admin_mrkv_ua_shipping__checkbox__input{
+	position: relative;
+    width: 30px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 5px;
+    min-width: 28px;
+}
+.admin_mrkv_ua_shipping_slider{
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+.admin_ua_ship_morkva_settings_row input[type="checkbox"]:checked + label .admin_mrkv_ua_shipping_slider{
+	background-color: #ed6230;
+}
+.admin_ua_ship_morkva_settings_line .mrkv-checkbox-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin_mrkv_ua_shipping_slider:before{
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.admin_ua_ship_morkva_settings_line input[type="checkbox"]:checked + label .admin_mrkv_ua_shipping_slider:before{
+	-webkit-transform: translateX(14px);
+    -ms-transform: translateX(14px);
+    transform: translateX(14px);
+}
+.admin_ua_ship_morkva_settings_line textarea:focus{
+	border-color: #ed6230;
+    box-shadow: unset;
+}
+.admin_ua_ship_morkva_settings_line input[type="text"]:focus{
+    border-color: #ed6230;
+    box-shadow: unset;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"]{
+	display: none;
+}
+.admin_ua_ship_morkva_settings_line .admin_ua_ship_morkva_settings_line{
+	margin-top: 10px;
+	margin-bottom: 0;
+}
+.admin_ua_ship_morkva_settings_line .admin_ua_ship_morkva_settings_line input{
+	margin-bottom: 0 !important;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"] + label{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	transition: all .7s;
+	position: relative;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"] + label:before{
+	content: '';
+	width: 12px;
+	height: 12px;
+	border-radius: 100%;
+	background-color: #ccc;
+	display: block;
+	border: 3px solid #ccc;
+	transition: all .7s;
+}
+.admin_ua_ship_morkva_settings_line input[type="radio"]:checked + label:before{
+	background-color: #fff;
+	border-color: #ed6230;
+}
+.admin_ua_ship_morkva_settings_line input[type="number"]{
+	border-radius: 10px;
+    border-color: #c5c5c5;
+    max-width: 100px;
+    width: 100%;
+    text-align: center;
+}
+.admin_ua_ship_morkva_one_data > div{
+	max-width: 370px;
+}
+.adm_morkva_row_size{
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+.admin_ua_ship_morkva_settings_line input[type="number"]:focus{
+	border-color: #ed6230;
+    box-shadow: unset;
+}
+.admin_ua_ship_morkva_settings_line .mrkv-checkbox-line{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.admin_ua_ship_morkva_settings_line textarea{
+	width: 100%;
+	height: 150px;
+	border-radius: 10px;
+	border-radius: 10px;
+    border-color: #c5c5c5;
+    padding: 20px;
+}
+.adm_morkva_row_size__col > span {
+    display: block;
+    margin-bottom: 5px;
+    text-align: center;
+}
+.admin_ua_ship_morkva__notification{
+	position: absolute;
+	left: calc(100% + 15px);
+	top: -3px;
+	padding: 3px 20px;
+    border-radius: 10px;
+    font-weight: 400;
+    width: max-content;
+    font-size: 11px;
+}
+.mrkv-notification-red{
+	background: #efbdba;
+}
+.mrkv-addittional-row{
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+.admin_ua_ship_morkva_settings_line__inner{
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    position: relative;
+}
+.col-mrkv-10{
+    width: 100%;
+}
+.admin_ua_ship_morkva_settings_line__inner:before{
+    content: '';
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #d3d3d3;
+    position: absolute;
+    top: -10px;
+    left: 20px;
+}
+input[type="checkbox"]:checked ~ .admin_ua_ship_morkva_settings_line__inner{
+    border-color: #ed6230;
+}
+input[type="checkbox"]:checked ~ .admin_ua_ship_morkva_settings_line__inner:before{
+    border-bottom: 10px solid #ed6230;
+}
+.admin_ua_ship_morkva_settings_row-col{
+    flex-direction: column;
+    gap: 3px;
+}
+.mrkv_ua_ship_create_invoice__loader{
+    display: none;
+}
+.mrkv_ua_ship_global__invoice{
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 8px 15px;
+    width: fit-content;
+    border: 1px solid #f2f2f2;
+    cursor: pointer;
+    color: #000;
+    font-size: 10px;
+}
+.close-error-mrkv-ua-ship, .close-all-mrkv-ua-ship{
+    background-color: #ed6230;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 16px;
+    padding: 11px 50px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    width: fit-content;
+    text-decoration: none;
+}
+.open-order-mrkv-ua-ship{
+    background-color: #fff;
+    border: 1px solid #ed6230;
+    color: #000;
+    font-size: 16px;
+    padding: 11px 50px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    width: fit-content;
+    text-decoration: none;
+}
+.close-error-mrkv-ua-ship:hover, .close-all-mrkv-ua-ship:hover, .open-order-mrkv-ua-ship:hover{
+    background-color: #c34f26;
+    color: #fff !important;
+}
+.close-error-mrkv-ua-ship:focus, .close-all-mrkv-ua-ship:focus, .open-order-mrkv-ua-ship:focus{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230;
+}
+#mrkv_ua_shipping_data_box .mrkv_ua_ship_global__invoice{
+    width: auto;
+    text-align: center;
+}
+#mrkv_ua_shipping_data_box .mrkv_ua_ship_global_create__invoice{
+    width: auto;
+    border: 1px solid #ed6230;
+}
+#mrkv_ua_shipping_data_box input{
+    max-width: 600px;
+    width: 100%;
+    border-radius: 10px;
+    border-color: #c5c5c5;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+#mrkv_ua_shipping_data_box .mrkv_ua_ship_global__invoice{
+    border-color: #c5c5c5;
+}
+#mrkv_ua_shipping_data_box h3{
+    font-weight: bold;
+    padding-left: 0;
+    font-size: 13px;
+}
+.mrkv_ua_shipping_change_field_address{
+    background-color: #ed6230 !important;
+    border: unset !important;
+    color: #fff !important;
+    font-size: 12px !important;
+    padding: 2px 50px !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    width: 100%;
+    text-align: center;
+}
+.mrkv_ua_shipping_change_field_address:hover{
+   box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230 !important;
+}
+.mrkv_ua_shipping_change_field_address:focus{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230 !important;
+}
+#mrkv_ua_shipping_data_box .select2-container--default .select2-selection--single{
+    border-radius: 10px;
+    border-color: #c5c5c5;
+}
+.select2-dropdown{
+    border-radius: 0 0 10px 10px !important;
+}
+.mrkv-hr-sidebar{
+    margin-top: 17px;
+}
+.mrkv_ua_ship_custom_invoice{
+    background-color: #ed6230 !important;
+    border: unset !important;
+    color: #fff !important;
+    font-size: 12px !important;
+    padding: 2px 50px !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px !important;
+    position: relative;
+}
+.mrkv_ua_ship_custom_invoice .mrkv_ua_ship_create_invoice__loader{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 18%;
+    left: 46%;
+    transform: translate(-50%, -50%);
+}
+.mrkv_ua_ship_custom_invoice:focus{
+    background-color: #c34f26 !important;
+}
+.mrkv_ua_ship_custom_invoice:hover{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230 !important;
+}
+.mrkv_ua_invoice_action_list a{
+    text-decoration: unset;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 4px 15px;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid #c5c5c5;
+    cursor: pointer;
+    color: #000;
+    position: relative;
+    font-size: 11px;
+    width: calc(50% - 40px);
+}
+.mrkv_ua_invoice_action_list a img{
+    height: 19px;
+}
+.mrkv_ua_invoice_action_list a:hover{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #ed6230;
+}
+.mrkv_ua_invoice_action_list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.mrkv_ua_ship_modal-content__message_completed{
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+select[name="mrkv_ua_ship_invoice_sender_ref"]{
+        max-width: 600px;
+    width: 100%;
+    border-radius: 10px;
+    border-color: #c5c5c5;
+    box-shadow: unset;
+    color: #000;
+}
+.mrkv-field-disabled h4{
+    color: #9b9b9b;
+    margin-bottom: 5px;
+}
+.mrkv-field-disabled label{
+    opacity: .5;
+}
+.mrkv-field-disabled .mrkv-ua-ship-description{
+    color: #9b9b9b;
+}
+.mrkv-ua-ship-only-pro{
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #ed6230;
+    font-weight: bold;
+    display: block;
+}
+.mrkv-field-disabled .mrkv-ua-ship-description{
+    background: transparent;
+}
+.mrkv-field-disabled input, .mrkv-field-disabled textarea{
+    background-color: #f0f0f1;
+    opacity: .7;
+}
+.mrkv-field-disabled .adm-textarea-btn{
+    opacity: .5;
+}
+.mrkv_invoices__table__body.mrkv-field-disabled .mrkv-ua-ship-only-pro{
+    text-align: center;
+}
+.admin_mrkv_ua_shipping__invoices__table__actions{
+    opacity: .5;
+}
+.mrkv-field-disabled .select2{
+    opacity: .7;
+}
+
+.column-mrkv_ua_invoice .mrkv_column-li_action{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px
+}
+.column-mrkv_ua_invoice a img{
+    width: 15px;
+}
+.column-mrkv_ua_invoice a.mrkv-col-added-link{
+    cursor: pointer;
+    background: #fff;
+    border-radius: 10px;
+    line-height: 1.2;
+    padding: 8px 15px;
+    border: 1px solid #f2f2f2;
+}
+.column-mrkv_ua_invoice:has(.mrkv-col-added-link) .mrkv_ua_ship_global_invoice-link span{
+    display: none;
+}
+.column-mrkv_ua_invoice:has(.mrkv-col-added-link) a{
+    padding: 8px;
+    max-height: 14px;
+}
+.column-mrkv_ua_invoice:has(.mrkv-col-added-link) a:hover, .column-mrkv_ua_invoice:has(.mrkv-col-added-link) a:focus{
+    box-shadow: 0 0 0 1px #fff, 0 0 0 2px #ed6230;
+}
+
+@media(max-width: 768px){
+    #mrkv_ua_ship_create_invoice{
+        left: 0;
+        width: 100%;
+        padding-top: 120px;
+    }
+    .mrkv_ua_ship_close{
+        top: -60px;
+        right: 0;
+    }
+    .mrkv_ua_ship_create_invoice__footer img{
+        right: unset;
+        left: 0;
+        top: -50px;
+    }
+    .col-mrkv-5{
+        width: 100%;
+    }
+    .admin_ua_ship_morkva_settings_row{
+        flex-direction: column;
+        gap: 0;
+    }
+}

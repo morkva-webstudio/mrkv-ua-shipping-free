@@ -3,12 +3,12 @@
 defined( 'ABSPATH' ) || exit;
 
 # Check if class exist
-if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
+if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTERNATIONAL'))
 {
     /**
      * Add new delivery method
      * */
-    class MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS extends WC_Shipping_Method 
+    class MRKV_UA_SHIPPING_NOVA_POSHTA_INTERNATIONAL extends WC_Shipping_Method 
     {
         /**
          * Constructor new shipping method
@@ -19,9 +19,9 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
             parent::__construct( $mrkv_ua_shipping_instance_id );
 
             # These title description are display on the configuration page
-            $this->id = 'mrkv_ua_shipping_nova-poshta_inter_address';
-            $this->method_title = __('Nova Poshta Address International', 'mrkv-ua-shipping');
-            $this->method_description = '';
+            $this->id = 'mrkv_ua_shipping_nova-poshta_international';
+            $this->method_title = __('Nova Poshta Warehouse International', 'mrkv-ua-shipping');
+            $this->method_description = __('(only to countries where Nova Post operates: Poland, Moldova, Czech Republic, Romania, Germany, Slovakia, Estonia, Latvia, Hungary, Italy, United Kingdom, Spain, France, Austria, Netherlands)', 'mrkv-ua-shipping');
 
             # Add support zones
             $this->supports = array(
@@ -156,7 +156,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
             if($this->get_option('enable_cost') && $this->get_option('enable_cost') == 'yes' && $this->get_option('enable_fix_cost') != 'yes')
             {
                 $country = '';
-                $recipient_postcode = '';
+                $recipient_division_id = '';
 
                 // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 if(isset( $_POST['post_data'] ))
@@ -170,27 +170,29 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
                     {
                         $country = sanitize_text_field( $post_data['billing_country'] );
                     }
-                    if(isset($post_data[$this->id . '_postcode']) && $post_data[$this->id . '_postcode'])
+                    if(isset($post_data[$this->id . '_warehouse_ref']) && $post_data[$this->id . '_warehouse_ref'])
                     {
-                        $recipient_postcode = sanitize_text_field($post_data[$this->id . '_postcode']);
+                        $recipient_division_id = sanitize_text_field($post_data[$this->id . '_warehouse_ref']);
                     }
                 }
+
                 // phpcs:ignore WordPress.Security.NonceVerification.Missing
-                if(!$recipient_postcode && isset($_POST[$this->id . '_postcode']))
+                if(!$recipient_division_id && isset($_POST[$this->id . '_warehouse_ref']))
                 {
                     // phpcs:ignore WordPress.Security.NonceVerification.Missing
-                    $recipient_postcode = sanitize_text_field(wp_unslash($_POST[$this->id . '_postcode']));
+                    $recipient_division_id = sanitize_text_field( wp_unslash($_POST[$this->id . '_warehouse_ref']));
                 }
+
                 // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 if(!$country && isset($_POST['billing_country']))
                 {
                     // phpcs:ignore WordPress.Security.NonceVerification.Missing
-                    $country = sanitize_text_field(wp_unslash($_POST['billing_country']));
+                    $country = sanitize_text_field( wp_unslash($_POST['billing_country']));
                 }
 
                 $cart_hash = md5(json_encode([
                     'country'     => $country,
-                    'recipient_postcode'     => $recipient_postcode,
+                    'recipient_division_id'     => $recipient_division_id,
                     'contents' => WC()->cart->get_cart_for_session(),
                     'weight'   => WC()->cart->cart_contents_weight,
                     'instance' => $this->instance_id
@@ -215,7 +217,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
                 $cargo = isset($settings_method['inter']['shipment_type']) ? $settings_method['inter']['shipment_type'] : 'Parcel';
                 $sender_country = 'UA';
 
-                if($country && $recipient_postcode)
+                if($country && $recipient_division_id)
                 {
                     if(isset($settings_method['inter']['cart_total']) && $settings_method['inter']['cart_total'] == 'total')
                     {
@@ -273,13 +275,11 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INTER_ADDRESS'))
                         ],
                         "recipient" => [
                             "countryCode" => $country,
-                            "addressParts" => [
-                                'postCode' => $recipient_postcode
-                            ]
+                            "divisionId" => $recipient_division_id,
+                            "addressParts" => new stdClass()
                         ]
                     ];
 
-                    require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-api-nova-post.php';
                     $api_internal = new MRKV_UA_SHIPPING_API_NOVA_POST($settings_method);
 
                     $data = $api_internal->send_post_request($mrkv_ua_shipping_args, 'shipments/calculations', 'POST');

@@ -232,8 +232,6 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_GLOBAL_ADDRESS'))
                     $shipping_type = strtolower($this->get_option('shipping_type'));
                 }
 
-                require_once MRKV_UA_SHIPPING_PLUGIN_PATH . 'classes/shipping_methods/nova-global/constants/mrkv-ua-shipping-nova-global-ship-constant.php';
-
                 $new_cost = 0.00;
 
                 if(isset(MRKV_UA_SHIPPING_GLOBAL_EXCLUDE[$country]))
