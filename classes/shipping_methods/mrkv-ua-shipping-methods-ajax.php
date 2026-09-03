@@ -21,7 +21,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 			# Call ajax ukr poshta
 			new MRKV_UA_SHIPPING_AJAX_UKR();
 			# Call ajax rozetka
-			new MRKV_UA_SHIPPING_AJAX_RZTK();
+			new MRKV_UA_SHIPPING_AJAX_ROZETKA();
 
 			add_action( 'wp_ajax_mrkv_ua_ship_get_order_data', array($this, 'mrkv_ua_ship_get_order_data_func') );
 			add_action( 'wp_ajax_mrkv_ua_ship_create_invoice', array($this, 'mrkv_ua_ship_create_invoice_func') );

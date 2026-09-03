@@ -3,12 +3,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit; 
 
 # Check if class exist
-if (!class_exists('MRKV_UA_SHIPPING_AJAX_RZTK'))
+if (!class_exists('MRKV_UA_SHIPPING_AJAX_ROZETKA'))
 {
 	/**
 	 * Class for setup shipping methods ajax rozetka
 	 */
-	class MRKV_UA_SHIPPING_AJAX_RZTK
+	class MRKV_UA_SHIPPING_AJAX_ROZETKA
 	{
 		/**
 		 * Constructor for plugin shipping methods ajax rozetka
