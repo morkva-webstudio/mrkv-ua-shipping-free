@@ -172,7 +172,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				unset($mrkv_ua_shipping_args['apiKey']);
 			}
 
-			$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+			$obj = $this->send_nova_poshta_search($mrkv_object_nova_poshta, $mrkv_ua_shipping_args);
 			$failed = $this->is_nova_poshta_failure($obj);
 
 			if (!is_array($obj)) {
@@ -219,6 +219,26 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 			echo wp_json_encode($areas);
 			wp_die();
+		}
+
+		/**
+		 * Send a search request. Nova Poshta limits requests per API key and answers the excess with
+		 * HTTP 200, success:false and "To many requests": try once more shortly after, the user should
+		 * not have to retype the search
+		 * @param object API client
+		 * @param array Request
+		 * @return mixed Answer
+		 * */
+		private function send_nova_poshta_search($api, $args)
+		{
+			$obj = $api->send_post_request($args, 10);
+
+			if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
+				usleep(400000);
+				$obj = $api->send_post_request($args, 10);
+			}
+
+			return $obj;
 		}
 
 		/**
@@ -326,7 +346,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 					unset($mrkv_ua_shipping_args['apiKey']);
 				}
 
-				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+				$obj = $this->send_nova_poshta_search($mrkv_object_nova_poshta, $mrkv_ua_shipping_args);
 				$failed = $this->is_nova_poshta_failure($obj);
 
 				if (!is_array($obj)) {
