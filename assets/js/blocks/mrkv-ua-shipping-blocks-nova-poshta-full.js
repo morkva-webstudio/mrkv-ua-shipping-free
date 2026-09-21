@@ -123,7 +123,7 @@ jQuery(window).on('load', function () {
         language: languageTexts,
         minimumInputLength: 3,
         ajax: {
-            delay: 800,
+            delay: 400,
             url: mrkv_ua_ship_helper.ajax_url,
             type: "POST",
             data: function (params) {
@@ -190,7 +190,7 @@ jQuery(window).on('load', function () {
                         language: languageTexts,
                         minimumInputLength: 3,
                         ajax: {
-                            delay: 800,
+                            delay: 400,
                             url: mrkv_ua_ship_helper.ajax_url,
                             type: "POST",
                             data: function (params) {
@@ -387,7 +387,7 @@ jQuery(window).on('load', function () {
                 language: extendedLanguage,
                 minimumInputLength: 0,
                 ajax: {
-                    delay: 400,
+                    delay: 250,
                     url: mrkv_ua_ship_helper.ajax_url,
                     type: "POST",
                     transport: function (params, success, failure) {
@@ -398,7 +398,11 @@ jQuery(window).on('load', function () {
                             return null;
                         }
 
-                        return jQuery.ajax(params).then(success).fail(failure);
+                        // Return the jqXHR itself: select2 aborts the previous request only if the transport result has abort()
+                        var request = jQuery.ajax(params);
+                        request.then(success);
+                        request.fail(failure);
+                        return request;
                     },
                     data: function (params) {
                         let city_ref = jQuery('#' + prefix + '-mrkv-ua-shipping-' + methodKey + '_city_ref').val();

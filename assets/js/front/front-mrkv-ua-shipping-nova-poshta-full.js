@@ -76,7 +76,7 @@ jQuery(window).on('load', function()
 			language: languageTexts,
 		minimumInputLength: 3,
 			ajax: {
-				delay: 800,
+				delay: 400,
 		    url: mrkv_ua_ship_helper.ajax_url,
 		    type: "POST",
 		    data: function (params) {
@@ -199,7 +199,7 @@ jQuery(window).on('load', function()
 			language: languageTexts,
 			minimumInputLength: 0,
 			ajax: {
-				delay: 400,
+				delay: 250,
 				url: mrkv_ua_ship_helper.ajax_url,
 				type: "POST",
 				data: function (params) 
@@ -354,7 +354,7 @@ jQuery(window).on('load', function()
 			language: languageTexts, 
 			minimumInputLength: 0, 
 			ajax: {
-				delay: 400,
+				delay: 250,
 				url: mrkv_ua_ship_helper.ajax_url,
 				type: "POST",
 				data: function (params) 
@@ -507,7 +507,7 @@ jQuery(window).on('load', function()
 							language: languageTexts,
 							minimumInputLength: 3,
 							ajax: {
-								delay: 800,
+								delay: 400,
 						    	url: mrkv_ua_ship_helper.ajax_url,
 						    	type: "POST",
 							    data: function (params) {
