@@ -83,15 +83,15 @@ spl_autoload_register( function( $class_name ) {
 } );
 
 /**
- * Initialize the plugin after all plugins are loaded.
+ * Load the translations.
+ *
+ * Runs on init:-1, before WooCommerce's own init:0. WooCommerce fires woocommerce_init inside
+ * its init:0 callback, and MRKV_UA_SHIPPING_BLOCKS_FIELDS reacts to it by loading
+ * constants-mrkv-ua-shipping-methods.php. That file define()s MRKV_UA_SHIPPING_LIST with __() labels
+ * once, so the textdomain has to be there already or the checkout block labels stay in English.
  */
-function mrkv_ua_shipping_init() {
-    // Ensure WooCommerce is active
-    if ( ! class_exists( 'WooCommerce' ) ) {
-        return;
-    }
-
-    $site_locale = get_locale(); 
+function mrkv_ua_shipping_load_textdomain() {
+    $site_locale = get_locale();
     $user_locale = get_user_locale();
 
     if (is_admin() && ($user_locale === 'ru_RU' || $user_locale === 'uk') && $site_locale !== $user_locale) {
@@ -99,6 +99,18 @@ function mrkv_ua_shipping_init() {
     } else {
         // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
         load_plugin_textdomain('mrkv-ua-shipping', false, dirname( plugin_basename( MRKV_UA_SHIPPING_PLUGIN_FILE ) ) . '/i18n/');
+    }
+}
+
+add_action( 'init', 'mrkv_ua_shipping_load_textdomain', -1 );
+
+/**
+ * Initialize the plugin after all plugins are loaded.
+ */
+function mrkv_ua_shipping_init() {
+    // Ensure WooCommerce is active
+    if ( ! class_exists( 'WooCommerce' ) ) {
+        return;
     }
 
     // Include plugin constants
