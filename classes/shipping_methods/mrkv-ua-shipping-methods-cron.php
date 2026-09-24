@@ -31,7 +31,114 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 		    ]);
 		}
 
+		/**
+		 * Recurrence of an already scheduled event.
+		 *
+		 * WP stores it as $crons[$timestamp][$hook][$key]['schedule'], where $key is
+		 * md5(serialize($args)). Reading [$hook]['schedule'] skips that level and always
+		 * yields null, which made the caller clear + reschedule on EVERY request: two writes
+		 * to the autoloaded `cron` option per page load, and a next-run timestamp reset to
+		 * time() each time, so the event was permanently due instead of running on schedule.
+		 *
+		 * @param string $hook      Hook name.
+		 * @param int    $timestamp Timestamp the event is scheduled at.
+		 * @return string Recurrence name, or '' when the event is not a recurring one.
+		 * */
+		private function mrkv_ua_shipping_scheduled_recurrence($hook, $timestamp)
+		{
+			$crons = _get_cron_array();
+
+			if ( ! isset($crons[$timestamp][$hook]) || ! is_array($crons[$timestamp][$hook]) ) {
+				return '';
+			}
+
+			# No args are passed when scheduling, so there is a single entry - but read it
+			# generically instead of hardcoding md5(serialize(array())).
+			foreach ( $crons[$timestamp][$hook] as $event ) {
+				if ( isset($event['schedule']) && $event['schedule'] ) {
+					return $event['schedule'];
+				}
+			}
+
+			return '';
+		}
+
+		/**
+		 * Apply a carrier status to an order, but only when it actually differs.
+		 *
+		 * update_status() calls save() unconditionally, and WC bumps date_modified and fires
+		 * woocommerce_update_order on every save - which queues a wc-admin lookup rebuild and
+		 * every registered webhook. Re-applying the status an order already has therefore cost
+		 * a full write per order per run, on every order with a TTN from the last 30 days.
+		 *
+		 * @param int    $order_id   Order ID.
+		 * @param string $new_status Target status, with or without the wc- prefix.
+		 * @return bool True when the status was changed.
+		 * */
+		private function mrkv_ua_shipping_apply_status($order_id, $new_status)
+		{
+			$new_status = str_replace('wc-', '', (string) $new_status);
+
+			if ('' === $new_status) {
+				return false;
+			}
+
+			$order = wc_get_order($order_id);
+
+			if (!$order) {
+				return false;
+			}
+
+			# Nothing to do - and, importantly, nothing to save
+			if ($order->get_status() === $new_status) {
+				return false;
+			}
+
+			# update_status() saves the order itself, a second save() would write it twice
+			$order->update_status($new_status);
+
+			return true;
+		}
+
+		/**
+		 * Run a status job at most once at a time.
+		 *
+		 * Both entry points can be triggered far more often than the job takes to finish:
+		 * WP-Cron re-spawns after its own 60s lock expires, and the REST route above is open
+		 * to anyone. Without this, runs stack up and each one walks the same orders.
+		 *
+		 * @param string   $lock_key Unique key per job.
+		 * @param callable $job      The job to run.
+		 * @return bool False when another run holds the lock.
+		 * */
+		private function mrkv_ua_shipping_run_locked($lock_key, $job)
+		{
+			$lock_key = 'mrkv_ua_shipping_lock_' . $lock_key;
+
+			if ( get_transient($lock_key) ) {
+				return false;
+			}
+
+			# TTL is only a crash guard - the lock is released right after the job
+			set_transient($lock_key, 1, 10 * MINUTE_IN_SECONDS);
+
+			try {
+				call_user_func($job);
+			} finally {
+				delete_transient($lock_key);
+			}
+
+			return true;
+		}
+
 		public function mrkv_ua_shipping_check_ttn($request)
+		{
+			$this->mrkv_ua_shipping_run_locked('np_check_ttn', function () {
+				$this->mrkv_ua_shipping_check_ttn_run();
+			});
+		}
+
+		private function mrkv_ua_shipping_check_ttn_run()
 		{
 			$log_file_date = dirname(__FILE__) . '/cron-log/cron-mrkv-ttn-status.log';
 			$log_file_offset = dirname(__FILE__) . '/cron-log/cron-mrkv-ttn-status-offset.log';
@@ -254,33 +361,25 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 				        	case '9':
 				        		if($updated_status_received)
 				        		{
-				        			$order_for_status = wc_get_order( $order->order_id );
-				        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_received));
-				        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_received );
 				        		}
 				        	break;
 				        	case '10':
 				        		if($updated_status_received)
 				        		{
-				        			$order_for_status = wc_get_order( $order->order_id );
-				        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_moneysms));
-				        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_moneysms );
 				        		}
 				        	break;
 				        	case '11':
 				        		if($updated_status_money)
 				        		{
-				        			$order_for_status = wc_get_order( $order->order_id );
-				        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_money));
-				        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_money );
 				        		}
 				        	break;
 				        	case '111':
 				        		if($updated_status_canceled)
 				        		{
-				        			$order_for_status = wc_get_order( $order->order_id );
-				        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_canceled));
-				        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_canceled );
 				        		}
 				        	break;
 				        	case '103':
@@ -288,17 +387,13 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 				        	case '105':
 				        		if($updated_status_refused)
 				        		{
-				        			$order_for_status = wc_get_order( $order->order_id );
-				        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_refused));
-				        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_refused );
 				        		}
 				        	break;
 				        	case '5':
 				        		if($updated_status_shipping)
 				        		{
-				        			$order_for_status = wc_get_order( $order->order_id );
-				        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_shipping));
-				        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_shipping );
 				        		}
 				        	break;
 				        }
@@ -329,11 +424,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 					$timestamp = wp_next_scheduled($hook);
 
 					if ( $timestamp ) {
-					    $crons = _get_cron_array();
-
-					    $current_schedule = $crons[$timestamp][$hook]['schedule'] ?? '';
-
-					    if ( $current_schedule !== $cron_frequency ) {
+					    if ( $this->mrkv_ua_shipping_scheduled_recurrence($hook, $timestamp) !== $cron_frequency ) {
 					        wp_clear_scheduled_hook($hook);
 					        wp_schedule_event(time(), $cron_frequency, $hook);
 					    }
@@ -352,6 +443,13 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 		}
 
 		public function mrknp_ua_shipping_nova_poshta_statuses_run()
+		{
+			$this->mrkv_ua_shipping_run_locked('np_statuses', function () {
+				$this->mrkv_ua_shipping_nova_poshta_statuses_do_run();
+			});
+		}
+
+		private function mrkv_ua_shipping_nova_poshta_statuses_do_run()
 		{
 			$settings = get_option('nova-poshta_m_ua_settings');
 			$change_status = (isset($settings['automation']['status']['enabled']) && $settings['automation']['status']['enabled'] == 'on'  && (!isset($settings['automation']['cron']['type']) || $settings['automation']['cron']['type'] != 'server_cron')) ? true : false;
@@ -505,33 +603,25 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 					        	case '9':
 					        		if($updated_status_received)
 					        		{
-					        			$order_for_status = wc_get_order( $order->order_id );
-					        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_received));
-					        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_received );
 					        		}
 					        	break;
 					        	case '10':
 					        		if($updated_status_received)
 					        		{
-					        			$order_for_status = wc_get_order( $order->order_id );
-					        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_moneysms));
-					        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_moneysms );
 					        		}
 					        	break;
 					        	case '11':
 					        		if($updated_status_money)
 					        		{
-					        			$order_for_status = wc_get_order( $order->order_id );
-					        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_money));
-					        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_money );
 					        		}
 					        	break;
 					        	case '111':
 					        		if($updated_status_canceled)
 					        		{
-					        			$order_for_status = wc_get_order( $order->order_id );
-					        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_canceled));
-					        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_canceled );
 					        		}
 					        	break;
 					        	case '103':
@@ -539,17 +629,13 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 				        		case '105':
 					        		if($updated_status_refused)
 					        		{
-					        			$order_for_status = wc_get_order( $order->order_id );
-					        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_refused));
-					        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_refused );
 					        		}
 					        	break;
 					        	case '5':
 					        		if($updated_status_shipping)
 					        		{
-					        			$order_for_status = wc_get_order( $order->order_id );
-					        			$order_for_status->update_status(str_replace("wc-", "", $updated_status_shipping));
-					        			$order_for_status->save();
+					        			$this->mrkv_ua_shipping_apply_status( $order->order_id, $updated_status_shipping );
 					        		}
 					        	break;
 					        }
