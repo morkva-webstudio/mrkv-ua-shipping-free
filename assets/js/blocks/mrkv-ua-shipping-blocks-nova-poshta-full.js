@@ -398,7 +398,10 @@ jQuery(window).on('load', function () {
                             return null;
                         }
 
-                        return jQuery.ajax(params).then(success).fail(failure);
+                        var request = jQuery.ajax(params);
+                        request.then(success);
+                        request.fail(failure);
+                        return request;
                     },
                     data: function (params) {
                         let city_ref = jQuery('#' + prefix + '-mrkv-ua-shipping-' + methodKey + '_city_ref').val();

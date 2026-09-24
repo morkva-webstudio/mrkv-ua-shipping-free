@@ -128,7 +128,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 				$orders = $wpdb->get_results(
 					$wpdb->prepare(
-						"SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
+						"SELECT MAX(ordermeta.meta_value) as invoice, ordermeta.post_id as order_id
 						FROM {$wpdb->prefix}postmeta as ordermeta
 						INNER JOIN (
 							SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
@@ -166,7 +166,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 				$orders = $wpdb->get_results(
 					$wpdb->prepare(
-						"SELECT ordermeta.meta_value as invoice, ordermeta.order_id
+						"SELECT MAX(ordermeta.meta_value) as invoice, ordermeta.order_id
 						FROM {$wpdb->prefix}wc_orders_meta as ordermeta
 						INNER JOIN (
 							SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
@@ -189,7 +189,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 						AND orders.status = %s
 						AND orders.date_created_gmt >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL %d DAY)
 						GROUP BY ordermeta.order_id
-						ORDER BY orders.date_created_gmt ASC
+						ORDER BY MAX(orders.date_created_gmt) ASC
 						LIMIT %d OFFSET 0",
 						'mrkv_ua_shipping_nova-poshta%', 
 						'nova_poshta_shipping_method%',  
@@ -369,7 +369,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 					$orders = $wpdb->get_results(
 						$wpdb->prepare(
-							"SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
+							"SELECT MAX(ordermeta.meta_value) as invoice, ordermeta.post_id as order_id
 							FROM {$wpdb->prefix}postmeta as ordermeta
 							INNER JOIN (
 								SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
@@ -406,7 +406,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 					$orders = $wpdb->get_results(
 						$wpdb->prepare(
-							"SELECT ordermeta.meta_value as invoice, ordermeta.order_id
+							"SELECT MAX(ordermeta.meta_value) as invoice, ordermeta.order_id
 							FROM {$wpdb->prefix}wc_orders_meta as ordermeta
 							INNER JOIN (
 								SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id
@@ -444,7 +444,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 					$orders = $wpdb->get_results(
 						$wpdb->prepare(
-							"SELECT ordermeta.meta_value as invoice, ordermeta.post_id as order_id
+							"SELECT MAX(ordermeta.meta_value) as invoice, ordermeta.post_id as order_id
 							FROM {$wpdb->prefix}postmeta as ordermeta
 							INNER JOIN (
 								SELECT orderitemmeta.meta_value as rate_id, orderitem.order_id as order_id

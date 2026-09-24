@@ -4,7 +4,7 @@
 ?>
 <section id="basic_settings" class="mrkv_up_ship_shipping_tab_block active">
 	<h2><img src="<?php echo esc_url(MRKV_UA_SHIPPING_ASSETS_URL . '/images/global/settings-icon.svg'); ?>" alt="Basic settings" title="Basic settings"><?php echo esc_html__('Basic settings', 'mrkv-ua-shipping'); ?></h2>
-	<p><?php echo esc_html__('For the shipping method to work, you need to get API keys from Ukrposhta (conclude an agreement at the branch). Details:', 'mrkv-ua-shipping'); ?> <a target="blanc" href="https://ukrposhta.ua/ukrposhta-dlya-biznesu.html">ukrposhta.ua</a></p>
+	<p><?php echo esc_html__('For the shipping method to work, you need to get API keys from Ukrposhta (conclude an agreement at the branch). Details:', 'mrkv-ua-shipping'); ?> <a target="_blank" href="https://ukrposhta.ua/ukrposhta-dlya-biznesu.html">ukrposhta.ua</a></p>
 	<hr class="mrkv-ua-ship__hr">
 	<?php do_action('mrkv_ua_shipping_settings_page_row', 'ukr-poshta', 'basic_first'); ?>
 	<div class="admin_ua_ship_morkva_settings_row">
@@ -603,7 +603,7 @@
 				?>
 			</div>
 		</div>
-		<p class="mrkv-ua-ship-description"><?php echo esc_html__('Options affect the shipping cost. Delivery is calculated in the currency specified ', 'mrkv-ua-shipping'); ?><a href="admin.php?page=wc-settings&tab=general" target="blanc"><?php echo esc_html__('in the Woocommerce settings', 'mrkv-ua-shipping'); ?></a></p>
+		<p class="mrkv-ua-ship-description"><?php echo esc_html__('Options affect the shipping cost. Delivery is calculated in the currency specified ', 'mrkv-ua-shipping'); ?><a href="admin.php?page=wc-settings&tab=general" target="_blank"><?php echo esc_html__('in the Woocommerce settings', 'mrkv-ua-shipping'); ?></a></p>
 	</div>
 	<?php do_action('mrkv_ua_shipping_settings_page_row', 'ukr-poshta', 'sender_middle_12'); ?>
 	<div class="admin_ua_ship_morkva_settings_line mrkv-field-disabled">

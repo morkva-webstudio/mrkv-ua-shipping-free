@@ -25,7 +25,7 @@
 			}
 		?>
 		<a class="<?php if($mrkv_ua_shipping_current_page == 'mrkv_ua_shipping_about_us'){ echo 'active'; } ?>" href="<?php echo esc_url($mrkv_ua_shipping_header_pre_link); ?>mrkv_ua_shipping_about_us"><?php echo esc_html__('About us', 'mrkv-ua-shipping'); ?></a>
-		<a class="admin_mrkv_ua_shipping_morkva-logo" href="https://morkva.co.ua/" target="blanc">
+		<a class="admin_mrkv_ua_shipping_morkva-logo" href="https://morkva.co.ua/" target="_blank">
 			<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global/morkva-logo.svg'); ?>" alt="morkva" title="morkva">
 		</a>
 	</div>

@@ -172,7 +172,19 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				unset($mrkv_ua_shipping_args['apiKey']);
 			}
 
-			$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args);
+
+			$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+
+			if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
+				usleep(400000);
+				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+			}
+
+			$failed = !is_array($obj) || !isset($obj['data']) || (isset($obj['success']) && !$obj['success']);
+
+			if (!is_array($obj)) {
+				$obj = array();
+			}
 
 			if ($mrkv_object_nova_poshta->active_api !== true) {
 				if (!isset($obj['data']) || !isset($obj['data'][0]['Addresses'][0])) {
@@ -187,6 +199,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 					if (!is_wp_error($response)) {
 						$city_array = json_decode(wp_remote_retrieve_body($response), true);
 						$obj['data'][0]['Addresses'] = $city_array;
+						$failed = !is_array($city_array);
 					}
 				}
 			}
@@ -204,7 +217,14 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				}
 			}
 
-			set_transient($transient_key, $areas, DAY_IN_SECONDS);
+			if (empty($areas)) {
+				if ($failed) {
+					wp_send_json_error(array('message' => __('Nova Poshta is not available, try again.', 'mrkv-ua-shipping')), 502);
+				}
+			}
+			else {
+				set_transient($transient_key, $areas, DAY_IN_SECONDS);
+			}
 
 			echo wp_json_encode($areas);
 			wp_die();
@@ -281,7 +301,18 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] = '9a68df70-0267-42a8-bb5c-37f427e36ee4';
 			}
 
-			$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args);
+			$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+
+			if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
+				usleep(400000);
+				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+			}
+
+			$failed = !is_array($obj) || !isset($obj['data']) || (isset($obj['success']) && !$obj['success']);
+
+			if (!is_array($obj)) {
+				$obj = array();
+			}
 
 			if ($mrkv_object_nova_poshta->active_api !== true) {
 				if (!isset($obj['data']) || !isset($obj['data'][0])) {
@@ -295,6 +326,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 					if (!is_wp_error($response)) {
 						$obj['data'] = json_decode(wp_remote_retrieve_body($response), true);
+						$failed = false;
 					}
 				}
 			}
@@ -313,6 +345,12 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 			if ($page === 1 && !empty($areas)) {
 				array_unshift($areas, $placeholder_item);
+			}
+
+			if (empty($areas)) {
+				if ($failed) {
+					wp_send_json_error(array('message' => __('Nova Poshta is not available, try again.', 'mrkv-ua-shipping')), 502);
+				}
 			}
 
 			echo wp_json_encode($areas);

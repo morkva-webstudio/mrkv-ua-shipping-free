@@ -20,11 +20,11 @@
 			                </div>
 			            </label>
 					</div>
-					<a class="mrkv_ua_ship_print" target="blanc">
+					<a class="mrkv_ua_ship_print" target="_blank">
 						<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/printer-icon.svg" alt="<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Print', 'mrkv-ua-shipping'); ?>">
 						<?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?>
 					</a>
-					<a class="mrkv_ua_ship_print" target="blanc">
+					<a class="mrkv_ua_ship_print" target="_blank">
 						<img src="<?php echo esc_url(MRKV_UA_SHIPPING_IMG_URL . '/global'); ?>/sticker-icon.svg" alt="<?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?>" title="<?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?>">
 						<?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?>
 					</a>

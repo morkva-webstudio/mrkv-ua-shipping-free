@@ -52,11 +52,11 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 		 * 
 		 * @return mixed Answer
 		 * */
-		public function send_post_request($params) 
+		public function send_post_request($params, $timeout = 30) 
 	    {
 	    	# Create arguments
 			$mrkv_ua_shipping_args = array(
-				'timeout' => 30,
+				'timeout' => $timeout,
 				'redirection' => 10,
 				'httpversion' => '1.0',
 				'blocking' => true,
@@ -118,6 +118,13 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    {
 	    	if(isset($this->settings_method['api_key']) && $this->settings_method['api_key'])
 	    	{
+				$cache_key = 'mrkv_np_key_ok_' . md5($this->settings_method['api_key']);
+
+	    		if(get_transient($cache_key))
+	    		{
+	    			return true;
+	    		}
+
 	    		# Set arguments
 	    		$mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->settings_method['api_key'],
@@ -130,6 +137,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 
 	    		if(is_array($obj) && isset($obj['success']) && $obj['success'] == true)
 	    		{
+					set_transient($cache_key, 1, HOUR_IN_SECONDS);
 	    			update_option('mrkv_api_fixed_np', false);
 	    			return true;
 	    		}

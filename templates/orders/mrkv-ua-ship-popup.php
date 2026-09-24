@@ -100,8 +100,8 @@
         </div>
         <div class="mrkv_ua_ship_create_invoice__footer">
             <a class="close-error-mrkv-ua-ship"><?php echo esc_html__('Turn back', 'mrkv-ua-shipping'); ?></a>
-            <a style="display:none;" target="blanc" class="print-ttn-mrkv-ua-ship" data-ship="" data-invoice="" data-form=""><?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?></a>
-            <a style="display: none;" href="" class="print-sticker-mrkv-ua-ship" target="blanc"><?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?></a>
+            <a style="display:none;" target="_blank" class="print-ttn-mrkv-ua-ship" data-ship="" data-invoice="" data-form=""><?php echo esc_html__('Print invoice', 'mrkv-ua-shipping'); ?></a>
+            <a style="display: none;" href="" class="print-sticker-mrkv-ua-ship" target="_blank"><?php echo esc_html__('Print sticker', 'mrkv-ua-shipping'); ?></a>
         </div>
     </div>
 </div>

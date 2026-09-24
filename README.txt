@@ -3,7 +3,7 @@ Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.12.3
+Stable tag: 1.13.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,12 @@ https://youtu.be/47-VrH_QJAE
 
 
 == Changelog ==
+
+= 1.13.0 =
+* [new] оптимізували налаштування
+* [new] оптимізували перевірку ключів API НП
+* [fix] виправили оновлення статусів ТТН НП HPOS
+* [fix] виправили переклад
 
 = 1.12.3 =
 * [new] додали вивід напису за тарифами перевізника у оновленому шаблоні email Woocommerce 
