@@ -722,6 +722,17 @@
 					?>					
 				</div>
 			</div>
+			<div class="admin_ua_ship_morkva_settings_row">
+				<div class="col-mrkv-5">
+					<p><?php echo esc_html__('Destroyed as a result of an enemy attack', 'mrkv-ua-shipping'); ?></p>
+				</div>
+				<div class="col-mrkv-5">
+					<?php 
+						$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['automation']['status']['124']) ? MRKV_SHIPPING_SETTINGS['automation']['status']['124'] : '';
+						echo wp_kses($mrkv_global_option_generator->get_select_simple('', MRKV_OPTION_OBJECT_NAME . '[automation][status][124]', $mrkv_ua_shipping_all_order_statuses, $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_automation_status_124' , __('Choose a status', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
+					?>					
+				</div>
+			</div>
 		</div>
 	</div>
 	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'automation_middle_4'); ?>
