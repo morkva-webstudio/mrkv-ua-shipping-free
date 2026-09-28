@@ -442,4 +442,18 @@ jQuery(window).on('load', function()
 	        return weight;
 	    }
 	}
+
+	let mrkvUaShipMiddlenameRequiredToggle = function() {
+		const middlenameEnabled = jQuery('#nova-poshta_m_ua_settings_checkout_middlename_enabled').is(':checked');
+		const middlenameRequired = jQuery('#nova-poshta_m_ua_settings_checkout_middlename_required');
+
+		if (!middlenameEnabled) {
+			middlenameRequired.prop('checked', false).prop('disabled', true);
+		} else {
+			middlenameRequired.prop('disabled', false);
+		}
+	};
+
+	mrkvUaShipMiddlenameRequiredToggle();
+	jQuery('#nova-poshta_m_ua_settings_checkout_middlename_enabled').change(function() { mrkvUaShipMiddlenameRequiredToggle(); });
 });
