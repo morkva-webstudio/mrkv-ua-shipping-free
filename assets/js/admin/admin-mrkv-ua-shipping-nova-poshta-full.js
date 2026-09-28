@@ -272,8 +272,6 @@ jQuery(window).on('load', function()
 		}
 	}
 
-	const submitBtn = jQuery('#submit');
-
     function validateSettings() {
         const apiKey = jQuery('#nova-poshta_m_ua_settings_api_key');
         const counterpartyRef = jQuery('#nova-poshta_m_ua_settings_sender_counterparty_ref');
@@ -293,40 +291,33 @@ jQuery(window).on('load', function()
             isAddressValid = jQuery.trim(streetRef) !== '' && jQuery.trim(houseNum) !== '';
         }
 
+        // Informational only — incomplete sender must not block saving other tabs (e.g. automation_settings).
         if (isCredentialsEntered && !isAddressValid) {
-            submitBtn.addClass('custom-disabled').css({
-                'opacity': '0.5',
-                'cursor': 'not-allowed'
-            });
+            jQuery('.admin_ua_ship_morkva_settings_line.mrkv_ua_ship_form_create_address').addClass('mrkv-field-error');
         } else {
-            submitBtn.removeClass('custom-disabled').css({
-                'opacity': '1',
-                'cursor': 'pointer'
-            });
+            jQuery('.admin_ua_ship_morkva_settings_line.mrkv_ua_ship_form_create_address').removeClass('mrkv-field-error');
         }
     }
 
     validateSettings();
 
-    jQuery(document).on('input change', 
+    jQuery(document).on('input change',
         '#nova-poshta_m_ua_settings_api_key, ' +
         '#nova-poshta_m_ua_settings_sender_counterparty_ref, ' +
         'input[name="nova-poshta_m_ua_settings[sender][address_type]"], ' +
         'input[name="nova-poshta_m_ua_settings[sender][warehouse][ref]"], ' +
         'input[name="nova-poshta_m_ua_settings[sender][street][ref]"], ' +
-        'input[name="nova-poshta_m_ua_settings[sender][street][house]"]', 
+        'input[name="nova-poshta_m_ua_settings[sender][street][house]"]',
         validateSettings
     );
 
-    submitBtn.on('click', function(e) {
-        if (jQuery(this).hasClass('custom-disabled')) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            
-            alert('Виберіть місто та відділення відправки, та натисніть “додати”. Після цього можете зберегти налаштування.');
-            return false;
-        }
-    });
+	let mrkvUaShipAutomationStatusToggle = function() {
+		const automationStatusEnabled = jQuery('#nova-poshta_m_ua_settings_automation_status_enabled').is(':checked');
+		jQuery('.mrkv-automation-status-block').toggle(automationStatusEnabled);
+	};
+
+	mrkvUaShipAutomationStatusToggle();
+	jQuery('#nova-poshta_m_ua_settings_automation_status_enabled').change(function() { mrkvUaShipAutomationStatusToggle(); });
 
 	let autoSelectCityPo = function() 
 	{

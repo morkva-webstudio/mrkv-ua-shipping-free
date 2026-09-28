@@ -647,7 +647,7 @@
 			$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['automation']['status']['enabled']) ? MRKV_SHIPPING_SETTINGS['automation']['status']['enabled'] : '';
 			echo wp_kses($mrkv_global_option_generator->get_input_checkbox(__('Automatically change order status', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[automation][status][enabled]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_automation_status_enabled', ), MRKV_UA_SHIPPING_ALLOW_TAGS);
 		?>
-		<div class="admin_ua_ship_morkva_settings_line__inner inner-align">
+		<div class="admin_ua_ship_morkva_settings_line__inner inner-align mrkv-automation-status-block">
 			<div class="admin_ua_ship_morkva_settings_row">
 				<div class="col-mrkv-5">
 					<h4><?php echo esc_html__('Tracking status of Nova Poshta', 'mrkv-ua-shipping'); ?></h4>
