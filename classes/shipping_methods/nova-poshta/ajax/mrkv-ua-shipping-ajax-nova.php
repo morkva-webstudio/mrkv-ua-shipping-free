@@ -186,7 +186,12 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$obj = array();
 			}
 
-			if ($mrkv_object_nova_poshta->active_api !== true) {
+			if ($mrkv_object_nova_poshta->active_api === true && $failed) {
+				# The key check is cached for an hour: a key that died meanwhile must be re-checked next time.
+				delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
+			}
+
+			if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
 				if (!isset($obj['data']) || !isset($obj['data'][0]['Addresses'][0])) {
 					$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
 						'timeout' => 10,
@@ -314,7 +319,11 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$obj = array();
 			}
 
-			if ($mrkv_object_nova_poshta->active_api !== true) {
+			if ($mrkv_object_nova_poshta->active_api === true && $failed) {
+				delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
+			}
+
+			if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
 				if (!isset($obj['data']) || !isset($obj['data'][0])) {
 					$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
 						'timeout' => 10,
