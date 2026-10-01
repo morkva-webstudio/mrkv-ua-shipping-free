@@ -173,11 +173,13 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			}
 
 
-			$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+			# While the Nova Poshta API is known to be down go straight to the proxy instead of waiting for it again.
+			$api_skipped = MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down();
+			$obj = $api_skipped ? array() : $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
 
 			if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
 				usleep(400000);
-				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
 			}
 
 			$failed = !is_array($obj) || !isset($obj['data']) || (isset($obj['success']) && !$obj['success']);
@@ -186,7 +188,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$obj = array();
 			}
 
-			if ($mrkv_object_nova_poshta->active_api === true && $failed) {
+			if ($mrkv_object_nova_poshta->active_api === true && $failed && !$api_skipped) {
 				delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
 			}
 
@@ -305,11 +307,13 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] = '9a68df70-0267-42a8-bb5c-37f427e36ee4';
 			}
 
-			$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+			# While the Nova Poshta API is known to be down go straight to the proxy instead of waiting for it again.
+			$api_skipped = MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down();
+			$obj = $api_skipped ? array() : $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
 
 			if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
 				usleep(400000);
-				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, 10);
+				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
 			}
 
 			$failed = !is_array($obj) || !isset($obj['data']) || (isset($obj['success']) && !$obj['success']);
@@ -318,7 +322,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$obj = array();
 			}
 
-			if ($mrkv_object_nova_poshta->active_api === true && $failed) {
+			if ($mrkv_object_nova_poshta->active_api === true && $failed && !$api_skipped) {
 				delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
 			}
 

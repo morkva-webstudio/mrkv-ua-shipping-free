@@ -36,6 +36,25 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 		public $slug_method = 'nova-poshta';
 
 		/**
+		 * @var int Timeout (s) for city/warehouse lookups: the proxy is the fallback, so do not wait long
+		 * */
+		const LOOKUP_TIMEOUT = 4;
+
+		/**
+		 * @var string Transient set while the API is unreachable
+		 * */
+		const API_DOWN_TRANSIENT = 'mrkv_np_api_down';
+
+		/**
+		 * Is the API marked unreachable (connection error or 5xx within the last minutes)
+		 * @return bool
+		 * */
+		public static function is_api_down()
+		{
+			return (bool) get_transient(self::API_DOWN_TRANSIENT);
+		}
+
+		/**
 		 * Constructor for nova poshta api
 		 * */
 		function __construct($settings)
@@ -73,6 +92,12 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 
 			# Send request
 			$response = wp_remote_post( $this->api_url, $mrkv_ua_shipping_args );
+
+			# Remember an unreachable API so lookups skip it and use the proxy at once
+			if ( is_wp_error( $response ) || (int) wp_remote_retrieve_response_code( $response ) >= 500 )
+			{
+				set_transient(self::API_DOWN_TRANSIENT, 1, 2 * MINUTE_IN_SECONDS);
+			}
 
 			# Check answer
 			if ( is_wp_error( $response ) ) 
@@ -125,6 +150,12 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    			return true;
 	    		}
 
+	    		# API is down: do not block on the key check, the key is not proven wrong
+	    		if(self::is_api_down())
+	    		{
+	    			return false;
+	    		}
+
 	    		# Set arguments
 	    		$mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->settings_method['api_key'],
@@ -133,7 +164,12 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 		        );
 
 	    		# Send request
-	    		$obj = $this->send_post_request( $mrkv_ua_shipping_args );
+	    		$obj = $this->send_post_request( $mrkv_ua_shipping_args, 10 );
+
+	    		if(self::is_api_down())
+	    		{
+	    			return false;
+	    		}
 
 	    		if(is_array($obj) && isset($obj['success']) && $obj['success'] == true)
 	    		{
