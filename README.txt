@@ -3,7 +3,7 @@ Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.13.1
+Stable tag: 1.13.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,11 @@ https://youtu.be/47-VrH_QJAE
 
 
 == Changelog ==
+
+= 1.13.2 =
+* [fix] виправили оффлайн завантаження полів НП 
+* [fix] виправили warnings
+* [fix] виправили налаштування по-батькові НП
 
 = 1.13.1 =
 * [new] додали новий статус ТТН НП Знищено внаслідок ворожої атаки

@@ -454,6 +454,9 @@
 	gap: 10px;
 	align-items: center;
 }
+.adm_morkva_row_size > span{
+	flex-shrink: 0;
+}
 .admin_ua_ship_morkva_settings_line input[type="number"]:focus{
 	border-color: #ed6230;
     box-shadow: unset;

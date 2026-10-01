@@ -749,11 +749,11 @@ jQuery(window).on('load', function()
 
  	function npCheckPaymentMethod() 
  	{
- 		if(mrkv_ua_ship_helper.up_middlename_exclude == 'yes')
+ 		if(mrkv_ua_ship_helper.nova_middlename_exclude == 'yes') 
  		{
  			jQuery('#mrkv_ua_shipping_nova-poshta_address_patronymic_field').hide();
  		}
- 		if(mrkv_ua_ship_helper.up_middlename_required == 'no')
+ 		if(mrkv_ua_ship_helper.nova_middlename_required == 'no')
  		{
  			jQuery('#mrkv_ua_shipping_nova-poshta_address_patronymic_enabled').val('off');
  			jQuery('label[for="mrkv_ua_shipping_nova-poshta_address_patronymic"] abbr').hide();

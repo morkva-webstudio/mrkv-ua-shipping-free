@@ -137,6 +137,11 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 		    	if(!isset($_POST[$this->current_shipping . $field_id]) || $_POST[$this->current_shipping . $field_id] == ''
 		    		|| ($options_data_loader && $_POST[$this->current_shipping . $field_id] == $options_data_loader))
 		    	{
+					if(isset($field_val['exclude']) && $field_val['exclude'] && isset($_POST[$this->current_shipping . $field_id . '_enabled']) && $_POST[$this->current_shipping . $field_id . '_enabled'] == 'off')
+		    		{
+		    			continue;
+		    		}
+
 		    		if(isset($settings['checkout']['middlename']['required']) && $settings['checkout']['middlename']['required'] == 'on' && '_patronymic' == $field_id)
 					{
 						$translated_field_val = $mrkv_ua_shipping_translate_labels[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'][$field_id]['label'];
@@ -146,11 +151,6 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 		    			return;	
 
 					}
-
-		    		if(isset($field_val['exclude']) && $field_val['exclude'] && isset($_POST[$this->current_shipping . $field_id . '_enabled']) && $_POST[$this->current_shipping . $field_id . '_enabled'] == 'off')
-		    		{
-		    			continue;
-		    		}
 
 		    		if(isset($field_val['required']) && !$field_val['required'])
 		    		{

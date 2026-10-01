@@ -277,6 +277,7 @@ jQuery(window).on('load', function()
     function validateSettings() {
         const apiKey = jQuery('#nova-poshta_m_ua_settings_api_key');
         const counterpartyRef = jQuery('#nova-poshta_m_ua_settings_sender_counterparty_ref');
+		const isApiKeyCorrect = jQuery('label[for="nova-poshta_m_ua_settings_api_key"] .admin_ua_ship_morkva__notification').hasClass('mrkv-notification-green');
         
         const isCredentialsEntered = jQuery.trim(apiKey.val()) !== '' && jQuery.trim(counterpartyRef.val()) !== '';
 
@@ -293,17 +294,19 @@ jQuery(window).on('load', function()
             isAddressValid = jQuery.trim(streetRef) !== '' && jQuery.trim(houseNum) !== '';
         }
 
-        if (isCredentialsEntered && !isAddressValid) {
+        if (isApiKeyCorrect && isCredentialsEntered && !isAddressValid) {
             submitBtn.addClass('custom-disabled').css({
                 'opacity': '0.5',
                 'cursor': 'not-allowed'
             });
-        } else {
-            submitBtn.removeClass('custom-disabled').css({
-                'opacity': '1',
-                'cursor': 'pointer'
-            });
         }
+		if(isApiKeyCorrect){
+			submitBtn.addClass('custom-disabled').css({
+				'opacity': '0.5',
+				'cursor': 'not-allowed'
+			});
+			return false;
+		}
     }
 
     validateSettings();
@@ -442,4 +445,18 @@ jQuery(window).on('load', function()
 	        return weight;
 	    }
 	}
+
+	let mrkvUaShipMiddlenameRequiredToggle = function() {
+		const middlenameEnabled = jQuery('#nova-poshta_m_ua_settings_checkout_middlename_enabled').is(':checked');
+		const middlenameRequired = jQuery('#nova-poshta_m_ua_settings_checkout_middlename_required');
+
+		if (!middlenameEnabled) {
+			middlenameRequired.prop('checked', false).prop('disabled', true);
+		} else {
+			middlenameRequired.prop('disabled', false);
+		}
+	};
+
+	mrkvUaShipMiddlenameRequiredToggle();
+	jQuery('#nova-poshta_m_ua_settings_checkout_middlename_enabled').change(function() { mrkvUaShipMiddlenameRequiredToggle(); });
 });

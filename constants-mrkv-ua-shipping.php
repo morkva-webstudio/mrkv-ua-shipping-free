@@ -74,4 +74,9 @@ define( 'MRKV_UA_SHIPPING_ALLOW_TAGS', array(
     'span' => array(
         'class' => true,
     ),
+    'a' => array(
+        'class' => true,
+        'href' => true,
+        'target' => true,
+    ),
 ) );

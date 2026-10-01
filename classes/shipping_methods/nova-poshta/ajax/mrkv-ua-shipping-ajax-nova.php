@@ -186,9 +186,13 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$obj = array();
 			}
 
-			if ($mrkv_object_nova_poshta->active_api !== true) {
+			if ($mrkv_object_nova_poshta->active_api === true && $failed) {
+				delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
+			}
+
+			if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
 				if (!isset($obj['data']) || !isset($obj['data'][0]['Addresses'][0])) {
-					$response = wp_remote_get('https://np.morkva.co.ua/api.php', [
+					$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
 						'timeout' => 10,
 						'body' => [
 							'query_type' => 'city',
@@ -314,9 +318,13 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$obj = array();
 			}
 
-			if ($mrkv_object_nova_poshta->active_api !== true) {
+			if ($mrkv_object_nova_poshta->active_api === true && $failed) {
+				delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
+			}
+
+			if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
 				if (!isset($obj['data']) || !isset($obj['data'][0])) {
-					$response = wp_remote_get('https://np.morkva.co.ua/api.php', [
+					$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
 						'timeout' => 10,
 						'body' => [
 							'query_type' => 'warehouse_poshtomat',
@@ -352,6 +360,11 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 					wp_send_json_error(array('message' => __('Nova Poshta is not available, try again.', 'mrkv-ua-shipping')), 502);
 				}
 			}
+
+			array_unshift($areas, array(
+				'value' => '',
+				'label' => __('Choose the street', 'mrkv-ua-shipping')
+			));
 
 			echo wp_json_encode($areas);
 			wp_die();
@@ -401,6 +414,11 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 	        			'label' => $area['StreetsType'] . ' ' . $area['Description']
 	        		);
 	        	}
+
+				array_unshift($areas, array(
+					'value' => '',
+					'label' => __('Choose the street', 'mrkv-ua-shipping')
+				));
 
 	        	# Return object
 	        	echo wp_json_encode($areas);
