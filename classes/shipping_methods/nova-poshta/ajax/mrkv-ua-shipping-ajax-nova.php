@@ -365,11 +365,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				}
 			}
 
-			array_unshift($areas, array(
-				'value' => '',
-				'label' => __('Choose the street', 'mrkv-ua-shipping')
-			));
-
 			echo wp_json_encode($areas);
 			wp_die();
 		}
