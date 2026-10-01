@@ -237,6 +237,28 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 		}
 
 		/**
+		 * Narrow the full list of a city, as the proxy answers it, to what the Nova Poshta API would
+		 * return for this search and page
+		 * @param array Every warehouse of the city
+		 * @param string Search text
+		 * @param int Page, from 1
+		 * @param int Rows per page
+		 * @return array Rows of the page
+		 * */
+		private function paginate_proxy_warehouses($rows, $search, $page, $limit)
+		{
+			$search = trim($search);
+
+			if ($search !== '') {
+				$rows = array_filter($rows, function ($row) use ($search) {
+					return false !== mb_stripos(($row['Description'] ?? '') . ' ' . ($row['Number'] ?? ''), $search);
+				});
+			}
+
+			return array_slice(array_values($rows), (max($page, 1) - 1) * $limit, $limit);
+		}
+
+		/**
 		 * Get Nova poshta Warehouse
 		 * */
 		public function get_nova_poshta_warehouse()
@@ -307,51 +329,67 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] = '9a68df70-0267-42a8-bb5c-37f427e36ee4';
 			}
 
-			# While the Nova Poshta API is known to be down go straight to the proxy instead of waiting for it again.
-			$api_skipped = MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down();
-			$obj = $api_skipped ? array() : $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
+			# The same search gives the same answer: cache by everything that shapes the request
+			$cache_properties = $mrkv_ua_shipping_args['methodProperties'];
+			$cache_properties['FindByString'] = mb_strtolower($cache_properties['FindByString']);
+			$transient_key = 'mrkv_np_wh_' . md5(wp_json_encode($cache_properties));
+			$areas = get_transient($transient_key);
+			$failed = false;
 
-			if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
-				usleep(400000);
-				$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
-			}
+			if (false === $areas) {
+				# While the Nova Poshta API is known to be down go straight to the proxy instead of waiting for it again.
+				$api_skipped = MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down();
+				$obj = $api_skipped ? array() : $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
 
-			$failed = !is_array($obj) || !isset($obj['data']) || (isset($obj['success']) && !$obj['success']);
+				if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
+					usleep(400000);
+					$obj = $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
+				}
 
-			if (!is_array($obj)) {
-				$obj = array();
-			}
+				$failed = !is_array($obj) || !isset($obj['data']) || (isset($obj['success']) && !$obj['success']);
 
-			if ($mrkv_object_nova_poshta->active_api === true && $failed && !$api_skipped) {
-				delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
-			}
+				if (!is_array($obj)) {
+					$obj = array();
+				}
 
-			if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
-				if (!isset($obj['data']) || !isset($obj['data'][0])) {
-					$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
-						'timeout' => 10,
-						'body' => [
-							'query_type' => 'warehouse_poshtomat',
-							'city_ref' => $city_ref,
-						]
-					]);
+				if ($mrkv_object_nova_poshta->active_api === true && $failed && !$api_skipped) {
+					delete_transient('mrkv_np_key_ok_' . md5($mrkv_object_nova_poshta->get_api_key()));
+				}
 
-					if (!is_wp_error($response)) {
-						$obj['data'] = json_decode(wp_remote_retrieve_body($response), true);
-						$failed = false;
+				if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
+					if (!isset($obj['data']) || !isset($obj['data'][0])) {
+						$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
+							'timeout' => 10,
+							'body' => [
+								'query_type' => 'warehouse_poshtomat',
+								'city_ref' => $city_ref,
+							]
+						]);
+
+						if (!is_wp_error($response)) {
+							# The proxy returns every warehouse of the city: serve only the requested page
+							$proxy_rows = json_decode(wp_remote_retrieve_body($response), true);
+							$obj['data'] = is_array($proxy_rows) ? $this->paginate_proxy_warehouses($proxy_rows, $key_search, $page, $limit) : $proxy_rows;
+							$failed = !is_array($proxy_rows);
+						}
 					}
 				}
-			}
 
-			$areas = array();
-			if (isset($obj['data'][0])) {
-				foreach ($obj['data'] as $area) {
-					$areas[] = array(
-						'value' => $area['Ref'],
-						'label' => $area['Description'],
-						'number' => $area['Number'],
-						'zipcode' => $area['PostalCodeUA']
-					);
+				$areas = array();
+				if (isset($obj['data'][0])) {
+					foreach ($obj['data'] as $area) {
+						$areas[] = array(
+							'value' => $area['Ref'],
+							'label' => $area['Description'],
+							'number' => $area['Number'],
+							'zipcode' => $area['PostalCodeUA']
+						);
+					}
+				}
+
+				# Only a real answer is cached: a failure or a search with no matches must not stick
+				if (!empty($areas)) {
+					set_transient($transient_key, $areas, apply_filters('mrkv_ua_shipping_np_warehouses_cache_ttl', 6 * HOUR_IN_SECONDS));
 				}
 			}
 
