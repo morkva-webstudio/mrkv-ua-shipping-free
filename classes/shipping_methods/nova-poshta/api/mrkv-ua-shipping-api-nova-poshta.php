@@ -46,12 +46,47 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 		const API_DOWN_TRANSIENT = 'mrkv_np_api_down';
 
 		/**
+		 * @var string Transient counting failures in a row, to lengthen the down mark
+		 * */
+		const API_DOWN_STREAK_TRANSIENT = 'mrkv_np_api_down_streak';
+
+		/**
+		 * @var int[] Minutes the down mark lasts after the 1st, 2nd, 3rd, 4th+ failure in a row
+		 * */
+		const API_DOWN_MINUTES = array(2, 5, 15, 60);
+
+		/**
 		 * Is the API marked unreachable (connection error or 5xx within the last minutes)
 		 * @return bool
 		 * */
 		public static function is_api_down()
 		{
 			return (bool) get_transient(self::API_DOWN_TRANSIENT);
+		}
+
+		/**
+		 * Mark the API unreachable. Every failure in a row lengthens the mark (2, 5, 15, 60 min), so a long
+		 * outage costs one probe an hour, not one every 2 minutes
+		 * */
+		private static function mark_api_down()
+		{
+			$streak = (int) get_transient(self::API_DOWN_STREAK_TRANSIENT) + 1;
+			$minutes = self::API_DOWN_MINUTES[min($streak, count(self::API_DOWN_MINUTES)) - 1];
+			$seconds = (int) apply_filters('mrkv_ua_shipping_np_api_down_ttl', $minutes * MINUTE_IN_SECONDS, $streak);
+
+			set_transient(self::API_DOWN_STREAK_TRANSIENT, $streak, DAY_IN_SECONDS);
+			set_transient(self::API_DOWN_TRANSIENT, 1, max(MINUTE_IN_SECONDS, $seconds));
+		}
+
+		/**
+		 * The API answered: drop the down mark and the failure count
+		 * */
+		private static function mark_api_up()
+		{
+			if (get_transient(self::API_DOWN_STREAK_TRANSIENT)) {
+				delete_transient(self::API_DOWN_STREAK_TRANSIENT);
+				delete_transient(self::API_DOWN_TRANSIENT);
+			}
 		}
 
 		/**
@@ -96,7 +131,11 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 			# Remember an unreachable API so lookups skip it and use the proxy at once
 			if ( is_wp_error( $response ) || (int) wp_remote_retrieve_response_code( $response ) >= 500 )
 			{
-				set_transient(self::API_DOWN_TRANSIENT, 1, 2 * MINUTE_IN_SECONDS);
+				self::mark_api_down();
+			}
+			else
+			{
+				self::mark_api_up();
 			}
 
 			# Check answer
