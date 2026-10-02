@@ -243,11 +243,19 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 		 * @param string Search text
 		 * @param int Page, from 1
 		 * @param int Rows per page
+		 * @param string TypeOfWarehouseRef sent to the API (poshtomat, cargo branch), empty for any type
 		 * @return array Rows of the page
 		 * */
-		private function paginate_proxy_warehouses($rows, $search, $page, $limit)
+		private function paginate_proxy_warehouses($rows, $search, $page, $limit, $type_ref = '')
 		{
 			$search = trim($search);
+
+			# Rows from a proxy copy synced before it kept TypeOfWarehouse have no type: let them through
+			if ($type_ref !== '') {
+				$rows = array_filter($rows, function ($row) use ($type_ref) {
+					return empty($row['TypeOfWarehouse']) || $row['TypeOfWarehouse'] === $type_ref;
+				});
+			}
 
 			if ($search !== '') {
 				$rows = array_filter($rows, function ($row) use ($search) {
@@ -369,7 +377,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 						if (!is_wp_error($response)) {
 							# The proxy returns every warehouse of the city: serve only the requested page
 							$proxy_rows = json_decode(wp_remote_retrieve_body($response), true);
-							$obj['data'] = is_array($proxy_rows) ? $this->paginate_proxy_warehouses($proxy_rows, $key_search, $page, $limit) : $proxy_rows;
+							$obj['data'] = is_array($proxy_rows) ? $this->paginate_proxy_warehouses($proxy_rows, $key_search, $page, $limit, $mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] ?? '') : $proxy_rows;
 							$failed = !is_array($proxy_rows);
 						}
 					}
