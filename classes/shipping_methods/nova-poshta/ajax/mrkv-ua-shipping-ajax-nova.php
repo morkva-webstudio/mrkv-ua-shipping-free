@@ -237,36 +237,6 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 		}
 
 		/**
-		 * Narrow the whole city, as a proxy without pagination answers, to what the Nova Poshta API
-		 * returns for this search, type and page
-		 * @param array Every warehouse of the city
-		 * @param string Search text
-		 * @param int Page, from 1
-		 * @param int Rows per page
-		 * @param string TypeOfWarehouseRef sent to the API, empty for any type
-		 * @return array Rows of the page
-		 * */
-		private function paginate_proxy_warehouses($rows, $search, $page, $limit, $type_ref = '')
-		{
-			$search = trim($search);
-
-			# Rows without a type (proxy copy synced before it kept TypeOfWarehouse) are let through
-			if ($type_ref !== '') {
-				$rows = array_filter($rows, function ($row) use ($type_ref) {
-					return empty($row['TypeOfWarehouse']) || $row['TypeOfWarehouse'] === $type_ref;
-				});
-			}
-
-			if ($search !== '') {
-				$rows = array_filter($rows, function ($row) use ($search) {
-					return false !== mb_stripos(($row['Description'] ?? '') . ' ' . ($row['Number'] ?? ''), $search);
-				});
-			}
-
-			return array_slice(array_values($rows), (max($page, 1) - 1) * $limit, $limit);
-		}
-
-		/**
 		 * Get Nova poshta Warehouse
 		 * */
 		public function get_nova_poshta_warehouse()
@@ -382,13 +352,8 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 						]);
 
 						if (!is_wp_error($response)) {
+							# Already filtered and cut to the page by the proxy
 							$proxy_rows = json_decode(wp_remote_retrieve_body($response), true);
-
-							# A proxy without pagination returns the whole city: narrow it here
-							if (is_array($proxy_rows) && !wp_remote_retrieve_header($response, 'x-np-paginated')) {
-								$proxy_rows = $this->paginate_proxy_warehouses($proxy_rows, $key_search, $page, $limit, $mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] ?? '');
-							}
-
 							$obj['data'] = $proxy_rows;
 							$failed = !is_array($proxy_rows);
 						}
