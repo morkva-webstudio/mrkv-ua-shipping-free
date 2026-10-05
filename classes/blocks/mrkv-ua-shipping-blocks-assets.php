@@ -221,11 +221,21 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
             wp_enqueue_style( 'front-mrkv-ua-shipping', MRKV_UA_SHIPPING_ASSETS_URL . '/css/blocks/blocks-mrkv-ua-shipping.css', array(), MRKV_UA_SHIPPING_PLUGIN_VERSION );
         }
 
+        /**
+         * Whether the checkout page is the Checkout block by default. CartCheckoutUtils is missing
+         * in older WooCommerce and the method is missing in some versions that have the class.
+         */
+        public static function mrkv_is_checkout_block_default() {
+            $utils = '\\Automattic\\WooCommerce\\Blocks\\Utils\\CartCheckoutUtils';
+
+            return class_exists( $utils ) && method_exists( $utils, 'is_checkout_block_default' ) && $utils::is_checkout_block_default();
+        }
+
         public function mrkv_enqueue_frontend_checkout_assets() {
-            if ( is_checkout() && \Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils::is_checkout_block_default() ) {
+            if ( is_checkout() && self::mrkv_is_checkout_block_default() ) {
                 $this->mrkv_load_checkout_resources(false);
             }
-            elseif ( is_cart() && \Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils::is_checkout_block_default() ) {
+            elseif ( is_cart() && self::mrkv_is_checkout_block_default() ) {
                 $this->mrkv_load_cart_resources();
             }
         }
