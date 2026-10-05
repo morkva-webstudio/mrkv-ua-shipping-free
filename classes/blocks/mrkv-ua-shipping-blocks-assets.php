@@ -222,10 +222,18 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
         }
 
         public function mrkv_enqueue_frontend_checkout_assets() {
-            if ( is_checkout() && \Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils::is_checkout_block_default() ) {
-                $this->mrkv_load_checkout_resources(false);
+            if ( ! function_exists( 'is_checkout' ) || ! function_exists( 'is_cart' ) ) {
+                return;
             }
-            elseif ( is_cart() && \Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils::is_checkout_block_default() ) {
+
+            $utils = '\\Automattic\\WooCommerce\\Blocks\\Utils\\CartCheckoutUtils';
+            $is_checkout_block = class_exists( $utils ) 
+                && method_exists( $utils, 'is_checkout_block_default' ) 
+                && $utils::is_checkout_block_default();
+
+            if ( is_checkout() && $is_checkout_block ) {
+                $this->mrkv_load_checkout_resources( false );
+            } elseif ( is_cart() && $is_checkout_block ) {
                 $this->mrkv_load_cart_resources();
             }
         }

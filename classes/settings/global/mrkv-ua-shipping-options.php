@@ -212,9 +212,31 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		            'payment_control' => isset( $automation['payment_control'] ) ? sanitize_text_field( $automation['payment_control'] ) : 'off',
 		            'autocreate'      => [
 		                'enabled' => isset( $automation['autocreate']['enabled'] ) ? sanitize_text_field( $automation['autocreate']['enabled'] ) : 'off',
+		                'status'  => isset( $automation['autocreate']['status'] ) && is_array( $automation['autocreate']['status'] )
+		                    ? array_map( 'sanitize_text_field', $automation['autocreate']['status'] )
+		                    : [],
+		                'payment' => isset( $automation['autocreate']['payment'] ) && is_array( $automation['autocreate']['payment'] )
+		                    ? array_map( 'sanitize_text_field', $automation['autocreate']['payment'] )
+		                    : [],
 		            ],
 		            'status'          => [
-		                'enabled' => isset( $automation['status']['enabled'] ) ? sanitize_text_field( $automation['status']['enabled'] ) : 'off',
+		                'enabled'   => isset( $automation['status']['enabled'] ) ? sanitize_text_field( $automation['status']['enabled'] ) : 'off',
+		                'received'  => isset( $automation['status']['received'] ) ? sanitize_text_field( $automation['status']['received'] ) : '',
+		                'moneysms'  => isset( $automation['status']['moneysms'] ) ? sanitize_text_field( $automation['status']['moneysms'] ) : '',
+		                'money'     => isset( $automation['status']['money'] ) ? sanitize_text_field( $automation['status']['money'] ) : '',
+		                'refused'   => isset( $automation['status']['refused'] ) ? sanitize_text_field( $automation['status']['refused'] ) : '',
+		                'canceled'  => isset( $automation['status']['canceled'] ) ? sanitize_text_field( $automation['status']['canceled'] ) : '',
+		                'shipping'  => isset( $automation['status']['shipping'] ) ? sanitize_text_field( $automation['status']['shipping'] ) : '',
+						'124'  => isset( $automation['status']['124'] ) ? sanitize_text_field( $automation['status']['124'] ) : '',
+		            ],
+		            'cron'            => [
+		                'type'         => isset( $automation['cron']['type'] ) ? sanitize_text_field( $automation['cron']['type'] ) : 'wp_cron',
+		                'status'       => isset( $automation['cron']['status'] ) ? sanitize_text_field( $automation['cron']['status'] ) : '',
+		                'max_count'    => isset( $automation['cron']['max_count'] ) ? intval( $automation['cron']['max_count'] ) : 10000,
+		                'frequency'    => isset( $automation['cron']['frequency'] ) ? intval( $automation['cron']['frequency'] ) : 1440,
+		                'count_step'   => isset( $automation['cron']['count_step'] ) ? intval( $automation['cron']['count_step'] ) : 300,
+		                'days'         => isset( $automation['cron']['days'] ) ? intval( $automation['cron']['days'] ) : 30,
+		                'wp_frequency' => isset( $automation['cron']['wp_frequency'] ) ? sanitize_text_field( $automation['cron']['wp_frequency'] ) : 'hourly',
 		            ],
 		        ];
 		    } elseif ( ! isset( $output['automation'] ) ) {

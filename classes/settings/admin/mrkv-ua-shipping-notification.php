@@ -26,19 +26,18 @@ if (!class_exists('MRKV_UA_SHIPPING_NOTIFICATION'))
 			if(isset($m_ua_active_plugins['nova-poshta']['enabled']) && $m_ua_active_plugins['nova-poshta']['enabled'] == 'on')
 			{
 				$last_check_np = get_option('mrkv_api_last_check_np');
-	    		$api_fixed_np = get_option('mrkv_api_fixed_np');
 
-	    		if ($api_fixed_np || !$last_check_np || (time() - $last_check_np) > DAY_IN_SECONDS) {
-			        $api_working = $this->mrkv_is_api_working('nova-poshta');
+				if (!$last_check_np || (time() - $last_check_np) > DAY_IN_SECONDS) {
+					update_option('mrkv_api_last_check_np', time());
 
-			        if ($api_working) {
-			            update_option('mrkv_api_fixed_np', false); 
-			        } else {
-			            update_option('mrkv_api_fixed_np', true); 
-			        }
+					$api_working = $this->mrkv_is_api_working('nova-poshta');
 
-			        update_option('mrkv_api_last_check_np', time()); 
-			    }
+					if ($api_working) {
+						update_option('mrkv_api_fixed_np', false); 
+					} else {
+						update_option('mrkv_api_fixed_np', true); 
+					}
+				}
 			}
 		}
 

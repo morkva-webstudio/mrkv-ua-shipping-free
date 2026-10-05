@@ -31,6 +31,19 @@ jQuery(window).on('load', function()
 		});
 	});	
 
+	jQuery('#nova-poshta_m_ua_settings_sender_address_type').change(function()
+	{
+		var option_selected = jQuery(this).find('option:selected');
+
+		if(option_selected.length === 0){
+			return;
+		}
+
+		jQuery('.mrkv-address-active').removeClass('mrkv-address-active');
+
+		jQuery('.adresstype-form-' + jQuery(this).val()).addClass('mrkv-address-active');
+	});	
+
 	jQuery('#nova-poshta_m_ua_settings_sender_area_name').autocomplete({
 		source: function (request, response) {
 			if(request.term.length < 2)
@@ -281,7 +294,7 @@ jQuery(window).on('load', function()
         
         const isCredentialsEntered = jQuery.trim(apiKey.val()) !== '' && jQuery.trim(counterpartyRef.val()) !== '';
 
-        const addressType = jQuery('input[name="nova-poshta_m_ua_settings[sender][address_type]"]:checked').val();
+        const addressType = jQuery('select[name="nova-poshta_m_ua_settings[sender][address_type]"]').val();
         
         let isAddressValid = false;
 
@@ -295,16 +308,9 @@ jQuery(window).on('load', function()
         }
 
         if (isApiKeyCorrect && isCredentialsEntered && !isAddressValid) {
-            submitBtn.addClass('custom-disabled').css({
-                'opacity': '0.5',
-                'cursor': 'not-allowed'
-            });
+			return true;
         }
 		if(isApiKeyCorrect){
-			submitBtn.addClass('custom-disabled').css({
-				'opacity': '0.5',
-				'cursor': 'not-allowed'
-			});
 			return false;
 		}
     }
@@ -314,7 +320,7 @@ jQuery(window).on('load', function()
     jQuery(document).on('input change', 
         '#nova-poshta_m_ua_settings_api_key, ' +
         '#nova-poshta_m_ua_settings_sender_counterparty_ref, ' +
-        'input[name="nova-poshta_m_ua_settings[sender][address_type]"], ' +
+        'select[name="nova-poshta_m_ua_settings[sender][address_type]"], ' +
         'input[name="nova-poshta_m_ua_settings[sender][warehouse][ref]"], ' +
         'input[name="nova-poshta_m_ua_settings[sender][street][ref]"], ' +
         'input[name="nova-poshta_m_ua_settings[sender][street][house]"]', 
@@ -322,11 +328,52 @@ jQuery(window).on('load', function()
     );
 
     submitBtn.on('click', function(e) {
-        if (jQuery(this).hasClass('custom-disabled')) {
+		if(!jQuery('label[for="nova-poshta_m_ua_settings_api_key"] .admin_ua_ship_morkva__notification').hasClass('mrkv-notification-green'))
+		{
+			return true;
+		}
+
+		let hasError = false;
+		const senderRef = jQuery('#nova-poshta_m_ua_settings_sender_ref');
+
+		if (jQuery.trim(senderRef.val()) === '') {
+			hasError = true;
+			senderRef.next('.select2-container').find('.select2-selection').addClass('mrkv-field-error');
+		} else {
+			senderRef.next('.select2-container').find('.select2-selection').removeClass('mrkv-field-error');
+		}
+
+        const addressType = jQuery('select[name="nova-poshta_m_ua_settings[sender][address_type]"]').val();
+        
+        let isAddressValid = false;
+        jQuery('.adresstype-form').removeClass('mrkv-field-error');
+
+        if (addressType === 'W') {
+            const warehouseRef = jQuery('input[name="nova-poshta_m_ua_settings[sender][warehouse][ref]"]').val();
+            isAddressValid = jQuery.trim(warehouseRef) !== '';
+        } else {
+            const streetRef = jQuery('input[name="nova-poshta_m_ua_settings[sender][street][ref]"]').val();
+            const houseNum = jQuery('input[name="nova-poshta_m_ua_settings[sender][street][house]"]').val();
+            isAddressValid = jQuery.trim(streetRef) !== '' && jQuery.trim(houseNum) !== '';
+        }
+        
+
+        if (hasError || !isAddressValid || jQuery(this).hasClass('custom-disabled')) {
             e.preventDefault();
             e.stopImmediatePropagation();
-            
-            alert('Виберіть місто та відділення відправки, та натисніть “додати”. Після цього можете зберегти налаштування.');
+
+			const senderTabBtn = jQuery('.mrkv_up_ship_tab_btn[data-tab="sender_settings"]');
+			if (senderTabBtn.length > 0) {
+				senderTabBtn.trigger('click');
+			} else {
+				jQuery('.admin_mrkv_ua_shipping__tabs_main__inner .active').removeClass('active');
+				jQuery('.mrkv_up_ship_shipping_tab_block').removeClass('active');
+				jQuery('#sender_settings').addClass('active');
+			}
+            let text_error_alert = '';
+            if(hasError){ text_error_alert = '' + text_error_alert + 'Заповніть поле "Відправник".\n'; }
+            if(!isAddressValid){ text_error_alert = '' + text_error_alert + 'Заповніть відділення/адресу відправки.'; jQuery('.adresstype-form').addClass('mrkv-field-error');  }
+            alert(text_error_alert);
             return false;
         }
     });

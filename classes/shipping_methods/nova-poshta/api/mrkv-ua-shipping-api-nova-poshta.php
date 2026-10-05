@@ -183,27 +183,31 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    	if(isset($this->settings_method['api_key']) && $this->settings_method['api_key'])
 	    	{
 				$cache_key = 'mrkv_np_key_ok_' . md5($this->settings_method['api_key']);
+				$cache_error_key = 'mrkv_np_key_err_' . md5($this->settings_method['api_key']);
 
 	    		if(get_transient($cache_key))
 	    		{
 	    			return true;
 	    		}
 
-	    		# API is down: do not block on the key check, the key is not proven wrong
+				$cached_error = get_transient($cache_error_key);
+				if($cached_error !== false)
+				{
+					return $cached_error;
+				}
+
 	    		if(self::is_api_down())
 	    		{
 	    			return false;
 	    		}
 
-	    		# Set arguments
 	    		$mrkv_ua_shipping_args = array(
 		            "apiKey" => $this->settings_method['api_key'],
 		            "modelName" => "AddressGeneral",
 		            "calledMethod" => "getAreas",
 		        );
 
-	    		# Send request
-	    		$obj = $this->send_post_request( $mrkv_ua_shipping_args, 10 );
+	    		$obj = $this->send_post_request( $mrkv_ua_shipping_args, 3 );
 
 	    		if(self::is_api_down())
 	    		{
@@ -213,28 +217,25 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 	    		if(is_array($obj) && isset($obj['success']) && $obj['success'] == true)
 	    		{
 					set_transient($cache_key, 1, HOUR_IN_SECONDS);
+					delete_transient($cache_error_key);
 	    			update_option('mrkv_api_fixed_np', false);
 	    			return true;
 	    		}
 	    		else
 	    		{
 	    			update_option('mrkv_api_fixed_np', true);
+	    			$error_message = __('API key incorrect', 'mrkv-ua-shipping');
 	    			if(is_array($obj) && isset($obj['errors'][0]) && $obj['errors'][0])
 	    			{
-	    				# Return false
-		    			return $obj['errors'][0];
+		    			$error_message = $obj['errors'][0];
 	    			}
-	    			else
-	    			{
-	    				# Return false
-		    			return __('API key incorrect', 'mrkv-ua-shipping');
-	    			}
+	    			set_transient($cache_error_key, $error_message, 5 * MINUTE_IN_SECONDS);
+	    			return $error_message;
 	    		}
 	    	}
 	    	else
 	    	{
 	    		update_option('mrkv_api_fixed_np', true);
-				# Return false
 	    		return false;
 	    	}
 	    }

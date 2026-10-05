@@ -60,38 +60,38 @@ jQuery(window).on('load', function() {
         element.dispatchEvent(new Event('input', { bubbles: true }));
         element.dispatchEvent(new Event('change', { bubbles: true }));
 
+        const inputName = element.getAttribute('name') || element.id || '';
+        const baseName = inputName.replace('_hidden_val', '');
+        const hiddenName = baseName + '_hidden_val';
+        const currentValue = element.value !== undefined ? String(element.value) : '';
+
         try {
             if (window.wp && wp.data) {
-                const storeErrorKey = id.replace(/-/g, '_'); 
-                
-                if (window.mrkvErrorsCache && window.mrkvErrorsCache[storeErrorKey]) {
-                    delete window.mrkvErrorsCache[storeErrorKey];
-                }
-                
-                const hiddenStoreErrorKey = storeErrorKey + '_hidden_val';
-                if (window.mrkvErrorsCache && window.mrkvErrorsCache[hiddenStoreErrorKey]) {
-                    delete window.mrkvErrorsCache[hiddenStoreErrorKey];
-                }
-
                 const validationDispatch = wp.data.dispatch('wc/store/validation');
-                if (validationDispatch && typeof validationDispatch.clearValidationError === 'function') {
-                    validationDispatch.clearValidationError(storeErrorKey);
-                    validationDispatch.clearValidationError(hiddenStoreErrorKey);
-                }
-                
-                const container = element.closest('.wc-block-components-select-input') || 
-                                element.closest('.wc-blocks-components-select') || 
-                                element.closest('.has-error');
-                if (container) {
-                    container.classList.remove('has-error');
-                    const errorNotice = container.querySelector('.wc-block-components-validation-error');
-                    if (errorNotice) {
-                        errorNotice.remove();
+
+                if (currentValue.trim() !== '') {
+                    if (window.mrkvErrorsCache) {
+                        delete window.mrkvErrorsCache[baseName];
+                        delete window.mrkvErrorsCache[hiddenName];
+                    }
+
+                    if (validationDispatch && typeof validationDispatch.clearValidationError === 'function') {
+                        validationDispatch.clearValidationError(baseName);
+                        validationDispatch.clearValidationError(hiddenName);
+                    }
+
+                    const container = element.closest('.wc-block-components-select-input') || 
+                                    element.closest('.wc-blocks-components-select') || 
+                                    element.closest('.has-error');
+                    if (container) {
+                        container.classList.remove('has-error');
+                        const errorNotice = container.querySelector('.wc-block-components-validation-error');
+                        if (errorNotice) { errorNotice.remove(); }
                     }
                 }
             }
         } catch (err) {
-            console.error(err);
+            console.error('[MRKV Debug Error]:', err);
         }
 
         isProgrammaticChange = false;

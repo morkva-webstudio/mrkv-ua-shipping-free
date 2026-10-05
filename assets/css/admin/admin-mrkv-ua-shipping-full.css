@@ -29,6 +29,13 @@
     font-size: 14px;
     font-weight: 600;
 }
+.select2-container .select2-selection.mrkv-field-error,
+.admin_mrkv_ua_ship_address_list.mrkv-field-error,
+.mrkv_ua_ship_form_create_address.mrkv-field-error {
+    border: 2px solid #dc3232 !important;
+    box-shadow: 0 0 4px rgba(220, 50, 50, 0.4) !important;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
 .mrkv-btn-sidebar-main.button.button-primary:hover{
     color: #000 !important;
     border:1px solid #ed6230 !important;
@@ -1042,6 +1049,13 @@
 .mrkv-field-disabled .select2{
 	opacity: .7;
 }
+.adresstype-form{display:none;}
+.adresstype-form.mrkv-address-active{display:block;}
+.admin_ua_ship_morkva_settings_line__inner:has(.adresstype-form){border-color:#ed6230;}
+.admin_ua_ship_morkva_settings_line__inner:has(.adresstype-form):before{border-bottom: 10px solid #ed6230;}
+.adresstype-form.mrkv-field-error input{border: 2px solid #dc3232 !important;
+    box-shadow: 0 0 4px rgba(220, 50, 50, .4) !important;
+    transition: border-color .3s, box-shadow .3s;}
 
 @media(max-width: 768px){
 	.admin_mrkv_ua_shipping__header__content{

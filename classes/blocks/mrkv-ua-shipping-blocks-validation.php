@@ -334,14 +334,6 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_VALIDATION'))
                     }
                     return $locales;
                 }, 9999 );
-                
-                add_filter( 'woocommerce_validate_additional_field', function( $errors, $field_id, $field_value ) use ( $fields_to_remove ) {
-                    if ( in_array( $field_id, $fields_to_remove ) ) {
-                        $errors->remove( 'woocommerce_required_checkout_field' );
-                        $errors->remove( 'woocommerce_invalid_checkout_field' );
-                    }
-                    return $errors;
-                }, 9999, 3 );
             }
 
             return $result;
