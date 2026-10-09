@@ -655,12 +655,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 			else
 			{
-				$length = 10;
-
-				if(isset($this->settings_shipping['shipment']['length']) && $this->settings_shipping['shipment']['length'])
-				{
-					$length = $this->settings_shipping['shipment']['length'];
-				}
+				$length = 0;
 
 				foreach ( $this->order->get_items() as $item_id => $product_item ) 
 	            {
@@ -675,6 +670,12 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 	            	$length = ($item_length > $length) ? $item_length : $length;
 				}
 
+				# Default size from the settings is only for products without dimensions
+				if(!$length)
+				{
+					$length = (isset($this->settings_shipping['shipment']['length']) && $this->settings_shipping['shipment']['length']) ? $this->settings_shipping['shipment']['length'] : 10;
+				}
+
 				return $length;
 			}
 		}
@@ -687,12 +688,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 			else
 			{
-				$width = 10;
-
-				if(isset($this->settings_shipping['shipment']['width']) && $this->settings_shipping['shipment']['width'])
-				{
-					$width = $this->settings_shipping['shipment']['width'];
-				}
+				$width = 0;
 
 				foreach ( $this->order->get_items() as $item_id => $product_item ) 
 	            {
@@ -707,6 +703,12 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 	            	$width = ($item_width > $width) ? $item_width : $width;
 				}
 
+				# Default size from the settings is only for products without dimensions
+				if(!$width)
+				{
+					$width = (isset($this->settings_shipping['shipment']['width']) && $this->settings_shipping['shipment']['width']) ? $this->settings_shipping['shipment']['width'] : 10;
+				}
+
 				return $width;
 			}
 		}
@@ -719,12 +721,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 			else
 			{
-				$height = 10;
-
-				if(isset($this->settings_shipping['shipment']['height']) && $this->settings_shipping['shipment']['height'])
-				{
-					$height = $this->settings_shipping['shipment']['height'];
-				}
+				$height = 0;
 
 				foreach ( $this->order->get_items() as $item_id => $product_item ) 
 	            {
@@ -737,6 +734,12 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 					$item_height = ( null !== $product->get_height() && $product->get_height()) ? wc_get_dimension( $product->get_height(), 'cm', $dimension_unit ) : 0.00;
 
 	            	$height = ($item_height > $height) ? $item_height : $height;
+				}
+
+				# Default size from the settings is only for products without dimensions
+				if(!$height)
+				{
+					$height = (isset($this->settings_shipping['shipment']['height']) && $this->settings_shipping['shipment']['height']) ? $this->settings_shipping['shipment']['height'] : 10;
 				}
 
 				return $height;
