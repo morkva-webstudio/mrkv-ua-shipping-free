@@ -564,7 +564,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 				$weight = $weight_coef * $weight;
 				$weight = number_format($weight, 2);
 
-				return max($default_weight, $weight);
+				return ($weight && $weight > 0) ? $weight : $default_weight;
 			}
 		}
 
