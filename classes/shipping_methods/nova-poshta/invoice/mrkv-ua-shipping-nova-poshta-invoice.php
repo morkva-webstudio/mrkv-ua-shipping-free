@@ -31,6 +31,11 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 		private $settings_shipping;
 
 		/**
+		 * @param array|null Parcel size of the order items (cached)
+		 * */
+		private $stack_dimensions = null;
+
+		/**
 		 * Constructor for plugin shipping methods invoice create
 		 * */
 		function __construct($order, $post_fields, $shipping_api, $settings_shipping)
@@ -647,6 +652,62 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			return $weight;
 		}
 
+		/**
+		 * Size of the whole order as one parcel (stack model).
+		 * Every product is turned so its longest side is the length, then
+		 * length = largest length, width = largest width, height = sum of heights * quantity.
+		 * Default size from the settings is used only for an axis no product has a size for.
+		 * */
+		private function get_stack_dimensions($dimension_unit)
+		{
+			if(null !== $this->stack_dimensions)
+			{
+				return $this->stack_dimensions;
+			}
+
+			$length = 0;
+			$width = 0;
+			$height = 0;
+
+			foreach ( $this->order->get_items() as $item_id => $product_item ) 
+			{
+				$product_id = $product_item->get_variation_id() ? $product_item->get_variation_id() : $product_item->get_product_id();
+
+				$product = wc_get_product($product_id);
+
+				if ( ! $product ) continue;
+
+				$sides = array();
+
+				foreach ( array( $product->get_length(), $product->get_width(), $product->get_height() ) as $side )
+				{
+					$sides[] = ( null !== $side && $side ) ? floatval( wc_get_dimension( $side, 'cm', $dimension_unit ) ) : 0.00;
+				}
+
+				rsort( $sides );
+
+				$quantity = max( 1, intval( $product_item->get_quantity() ) );
+
+				$length = max( $length, $sides[0] );
+				$width = max( $width, $sides[1] );
+				$height += $sides[2] * $quantity;
+			}
+
+			$sizes = array( 'length' => $length, 'width' => $width, 'height' => $height );
+
+			foreach ( $sizes as $axis => $size )
+			{
+				if( ! $size )
+				{
+					$sizes[$axis] = ( isset($this->settings_shipping['shipment'][$axis]) && $this->settings_shipping['shipment'][$axis] ) ? $this->settings_shipping['shipment'][$axis] : 10;
+				}
+			}
+
+			$this->stack_dimensions = $sizes;
+
+			return $sizes;
+		}
+
 		private function get_cargo_length($dimension_unit)
 		{
 			if(isset($this->post_fields['mrkv_ua_ship_invoice_shipment_length']) && $this->post_fields['mrkv_ua_ship_invoice_shipment_length'])
@@ -655,28 +716,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 			else
 			{
-				$length = 0;
-
-				foreach ( $this->order->get_items() as $item_id => $product_item ) 
-	            {
-	            	$product_id = $product_item->get_variation_id() ? $product_item->get_variation_id() : $product_item->get_product_id();
-	            	
-	            	$product = wc_get_product($product_id);
-
-					if ( ! $product ) continue;
-
-					$item_length = ( null !== $product->get_length() && $product->get_length()) ? wc_get_dimension( $product->get_length(), 'cm', $dimension_unit ) : 0.00;
-
-	            	$length = ($item_length > $length) ? $item_length : $length;
-				}
-
-				# Default size from the settings is only for products without dimensions
-				if(!$length)
-				{
-					$length = (isset($this->settings_shipping['shipment']['length']) && $this->settings_shipping['shipment']['length']) ? $this->settings_shipping['shipment']['length'] : 10;
-				}
-
-				return $length;
+				return $this->get_stack_dimensions($dimension_unit)['length'];
 			}
 		}
 
@@ -688,28 +728,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 			else
 			{
-				$width = 0;
-
-				foreach ( $this->order->get_items() as $item_id => $product_item ) 
-	            {
-	            	$product_id = $product_item->get_variation_id() ? $product_item->get_variation_id() : $product_item->get_product_id();
-	            	
-	            	$product = wc_get_product($product_id);
-
-					if ( ! $product ) continue;
-
-					$item_width = ( null !== $product->get_width() && $product->get_width()) ? wc_get_dimension( $product->get_width(), 'cm', $dimension_unit ) : 0.00;
-
-	            	$width = ($item_width > $width) ? $item_width : $width;
-				}
-
-				# Default size from the settings is only for products without dimensions
-				if(!$width)
-				{
-					$width = (isset($this->settings_shipping['shipment']['width']) && $this->settings_shipping['shipment']['width']) ? $this->settings_shipping['shipment']['width'] : 10;
-				}
-
-				return $width;
+				return $this->get_stack_dimensions($dimension_unit)['width'];
 			}
 		}
 
@@ -721,28 +740,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 			else
 			{
-				$height = 0;
-
-				foreach ( $this->order->get_items() as $item_id => $product_item ) 
-	            {
-	            	$product_id = $product_item->get_variation_id() ? $product_item->get_variation_id() : $product_item->get_product_id();
-	            	
-	            	$product = wc_get_product($product_id);
-
-					if ( ! $product ) continue;
-
-					$item_height = ( null !== $product->get_height() && $product->get_height()) ? wc_get_dimension( $product->get_height(), 'cm', $dimension_unit ) : 0.00;
-
-	            	$height = ($item_height > $height) ? $item_height : $height;
-				}
-
-				# Default size from the settings is only for products without dimensions
-				if(!$height)
-				{
-					$height = (isset($this->settings_shipping['shipment']['height']) && $this->settings_shipping['shipment']['height']) ? $this->settings_shipping['shipment']['height'] : 10;
-				}
-
-				return $height;
+				return $this->get_stack_dimensions($dimension_unit)['height'];
 			}
 		}
 
