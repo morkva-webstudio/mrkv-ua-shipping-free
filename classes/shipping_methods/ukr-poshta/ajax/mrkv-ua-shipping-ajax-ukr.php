@@ -106,6 +106,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
        				$warehouse[] = array(
 	        			'value' => $entry['POSTCODE'],
 	        			'label' => $entry['POSTOFFICE_UA'] . ', ' . $entry['STREET_UA_VPZ'],
+						'type' => $entry['TYPE_ID'],
 	        		);
        			}
 

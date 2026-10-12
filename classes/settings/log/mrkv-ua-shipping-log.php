@@ -63,6 +63,32 @@ if (!class_exists('MRKV_UA_SHIPPING_LOG'))
             }
         }
 
+         /**
+         * Hide API keys and tokens in a log line: only the last 4 characters stay (***abcd).
+         * Covers JSON bodies ("apiKey":"..."), Bearer headers and token query arguments.
+         */
+        private function mask_secrets( $data ) {
+            $mask = function ( $value ) {
+                return '***' . ( strlen( $value ) > 8 ? substr( $value, -4 ) : '' );
+            };
+
+            $data = preg_replace_callback(
+                '/("(?:apiKey|api_key|token|access_token|Authorization)"\s*:\s*")((?:Bearer\s+)?)([^"]*)(")/i',
+                function ( $m ) use ( $mask ) {
+                    return $m[1] . $m[2] . $mask( $m[3] ) . $m[4];
+                },
+                $data
+            );
+
+            return preg_replace_callback(
+                '/([?&](?:apiKey|api_key|token)=)([^&\s"]+)/i',
+                function ( $m ) use ( $mask ) {
+                    return $m[1] . $mask( $m[2] );
+                },
+                $data
+            );
+        }
+
         /**
          * Internal helper to format and write the log entry.
          */
@@ -74,6 +100,8 @@ if (!class_exists('MRKV_UA_SHIPPING_LOG'))
             if ( ! is_scalar( $data ) ) {
                 $data = wp_json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
             }
+
+            $data = $this->mask_secrets( (string) $data );
 
             switch ( $level ) {
                 case 'error':

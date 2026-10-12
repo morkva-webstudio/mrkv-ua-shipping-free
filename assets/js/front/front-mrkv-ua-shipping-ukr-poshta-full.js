@@ -193,6 +193,7 @@ jQuery(window).on('load', function()
 			                  .attr('value', this.label)
 			                  .text(this.label)
 			                  .attr('data-ref', this.value)
+							  .attr('data-type', this.type)
 			                );
 		              	});
 
@@ -247,6 +248,7 @@ jQuery(window).on('load', function()
 			                  .attr('value', this.label)
 			                  .text(this.label)
 			                  .attr('data-ref', this.value)
+			                  .attr('data-type', this.type)
 			                );
 		              });
 
@@ -264,6 +266,7 @@ jQuery(window).on('load', function()
  		jQuery('body').on('change', '#mrkv_ua_shipping_ukr-poshta_warehouse', function() {
 		    let option_selected = jQuery(this).find('option:selected');
 		    jQuery('#mrkv_ua_shipping_ukr-poshta_warehouse_ref').val(jQuery(option_selected).attr('data-ref'));
+		    jQuery('#mrkv_ua_shipping_ukr-poshta_warehouse_type').val(jQuery(option_selected).attr('data-type'));
 		    mrkvUaShipUpdateCartUkr();
 
 		    jQuery.ajax({

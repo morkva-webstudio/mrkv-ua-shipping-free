@@ -117,6 +117,16 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CHECKOUT_VALIDATION'))
 
 			$settings = get_option($this->current_shipping_global . '_m_ua_settings');
 
+			if ( 'ukr-poshta' === $this->current_shipping_global && 'cod' === $mrkv_ua_shipping_payment_method ) {
+				$warehouse_type_key = $this->current_shipping . '_warehouse_type';
+				$warehouse_type = isset( $_POST[ $warehouse_type_key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $warehouse_type_key ] ) ) : '';
+
+				if ( '56' === (string) $warehouse_type ) {
+					wc_add_notice( __( 'Delivery to parcel lockers does not work with cash on delivery.', 'mrkv-ua-shipping' ), 'error' );
+					return;
+				}
+			}
+
 		    foreach(MRKV_UA_SHIPPING_LIST[$this->current_shipping_global]['method'][$this->current_shipping]['checkout_fields'] as $field_id => $field_val)
 		    {
 		    	$options_data_loader = '';

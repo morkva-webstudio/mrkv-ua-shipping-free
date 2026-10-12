@@ -402,6 +402,11 @@ define('MRKV_UA_SHIPPING_LIST', array(
 						'required' => true,
 						'label' => __('Warehouse', 'mrkv-ua-shipping'),
 					),
+					'_warehouse_type' => array(
+						'type' => 'hidden',
+						'autocomplete' => 'off',
+						'replace' => '_warehouse_type'
+					),
 					'_address_ref' => array(
 						'type' => 'hidden',
 						'autocomplete' => 'off',

@@ -313,9 +313,9 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 
 			$address_id = $this->order->get_meta($current_shipping_method . '_address_ref');
 
-			if(!$address_id)
+			if(!$address_id || ($address_id && !ctype_digit((string) $address_id)))
 			{
-				$address_id = $this->get_recipient_address_ref();
+				$address_id = $this->get_recipient_address_ref($current_shipping_method);
 			}
 
 			if($recipient_phone)
@@ -353,25 +353,36 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 			return isset($obj['uuid']) ? $obj['uuid'] : '';
 		}
 
-		public function get_recipient_address_ref()
+		public function get_recipient_address_ref($current_shipping_method	)
 		{
 			$postcode = $this->order->get_billing_postcode() ? $this->order->get_billing_postcode() : $this->order->get_shipping_postcode();
-			$country = $this->order->get_billing_country() ? $this->order->get_billing_country() : $this->order->get_shipping_country();
-			$country = $country ? $country : 'UA';
-			$region = $this->order->get_billing_state() ? $this->order->get_billing_state() : $this->order->get_shipping_state();
-			$city = $this->order->get_billing_city() ? $this->order->get_billing_city() : $this->order->get_shipping_city();
-			$street = $this->order->get_billing_address_1() ? $this->order->get_billing_address_1() : $this->order->get_shipping_address_1();
-			$apartment_number = $this->order->get_billing_address_2() ? $this->order->get_billing_address_2() : $this->order->get_shipping_address_2();
 
-			# Send request
-	        $obj = $this->shipping_api->send_post_request_curl('ecom/0.0.1/addresses', 'POST', array(
-				"postcode" => $postcode,
-				"country" => $country,
-				"region" => $region,
-				"city" => $city,
-				"street" => $street,
-				"apartmentNumber" => $apartment_number,
-			));
+			if($current_shipping_method == 'mrkv_ua_shipping_ukr-poshta')
+			{
+				# Send request
+				$obj = $this->shipping_api->send_post_request_curl('ecom/0.0.1/addresses', 'POST', array(
+					"postcode" => $postcode
+				));
+			}
+			else{
+				$country = $this->order->get_billing_country() ? $this->order->get_billing_country() : $this->order->get_shipping_country();
+				$country = $country ? $country : 'UA';
+				$region = $this->order->get_billing_state() ? $this->order->get_billing_state() : $this->order->get_shipping_state();
+				$city = $this->order->get_billing_city() ? $this->order->get_billing_city() : $this->order->get_shipping_city();
+				$street = $this->order->get_billing_address_1() ? $this->order->get_billing_address_1() : $this->order->get_shipping_address_1();
+				$apartment_number = $this->order->get_billing_address_2() ? $this->order->get_billing_address_2() : $this->order->get_shipping_address_2();
+
+				# Send request
+				$obj = $this->shipping_api->send_post_request_curl('ecom/0.0.1/addresses', 'POST', array(
+					"postcode" => $postcode,
+					"country" => $country,
+					"region" => $region,
+					"city" => $city,
+					"street" => $street,
+					"apartmentNumber" => $apartment_number,
+				));
+			}
+			
 
 	        if(isset($obj['id']))
        		{
