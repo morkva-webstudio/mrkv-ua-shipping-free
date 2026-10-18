@@ -2993,3 +2993,11 @@ msgstr "Житомир"
 #: classes/shipping_methods/ukr-poshta/checkout/mrkv-ua-shipping-checkout.php:23
 msgid "Zhytomyr, Zhytomyr district"
 msgstr "Житомир, Житомирський район"
+
+#: classes/settings/admin/mrkv-ua-shipping-notification.php
+msgid "Please note: none of the shipping methods (Nova Poshta, Ukrposhta, Rozetka Delivery) has been added to your shipping zones yet. The plugin fields will not appear on the checkout page until you set up a region."
+msgstr "Зверніть увагу: жоден метод доставки (Нова Пошта, Укрпошта, Rozetka Delivery) ще не додано до ваших зон доставки. Поля плагіна не з'являться на сторінці оформлення замовлення, доки ви не налаштуєте регіон."
+
+#: classes/settings/admin/mrkv-ua-shipping-notification.php
+msgid "Set up a shipping zone"
+msgstr "Налаштувати зону доставки"
