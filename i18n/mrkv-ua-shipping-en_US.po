@@ -2654,6 +2654,14 @@ msgstr "The sender represents"
 msgid "the settings"
 msgstr "the settings"
 
+#: classes/settings/admin/mrkv-ua-shipping-notification.php
+msgid "Please note: none of the shipping methods (Nova Poshta, Ukrposhta, Rozetka Delivery) has been added to your shipping zones yet. The plugin fields will not appear on the checkout page until you set up a region."
+msgstr "Please note: none of the shipping methods (Nova Poshta, Ukrposhta, Rozetka Delivery) has been added to your shipping zones yet. The plugin fields will not appear on the checkout page until you set up a region."
+
+#: classes/settings/admin/mrkv-ua-shipping-notification.php
+msgid "Set up a shipping zone"
+msgstr "Set up a shipping zone"
+
 #: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php:662
 msgid "The shipment has been received"
 msgstr "The shipment has been received"
@@ -2989,11 +2997,3 @@ msgstr "Zhytomyr"
 #: classes/shipping_methods/ukr-poshta/checkout/mrkv-ua-shipping-checkout.php:23
 msgid "Zhytomyr, Zhytomyr district"
 msgstr "Zhytomyr, Zhytomyr district"
-
-#: classes/settings/admin/mrkv-ua-shipping-notification.php
-msgid "Please note: none of the shipping methods (Nova Poshta, Ukrposhta, Rozetka Delivery) has been added to your shipping zones yet. The plugin fields will not appear on the checkout page until you set up a region."
-msgstr "Please note: none of the shipping methods (Nova Poshta, Ukrposhta, Rozetka Delivery) has been added to your shipping zones yet. The plugin fields will not appear on the checkout page until you set up a region."
-
-#: classes/settings/admin/mrkv-ua-shipping-notification.php
-msgid "Set up a shipping zone"
-msgstr "Set up a shipping zone"
