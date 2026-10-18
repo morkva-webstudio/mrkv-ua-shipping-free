@@ -33,6 +33,9 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			add_action( 'wp_ajax_mrkv_ua_ship_nova_poshta_sender_get_address_ref', array($this, 'get_sender_get_address_ref') );
 			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_nova_poshta_sender_get_address_ref', array($this, 'get_sender_get_address_ref') );
 
+			add_action( 'wp_ajax_mrkv_ua_ship_nova_poshta_connect', array($this, 'get_sender_counterparties') );
+			add_action( 'wp_ajax_mrkv_ua_ship_nova_poshta_contact_persons', array($this, 'get_sender_contact_persons') );
+
 			add_action( 'wp_ajax_mrkv_ua_ship_novapost_divisions', array($this, 'get_mrkv_ua_ship_novapost_divisions') );
 			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_novapost_divisions', array($this, 'get_mrkv_ua_ship_novapost_divisions') );
 		}
@@ -512,6 +515,77 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 		}
 
 		/**
+	     * Settings page, step 1: check the entered (maybe not saved yet) API key and load its sender counterparties
+	     * */
+	    public function get_sender_counterparties()
+	    {
+	    	$mrkv_sender_object_nova_poshta = $this->get_settings_sender_object();
+	    	$force = !empty($_POST['force']);
+
+	    	$counterparties = $mrkv_sender_object_nova_poshta->get_sender_counterparties($force);
+
+	    	if(empty($counterparties))
+	    	{
+	    		wp_send_json_error($mrkv_sender_object_nova_poshta->get_last_error());
+	    	}
+
+	    	wp_send_json_success(array('counterparties' => $counterparties));
+	    }
+
+	    /**
+	     * Settings page, step 2: contact persons of the chosen sender counterparty
+	     * */
+	    public function get_sender_contact_persons()
+	    {
+	    	$mrkv_sender_object_nova_poshta = $this->get_settings_sender_object();
+	    	$force = !empty($_POST['force']);
+	    	$counterparty_ref = isset($_POST['counterparty_ref']) ? sanitize_text_field(wp_unslash($_POST['counterparty_ref'])) : '';
+
+	    	# Only a counterparty of this key: Nova Poshta would answer for any Ref
+	    	$counterparties = $mrkv_sender_object_nova_poshta->get_sender_counterparties();
+
+	    	if(!$counterparty_ref || !in_array($counterparty_ref, array_column($counterparties, 'ref'), true))
+	    	{
+	    		wp_send_json_error(__('Choose a sender', 'mrkv-ua-shipping'));
+	    	}
+
+	    	$contacts = $mrkv_sender_object_nova_poshta->get_contact_persons($counterparty_ref, $force);
+
+	    	if(empty($contacts))
+	    	{
+	    		wp_send_json_error(__('Contact person list empty', 'mrkv-ua-shipping'));
+	    	}
+
+	    	wp_send_json_success(array('contacts' => MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA::get_contact_persons_options($contacts, $counterparty_ref)));
+	    }
+
+	    /**
+	     * Sender API object for the settings page: admins only, with the key from the form
+	     * @return MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA
+	     * */
+	    private function get_settings_sender_object()
+	    {
+	    	check_ajax_referer('mrkv_ua_ship_nonce', 'nonce');
+
+	    	if(!current_user_can('manage_options'))
+	    	{
+	    		wp_send_json_error(__('You do not have permission to do this.', 'mrkv-ua-shipping'), 403);
+	    	}
+
+	    	$settings = get_option('nova-poshta_m_ua_settings');
+	    	$settings = is_array($settings) ? $settings : array();
+	    	$settings['api_key'] = isset($_POST['api_key']) ? sanitize_text_field(wp_unslash($_POST['api_key'])) : '';
+
+	    	if(!$settings['api_key'])
+	    	{
+	    		wp_send_json_error(__('Enter the key...', 'mrkv-ua-shipping'));
+	    	}
+
+	    	# The key may be not saved yet: do not let its check mark the saved key broken or fixed
+	    	return new MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA(new MRKV_UA_SHIPPING_API_NOVA_POSHTA($settings, false));
+	    }
+
+		/**
 	     * Get Sender Address Ref
 	     * */
 	    public function get_sender_get_address_ref()
@@ -520,7 +594,21 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 		        wp_send_json_error(__('Invalid nonce.', 'mrkv-ua-shipping'), 403);
 		        wp_die();
 		    }
-			$mrkv_object_nova_poshta = new MRKV_UA_SHIPPING_API_NOVA_POSHTA(get_option('nova-poshta_m_ua_settings'));
+		    $settings = get_option('nova-poshta_m_ua_settings');
+		    $counterparty_ref = '';
+
+		    # Settings page: the address belongs to the chosen counterparty of the entered key. Checkout keeps the saved key and the first counterparty
+		    if(current_user_can('manage_options') && !empty($_POST['counterparty_ref']) && !empty($_POST['api_key']))
+		    {
+		    	$settings = is_array($settings) ? $settings : array();
+		    	$settings['api_key'] = sanitize_text_field(wp_unslash($_POST['api_key']));
+		    	$counterparty_ref = sanitize_text_field(wp_unslash($_POST['counterparty_ref']));
+		    	$mrkv_object_nova_poshta = new MRKV_UA_SHIPPING_API_NOVA_POSHTA($settings, false);
+		    }
+		    else
+		    {
+				$mrkv_object_nova_poshta = new MRKV_UA_SHIPPING_API_NOVA_POSHTA($settings);
+		    }
 			$mrkv_sender_object_nova_poshta = new MRKV_UA_SHIPPING_SENDER_NOVA_POSHTA($mrkv_object_nova_poshta);
 
 			$sender_street_ref = isset($_POST['sender_street_ref']) ? sanitize_text_field(wp_unslash($_POST['sender_street_ref'])) : '';
@@ -528,7 +616,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 			$sender_flat = isset($_POST['sender_flat']) ? sanitize_text_field(wp_unslash($_POST['sender_flat'])) : '';
 
 	        # Send request
-	        $ref = $mrkv_sender_object_nova_poshta->get_sender_address_ref($sender_street_ref, $sender_building_number, $sender_flat);
+	        $ref = $mrkv_sender_object_nova_poshta->get_sender_address_ref($sender_street_ref, $sender_building_number, $sender_flat, $counterparty_ref);
 	        $ref = str_replace('"', "", $ref);
 
 	        if($ref)

@@ -1160,3 +1160,65 @@
     	margin-top: 0px;
 	}
 }
+/* Nova Poshta sender tab: steps API key -> sender -> shipping place */
+.mrkv-ua-ship-np-step {
+	position: relative;
+	transition: opacity .3s;
+}
+.mrkv-ua-ship-np-step + .mrkv-ua-ship-np-step {
+	border-top: 1px solid #f2f2f2;
+	padding-top: 20px;
+}
+.mrkv-ua-ship-np-step > h3:first-child {
+	margin-top: 10px;
+}
+.mrkv-ua-ship-np-step--locked {
+	opacity: .45;
+	pointer-events: none;
+	user-select: none;
+}
+.mrkv-ua-ship-np-connect {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 15px;
+	margin-top: 15px;
+}
+.mrkv-ua-ship-np-connect__btn {
+	height: 34px;
+	padding: 0 28px;
+	border: 1px solid #ed6230;
+	border-radius: 10px;
+	background-color: #fff;
+	color: #000;
+	font-weight: 600;
+	cursor: pointer;
+}
+.mrkv-ua-ship-np-connect__btn:hover {
+	background-color: #ed623021;
+}
+.mrkv-ua-ship-np-connect__btn:disabled {
+	opacity: .6;
+	cursor: wait;
+}
+.mrkv-ua-ship-np-connect__status {
+	padding: 3px 15px;
+	border-radius: 10px;
+	font-size: 12px;
+}
+.mrkv-ua-ship-np-connect__status:empty,
+.mrkv-ua-ship-np-counterparty.hide_element,
+.mrkv-ua-ship-np-sender-notice.hide_element {
+	display: none;
+}
+.admin_ua_ship_morkva_settings_line input[type=radio]:disabled + label {
+	opacity: .4;
+	cursor: not-allowed;
+}
+.mrkv-ua-ship-np-sender-notice {
+	margin-top: 20px;
+	padding: 10px 15px;
+	border-radius: 10px;
+	background: #efbdba;
+	color: #000;
+}
