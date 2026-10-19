@@ -91,13 +91,15 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_POSHTA'))
 
 		/**
 		 * Constructor for nova poshta api
+		 * @param array Settings
+		 * @param bool Check the key now. False for a key that is not saved yet: the check marks the saved key broken or fixed
 		 * */
-		function __construct($settings)
+		function __construct($settings, $check_key = true)
 		{
 			# Set data
 			$this->settings_method = $settings;
 			$this->debug_log = new MRKV_UA_SHIPPING_LOG($this->get_debug_enabled());
-			$this->active_api = $this->get_api_key_active();
+			$this->active_api = $check_key ? $this->get_api_key_active() : null;
 		}
 
 		/**
