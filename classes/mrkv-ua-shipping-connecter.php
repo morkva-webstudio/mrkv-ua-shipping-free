@@ -65,17 +65,16 @@ if (!class_exists('MRKV_UA_SHIPPING_CONNECTER'))
             }
 
             foreach ( $order->get_shipping_methods() as $shipping_item ) {
-                $method_id = $shipping_item->get_method_id();
+                $method_id   = $shipping_item->get_method_id();
+                $instance_id = $shipping_item->get_instance_id();
 
                 if ( strpos( $method_id, 'mrkv_ua_shipping_' ) !== false ) {
-                    $wc_shipping = WC_Shipping::instance();
-                    $all_methods = $wc_shipping->get_shipping_methods();
+                    $shipping_instance = WC_Shipping_Zones::get_shipping_method( $instance_id );
 
-                    if ( isset( $all_methods[ $method_id ] ) ) {
-                        $shipping_class = $all_methods[ $method_id ];
-                        $shipping_instance = is_string( $shipping_class ) ? new $shipping_class( $shipping_item->get_instance_id() ) : $shipping_class;
+                    if ( $shipping_instance ) {
+                        $enable_min_cost = $shipping_instance->get_instance_option( 'enable_minimum_cost' );
 
-                        if ( 'yes' === $shipping_instance->get_option( 'enable_minimum_cost' ) ) {
+                        if ( 'yes' === $enable_min_cost ) {
                             $woo_cart_total = $order->get_subtotal();
                             
                             $settings_method = get_option('ukr-poshta_m_ua_settings');
@@ -83,7 +82,7 @@ if (!class_exists('MRKV_UA_SHIPPING_CONNECTER'))
                                 $woo_cart_total = $order->get_total() - $order->get_shipping_total();
                             }
 
-                            $min_cost_total = (float) $shipping_instance->get_option( 'minimum_cost_total' );
+                            $min_cost_total = (float) $shipping_instance->get_instance_option( 'minimum_cost_total' );
 
                             if ( $woo_cart_total >= $min_cost_total ) {
                                 return __( 'Free', 'mrkv-ua-shipping' );
