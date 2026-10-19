@@ -2984,3 +2984,83 @@ msgstr "Zhytomyr"
 #: classes/shipping_methods/ukr-poshta/checkout/mrkv-ua-shipping-checkout.php:23
 msgid "Zhytomyr, Zhytomyr district"
 msgstr "Zhytomyr, Zhytomyr district"
+
+#: classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-sender-nova-poshta.php
+msgid "Nova Poshta did not answer, try again later"
+msgstr "Nova Poshta did not answer, try again later"
+
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-ajax-nova.php
+msgid "Contact person list empty"
+msgstr "Contact person list empty"
+
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-ajax-nova.php
+msgid "You do not have permission to do this."
+msgstr "You do not have permission to do this."
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Private person"
+msgstr "Private person"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Legal entity (FOP, LLC)"
+msgstr "Legal entity (FOP, LLC)"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Connect"
+msgstr "Connect"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Refresh data"
+msgstr "Refresh data"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Loading..."
+msgstr "Loading..."
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Choose a contact person"
+msgstr "Choose a contact person"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "EDRPOU"
+msgstr "EDRPOU"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "The key has changed: press \"Connect\" to load its senders"
+msgstr "The key has changed: press \"Connect\" to load its senders"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "The sender settings are not complete, these changes will not be saved. Continue?"
+msgstr "The sender settings are not complete, these changes will not be saved. Continue?"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Finish the sender settings, or leave them empty to save only the API key. Missing:"
+msgstr "Finish the sender settings, or leave them empty to save only the API key. Missing:"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "sender type"
+msgstr "sender type"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "contact person"
+msgstr "contact person"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "shipping place (warehouse or address)"
+msgstr "shipping place (warehouse or address)"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Sender type"
+msgstr "Sender type"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "The types available for this API key are active. A type is chosen automatically when the key has only one"
+msgstr "The types available for this API key are active. A type is chosen automatically when the key has only one"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Counterparty"
+msgstr "Counterparty"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "When you send from an address, Nova Poshta creates a courier pickup request automatically, unless the separate \"Courier call\" service is connected through your manager"
+msgstr "When you send from an address, Nova Poshta creates a courier pickup request automatically, unless the separate \"Courier call\" service is connected through your manager"

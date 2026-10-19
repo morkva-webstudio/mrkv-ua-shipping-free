@@ -73,6 +73,36 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 			}
 	    }
 
+		/**
+		 * State of the Nova Poshta sender block: "empty" (only the API key), "complete" or "partial".
+		 * The sender type and counterparty are filled in automatically, so they alone do not start the block
+		 * @param array Sender as posted
+		 * 
+		 * @return string
+		 * */
+		public static function get_nova_poshta_sender_state( $sender )
+		{
+		    $city_ref  = isset( $sender['city']['ref'] ) ? $sender['city']['ref'] : '';
+		    $warehouse = isset( $sender['warehouse']['ref'] ) ? $sender['warehouse']['ref'] : '';
+		    $street    = isset( $sender['street']['ref'] ) ? $sender['street']['ref'] : '';
+		    $house     = isset( $sender['street']['house'] ) ? $sender['street']['house'] : '';
+		    $started   = $city_ref || $warehouse || $street || $house;
+
+		    if ( isset( $sender['address_type'] ) && $sender['address_type'] === 'D' ) {
+		        $placed = $city_ref && $street && $house;
+		    } else {
+		        $placed = $city_ref && $warehouse;
+		    }
+
+		    $contact = ! empty( $sender['ref'] );
+
+		    if ( ! $contact && ! $started ) {
+		        return 'empty';
+		    }
+
+		    return ( $contact && ! empty( $sender['counterparty_ref'] ) && $placed ) ? 'complete' : 'partial';
+		}
+
 	    public function sanitize_nova_poshta_settings( $input ) 
 		{
 		    if ( ! current_user_can( 'manage_options' ) ) {
@@ -110,6 +140,8 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		            'lastname'       => isset( $sender['lastname'] ) ? sanitize_text_field( $sender['lastname'] ) : '',
 		            'middlename'     => isset( $sender['middlename'] ) ? sanitize_text_field( $sender['middlename'] ) : '',
 		            'counterparty_ref' => isset( $sender['counterparty_ref'] ) ? sanitize_text_field( $sender['counterparty_ref'] ) : '',
+		            'counterparty_type' => ( isset( $sender['counterparty_type'] ) && in_array( $sender['counterparty_type'], array( 'PrivatePerson', 'Organization' ), true ) ) ? $sender['counterparty_type'] : '',
+		            'counterparty_description' => isset( $sender['counterparty_description'] ) ? sanitize_text_field( $sender['counterparty_description'] ) : '',
 		            'list'           => isset( $sender['list'] ) ? wp_kses_post( $sender['list'] ) : '',
 		            'address_type'   => isset( $sender['address_type'] ) ? sanitize_text_field( $sender['address_type'] ) : 'W',
 		            'city'           => isset( $sender['city'] ) && is_array( $sender['city'] ) ? [
@@ -131,6 +163,23 @@ if (!class_exists('MRKV_UA_SHIPPING_OPTIONS'))
 		                'ref' => isset( $sender['address']['ref'] ) ? sanitize_text_field( $sender['address']['ref'] ) : '',
 		            ] : [],
 		        ];
+		    }
+
+		    # --- Sender: "only the API key" or "everything". A half-filled sender never replaces the saved one ---
+		    if ( isset( $output['sender'] ) && is_array( $output['sender'] ) && isset( $input['sender'] ) ) {
+		        $current_sender = ( isset( $current['sender'] ) && is_array( $current['sender'] ) ) ? $current['sender'] : [];
+		        # Raw input: sanitizing drops the addresses of a sender without a contact person
+		        $sender_state   = self::get_nova_poshta_sender_state( is_array( $input['sender'] ) ? $input['sender'] : [] );
+
+		        if ( $sender_state === 'partial' ) {
+		            $output['sender'] = $current_sender;
+		        } elseif ( $sender_state === 'complete' && ! empty( $current_sender['list'] ) && ! empty( $current_sender['ref'] ) && $current_sender['ref'] === $output['sender']['ref'] ) {
+		            # Nova Poshta did not answer while the page loaded: keep the saved contact list instead of an empty one
+		            $list = json_decode( base64_decode( $output['sender']['list'] ), true );
+		            if ( empty( $list ) ) {
+		                $output['sender']['list'] = $current_sender['list'];
+		            }
+		        }
 		    }
 
 		    # --- Payer (Default Settings) --- NEW SECTION

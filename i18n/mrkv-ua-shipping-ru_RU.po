@@ -2996,3 +2996,83 @@ msgstr "Житомир"
 #: classes/shipping_methods/ukr-poshta/checkout/mrkv-ua-shipping-checkout.php:23
 msgid "Zhytomyr, Zhytomyr district"
 msgstr "Житомир, Житомирський район"
+
+#: classes/shipping_methods/nova-poshta/api/mrkv-ua-shipping-sender-nova-poshta.php
+msgid "Nova Poshta did not answer, try again later"
+msgstr "Нова Пошта не відповіла, спробуйте пізніше"
+
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-ajax-nova.php
+msgid "Contact person list empty"
+msgstr "Список контактних осіб порожній"
+
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-ajax-nova.php
+msgid "You do not have permission to do this."
+msgstr "У вас немає прав для цієї дії."
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Private person"
+msgstr "Фізична особа"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Legal entity (FOP, LLC)"
+msgstr "Юридична особа (ФОП, ТОВ)"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Connect"
+msgstr "Підключити"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Refresh data"
+msgstr "Оновити дані"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Loading..."
+msgstr "Завантаження..."
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Choose a contact person"
+msgstr "Оберіть контактну особу"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "EDRPOU"
+msgstr "ЄДРПОУ"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "The key has changed: press \"Connect\" to load its senders"
+msgstr "Ключ змінено: натисніть «Підключити», щоб завантажити його відправників"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "The sender settings are not complete, these changes will not be saved. Continue?"
+msgstr "Налаштування відправника заповнені не повністю, ці зміни не буде збережено. Продовжити?"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Finish the sender settings, or leave them empty to save only the API key. Missing:"
+msgstr "Заповніть налаштування відправника до кінця або залиште їх порожніми, щоб зберегти лише API ключ. Не заповнено:"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "sender type"
+msgstr "тип відправника"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "contact person"
+msgstr "контактна особа"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "shipping place (warehouse or address)"
+msgstr "місце відправки (відділення або адреса)"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Sender type"
+msgstr "Тип відправника"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "The types available for this API key are active. A type is chosen automatically when the key has only one"
+msgstr "Активні лише типи, доступні для цього API ключа. Якщо тип один, він обирається автоматично"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "Counterparty"
+msgstr "Контрагент"
+
+#: templates/settings/methods/shipping_fields/mrkv-ua-shipping-nova-poshta.php
+msgid "When you send from an address, Nova Poshta creates a courier pickup request automatically, unless the separate \"Courier call\" service is connected through your manager"
+msgstr "При відправці з адреси Нова Пошта автоматично створює заявку на виклик кур’єра, якщо через менеджера не підключено окрему послугу «Виклик кур’єра»"

@@ -911,7 +911,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 						? $this->settings_shipping['sender']['street']['flat'] : '';
 
 	        # Send request
-	        $ref = $mrkv_sender_object_nova_poshta->get_sender_address_ref($sender_street_ref, $sender_building_number, $sender_flat);
+	        $ref = $mrkv_sender_object_nova_poshta->get_sender_address_ref($sender_street_ref, $sender_building_number, $sender_flat, $this->get_sender_counterparty_ref());
 	        $ref = str_replace('"', "", $ref);
 
 	        if($ref)

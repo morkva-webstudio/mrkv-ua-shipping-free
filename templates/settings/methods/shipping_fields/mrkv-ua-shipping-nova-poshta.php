@@ -1,143 +1,262 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<section id="basic_settings" class="mrkv_up_ship_shipping_tab_block active">
-	<h2><img src="<?php echo esc_url(MRKV_UA_SHIPPING_ASSETS_URL . '/images/global/settings-icon.svg'); ?>" alt="Basic settings" title="Basic settings"><?php echo esc_html__('Basic settings', 'mrkv-ua-shipping'); ?></h2>
-	<hr class="mrkv-ua-ship__hr">
-	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'basic_first'); ?>
-	<div class="admin_ua_ship_morkva_settings_line">
-		<?php 
-			$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['api_key']) ? MRKV_SHIPPING_SETTINGS['api_key'] : '';
-			$mrkv_ua_shipping_label = __('API Key', 'mrkv-ua-shipping');
-			global $mrkv_global_option_generator;
-			global $mrkv_global_shipping_object;
+<?php
+	global $mrkv_global_option_generator;
+	global $mrkv_global_shipping_object;
 
-			if(is_string($mrkv_global_shipping_object->active_api))
-			{
-				$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-red">' . $mrkv_global_shipping_object->active_api . '</div>';
-			}
-			elseif($mrkv_global_shipping_object->active_api)
-			{
-				$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-green">' . __('API key correct','mrkv-ua-shipping') . '</div>';
-			}
+	$mrkv_ua_shipping_sender_saved = (isset(MRKV_SHIPPING_SETTINGS['sender']) && is_array(MRKV_SHIPPING_SETTINGS['sender'])) ? MRKV_SHIPPING_SETTINGS['sender'] : array();
+	$mrkv_ua_shipping_counterparties = MRKV_OPTION_NOVA_COUNTERPARTIES;
+	$mrkv_ua_shipping_connected = !empty($mrkv_ua_shipping_counterparties);
 
-			$mrkv_ua_shipping_description = __('Not sure where to get the key? Take a look', 'mrkv-ua-shipping') . ' <a target="_blank" href="https://docs.morkva.co.ua/uk/plugins/iak-znaiti-zghienieruvati-kliuch-ari-novoyi-poshti">' . __('at this guide', 'mrkv-ua-shipping') . '</a>';
+	# Nova Poshta did not answer: keep the saved counterparty, the form must not lose it
+	$mrkv_ua_shipping_counterparty_ref = MRKV_OPTION_NOVA_COUNTERPARTY_REF ? MRKV_OPTION_NOVA_COUNTERPARTY_REF : (isset($mrkv_ua_shipping_sender_saved['counterparty_ref']) ? $mrkv_ua_shipping_sender_saved['counterparty_ref'] : '');
+	$mrkv_ua_shipping_counterparty_type = isset($mrkv_ua_shipping_sender_saved['counterparty_type']) ? $mrkv_ua_shipping_sender_saved['counterparty_type'] : '';
+	$mrkv_ua_shipping_counterparty_description = isset($mrkv_ua_shipping_sender_saved['counterparty_description']) ? $mrkv_ua_shipping_sender_saved['counterparty_description'] : '';
+	$mrkv_ua_shipping_counterparty_types = array();
 
-			echo wp_kses( $mrkv_global_option_generator->get_input_text($mrkv_ua_shipping_label, MRKV_OPTION_OBJECT_NAME . '[api_key]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_api_key' , '', __('Enter the key...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
-		?>
-	</div>
-	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'basic_last'); ?>
-</section>
-<section id="sender_settings" class="mrkv_up_ship_shipping_tab_block">
+	foreach($mrkv_ua_shipping_counterparties as $mrkv_ua_shipping_counterparty)
+	{
+		$mrkv_ua_shipping_counterparty_types[$mrkv_ua_shipping_counterparty['type']][] = $mrkv_ua_shipping_counterparty;
+
+		if($mrkv_ua_shipping_counterparty['ref'] == $mrkv_ua_shipping_counterparty_ref)
+		{
+			$mrkv_ua_shipping_counterparty_type = $mrkv_ua_shipping_counterparty['type'];
+			$mrkv_ua_shipping_counterparty_description = $mrkv_ua_shipping_counterparty['description'];
+		}
+	}
+
+	$mrkv_ua_shipping_sender_types = array(
+		'PrivatePerson' => __('Private person', 'mrkv-ua-shipping'),
+		'Organization'  => __('Legal entity (FOP, LLC)', 'mrkv-ua-shipping'),
+	);
+
+	$mrkv_ua_shipping_np_sender_data = array(
+		'connected'      => $mrkv_ua_shipping_connected,
+		'counterparties' => $mrkv_ua_shipping_counterparties,
+		'i18n'           => array(
+			'connect'          => __('Connect', 'mrkv-ua-shipping'),
+			'refresh'          => __('Refresh data', 'mrkv-ua-shipping'),
+			'loading'          => __('Loading...', 'mrkv-ua-shipping'),
+			'connected'        => __('API key correct', 'mrkv-ua-shipping'),
+			'error'            => __('Nova Poshta did not answer, try again later', 'mrkv-ua-shipping'),
+			'choose_contact'   => __('Choose a contact person', 'mrkv-ua-shipping'),
+			'edrpou'           => __('EDRPOU', 'mrkv-ua-shipping'),
+			'key_changed'      => __('The key has changed: press "Connect" to load its senders', 'mrkv-ua-shipping'),
+			'partial_leave'    => __('The sender settings are not complete, these changes will not be saved. Continue?', 'mrkv-ua-shipping'),
+			'partial_save'     => __('Finish the sender settings, or leave them empty to save only the API key. Missing:', 'mrkv-ua-shipping'),
+			'missing_type'     => __('sender type', 'mrkv-ua-shipping'),
+			'missing_contact'  => __('contact person', 'mrkv-ua-shipping'),
+			'missing_place'    => __('shipping place (warehouse or address)', 'mrkv-ua-shipping'),
+		),
+	);
+?>
+<section id="sender_settings" class="mrkv_up_ship_shipping_tab_block active" data-mrkv-np-sender="<?php echo esc_attr(wp_json_encode($mrkv_ua_shipping_np_sender_data)); ?>">
 	<h2><img src="<?php echo esc_url(MRKV_UA_SHIPPING_ASSETS_URL . '/images/global/user-icon.svg'); ?>" alt="Sender settings" title="Sender settings"><?php echo esc_html__('Sender Settings', 'mrkv-ua-shipping'); ?></h2>
 	<p><?php echo esc_html__('Fill in the data for the sender, which will be used to create shipment', 'mrkv-ua-shipping'); ?></p>
 	<hr class="mrkv-ua-ship__hr">
-	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_first'); ?>
-	<div class="admin_ua_ship_morkva_settings_line">
-		<?php
-			$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['ref'] : '';
-			$mrkv_ua_shipping_label = __('Sender', 'mrkv-ua-shipping');
+	<div class="mrkv-ua-ship-np-step mrkv-ua-ship-np-step--key">
+		<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'basic_first'); ?>
+		<div class="admin_ua_ship_morkva_settings_line">
+			<?php
+				$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['api_key']) ? MRKV_SHIPPING_SETTINGS['api_key'] : '';
+				$mrkv_ua_shipping_label = __('API Key', 'mrkv-ua-shipping');
 
-			if(empty(MRKV_OPTION_NOVA_SENDER))
-			{
-				$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-red">' . __('Sender list empty', 'mrkv-ua-shipping') . '</div>';
-			}
-			elseif(isset(MRKV_OPTION_NOVA_SENDER[0]))
-			{
-				$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-green">' . __('Sender list loaded','mrkv-ua-shipping') . '</div>';
-			}
-
-			echo wp_kses( $mrkv_global_option_generator->get_select_tag($mrkv_ua_shipping_label, MRKV_OPTION_OBJECT_NAME . '[sender][ref]', MRKV_OPTION_NOVA_SENDER, $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_ref' , __('Choose a sender', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
-
-			if(isset(MRKV_OPTION_NOVA_SENDER[0]['attr']) && !empty(MRKV_OPTION_NOVA_SENDER))
-			{
-				foreach(MRKV_OPTION_NOVA_SENDER[0]['attr'] as $mrkv_ua_shipping_sender_data_key => $mrkv_ua_shipping_sender_data_val)
+				if(is_string($mrkv_global_shipping_object->active_api))
 				{
-					if($mrkv_ua_shipping_sender_data_key == 'ref')
-					{
-						continue;
-					}
-					$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender'][$mrkv_ua_shipping_sender_data_key]) && MRKV_SHIPPING_SETTINGS['sender'][$mrkv_ua_shipping_sender_data_key] ? MRKV_SHIPPING_SETTINGS['sender'][$mrkv_ua_shipping_sender_data_key] : $mrkv_ua_shipping_sender_data_val;
-					echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][' . $mrkv_ua_shipping_sender_data_key . ']', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_' . $mrkv_ua_shipping_sender_data_key), MRKV_UA_SHIPPING_ALLOW_TAGS);
+					$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-red">' . $mrkv_global_shipping_object->active_api . '</div>';
 				}
-			}
-			$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['list']) ? MRKV_SHIPPING_SETTINGS['sender']['list'] : '';
-			echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][list]', base64_encode(wp_json_encode(MRKV_OPTION_NOVA_SENDER)), MRKV_OPTION_OBJECT_NAME . '_sender_list'), MRKV_UA_SHIPPING_ALLOW_TAGS);
-		?>
-	</div>
-	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_middle_1'); ?>
-	<h3><img src="<?php echo esc_url(MRKV_UA_SHIPPING_ASSETS_URL . '/images/global/routing-icon.svg'); ?>" alt="Sender address" title="Sender address"><?php echo esc_html__('Sender address', 'mrkv-ua-shipping'); ?></h3>
-	<p><?php echo esc_html__('Specify the sender\'s address from which the goods will be sent', 'mrkv-ua-shipping'); ?></p>
-	<hr class="mrkv-ua-ship__hr">
-	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_middle_2'); ?>
-	<div class="admin_ua_ship_morkva_settings_row">
-		<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
-			<?php 
-				$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['city']['name']) ? MRKV_SHIPPING_SETTINGS['sender']['city']['name'] : '';
-				$mrkv_ua_shipping_description = __('Enter the first 2-3 letters and wait for the data to load', 'mrkv-ua-shipping');
+				elseif($mrkv_global_shipping_object->active_api)
+				{
+					$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-green">' . __('API key correct','mrkv-ua-shipping') . '</div>';
+				}
 
-				echo wp_kses( $mrkv_global_option_generator->get_input_text(__('City', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][city][name]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_city_name' , '', __('Enter the city...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
-				$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['city']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['city']['ref'] : '';
-				echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][city][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_city_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+				$mrkv_ua_shipping_description = __('Not sure where to get the key? Take a look', 'mrkv-ua-shipping') . ' <a target="_blank" href="https://docs.morkva.co.ua/uk/plugins/iak-znaiti-zghienieruvati-kliuch-ari-novoyi-poshti">' . __('at this guide', 'mrkv-ua-shipping') . '</a>';
+
+				echo wp_kses($mrkv_global_option_generator->get_input_text($mrkv_ua_shipping_label, MRKV_OPTION_OBJECT_NAME . '[api_key]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_api_key' , '', __('Enter the key...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
+			?>
+			<div class="mrkv-ua-ship-np-connect">
+				<button type="button" class="mrkv-ua-ship-np-connect__btn"><?php echo $mrkv_ua_shipping_connected ? esc_html__('Refresh data', 'mrkv-ua-shipping') : esc_html__('Connect', 'mrkv-ua-shipping'); ?></button>
+				<span class="mrkv-ua-ship-np-connect__status" role="status"></span>
+			</div>
+		</div>
+		<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'basic_last'); ?>
+	</div>
+	<div class="mrkv-ua-ship-np-step mrkv-ua-ship-np-step--sender<?php echo $mrkv_ua_shipping_connected ? '' : ' mrkv-ua-ship-np-step--locked'; ?>" <?php echo $mrkv_ua_shipping_connected ? '' : 'inert'; ?>>
+		<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_first'); ?>
+		<div class="admin_ua_ship_morkva_settings_line mrkv-ua-ship-np-type">
+			<h4><?php echo esc_html__('Sender type', 'mrkv-ua-shipping'); ?></h4>
+			<div class="admin_ua_ship_morkva_settings_row">
+				<?php
+					foreach($mrkv_ua_shipping_sender_types as $mrkv_ua_shipping_type_key => $mrkv_ua_shipping_type_name)
+					{
+						$mrkv_ua_shipping_type_id = MRKV_OPTION_OBJECT_NAME . '_sender_counterparty_type_' . $mrkv_ua_shipping_type_key;
+						$mrkv_ua_shipping_type_missing = $mrkv_ua_shipping_connected && empty($mrkv_ua_shipping_counterparty_types[$mrkv_ua_shipping_type_key]);
+						?>
+							<input id="<?php echo esc_attr($mrkv_ua_shipping_type_id); ?>" type="radio" name="<?php echo esc_attr(MRKV_OPTION_OBJECT_NAME . '[sender][counterparty_type]'); ?>" value="<?php echo esc_attr($mrkv_ua_shipping_type_key); ?>" <?php checked($mrkv_ua_shipping_counterparty_type, $mrkv_ua_shipping_type_key); ?> <?php disabled($mrkv_ua_shipping_type_missing); ?>>
+							<label for="<?php echo esc_attr($mrkv_ua_shipping_type_id); ?>"><?php echo esc_html($mrkv_ua_shipping_type_name); ?></label>
+						<?php
+					}
+				?>
+			</div>
+			<p class="mrkv-ua-ship-description"><?php echo esc_html__('The types available for this API key are active. A type is chosen automatically when the key has only one', 'mrkv-ua-shipping'); ?></p>
+		</div>
+		<?php
+			$mrkv_ua_shipping_counterparties_of_type = isset($mrkv_ua_shipping_counterparty_types[$mrkv_ua_shipping_counterparty_type]) ? $mrkv_ua_shipping_counterparty_types[$mrkv_ua_shipping_counterparty_type] : array();
+		?>
+		<div class="admin_ua_ship_morkva_settings_line mrkv-ua-ship-np-counterparty<?php echo (count($mrkv_ua_shipping_counterparties_of_type) > 1) ? '' : ' hide_element'; ?>">
+			<label for="<?php echo esc_attr(MRKV_OPTION_OBJECT_NAME . '_sender_counterparty_select'); ?>"><?php echo esc_html__('Counterparty', 'mrkv-ua-shipping'); ?></label>
+			<select id="<?php echo esc_attr(MRKV_OPTION_OBJECT_NAME . '_sender_counterparty_select'); ?>">
+				<?php
+					foreach($mrkv_ua_shipping_counterparties_of_type as $mrkv_ua_shipping_counterparty)
+					{
+						$mrkv_ua_shipping_counterparty_label = $mrkv_ua_shipping_counterparty['description'] . ($mrkv_ua_shipping_counterparty['edrpou'] ? ' · ' . __('EDRPOU', 'mrkv-ua-shipping') . ' ' . $mrkv_ua_shipping_counterparty['edrpou'] : '');
+						?>
+							<option value="<?php echo esc_attr($mrkv_ua_shipping_counterparty['ref']); ?>" <?php selected($mrkv_ua_shipping_counterparty_ref, $mrkv_ua_shipping_counterparty['ref']); ?>><?php echo esc_html($mrkv_ua_shipping_counterparty_label); ?></option>
+						<?php
+					}
+				?>
+			</select>
+		</div>
+		<?php
+			echo wp_kses($mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][counterparty_ref]', esc_attr($mrkv_ua_shipping_counterparty_ref), MRKV_OPTION_OBJECT_NAME . '_sender_counterparty_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+			echo wp_kses($mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][counterparty_description]', esc_attr($mrkv_ua_shipping_counterparty_description), MRKV_OPTION_OBJECT_NAME . '_sender_counterparty_description'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+		?>
+		<div class="admin_ua_ship_morkva_settings_line mrkv-ua-ship-np-contact">
+			<?php
+				$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_sender_saved['ref']) ? $mrkv_ua_shipping_sender_saved['ref'] : '';
+				$mrkv_ua_shipping_label = __('Sender contact person', 'mrkv-ua-shipping');
+
+				if($mrkv_ua_shipping_connected && empty(MRKV_OPTION_NOVA_SENDER))
+				{
+					$mrkv_ua_shipping_label .= '<div class="admin_ua_ship_morkva__notification mrkv-notification-red">' . __('Sender list empty', 'mrkv-ua-shipping') . '</div>';
+				}
+
+				$mrkv_ua_shipping_contact_options = array();
+
+				# Escaped here: the option generator prints values as they are
+				foreach(MRKV_OPTION_NOVA_SENDER as $mrkv_ua_shipping_contact_option)
+				{
+					$mrkv_ua_shipping_contact_options[] = array(
+						'data'        => esc_attr($mrkv_ua_shipping_contact_option['data']),
+						'description' => esc_html($mrkv_ua_shipping_contact_option['description']),
+						'attr'        => array_map('esc_attr', isset($mrkv_ua_shipping_contact_option['attr']) ? (array) $mrkv_ua_shipping_contact_option['attr'] : array()),
+					);
+				}
+
+				# The saved person is missing from the list (Nova Poshta did not answer): keep it, the form must not lose it
+				if($mrkv_ua_shipping_data && !in_array($mrkv_ua_shipping_data, array_column($mrkv_ua_shipping_contact_options, 'data'), true))
+				{
+					$mrkv_ua_shipping_saved_attr = array();
+
+					foreach(array('description', 'phones', 'email', 'lastname', 'firstname', 'middlename', 'counterparty_ref') as $mrkv_ua_shipping_sender_data_key)
+					{
+						$mrkv_ua_shipping_saved_attr[$mrkv_ua_shipping_sender_data_key] = isset($mrkv_ua_shipping_sender_saved[$mrkv_ua_shipping_sender_data_key]) ? esc_attr($mrkv_ua_shipping_sender_saved[$mrkv_ua_shipping_sender_data_key]) : '';
+					}
+
+					$mrkv_ua_shipping_contact_options[] = array(
+						'data'        => esc_attr($mrkv_ua_shipping_data),
+						'description' => esc_html(!empty($mrkv_ua_shipping_sender_saved['description']) ? $mrkv_ua_shipping_sender_saved['description'] : $mrkv_ua_shipping_data),
+						'attr'        => $mrkv_ua_shipping_saved_attr,
+					);
+				}
+
+				# data-* of the options carry the person's phone and name to the hidden fields below
+				$mrkv_ua_shipping_contact_tags = MRKV_UA_SHIPPING_ALLOW_TAGS;
+				$mrkv_ua_shipping_contact_tags['option']['data-*'] = true;
+
+				echo wp_kses($mrkv_global_option_generator->get_select_tag($mrkv_ua_shipping_label, MRKV_OPTION_OBJECT_NAME . '[sender][ref]', $mrkv_ua_shipping_contact_options, esc_attr($mrkv_ua_shipping_data), MRKV_OPTION_OBJECT_NAME . '_sender_ref' , __('Choose a contact person', 'mrkv-ua-shipping')), $mrkv_ua_shipping_contact_tags);
+
+				# Data of the chosen contact person, filled from the data-* of its option
+				foreach(array('description', 'phones', 'email', 'lastname', 'firstname', 'middlename') as $mrkv_ua_shipping_sender_data_key)
+				{
+					$mrkv_ua_shipping_sender_data_val = isset(MRKV_OPTION_NOVA_SENDER[0]['attr'][$mrkv_ua_shipping_sender_data_key]) ? MRKV_OPTION_NOVA_SENDER[0]['attr'][$mrkv_ua_shipping_sender_data_key] : '';
+					$mrkv_ua_shipping_data = isset($mrkv_ua_shipping_sender_saved[$mrkv_ua_shipping_sender_data_key]) && $mrkv_ua_shipping_sender_saved[$mrkv_ua_shipping_sender_data_key] ? $mrkv_ua_shipping_sender_saved[$mrkv_ua_shipping_sender_data_key] : $mrkv_ua_shipping_sender_data_val;
+					echo wp_kses($mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][' . $mrkv_ua_shipping_sender_data_key . ']', esc_attr($mrkv_ua_shipping_data), MRKV_OPTION_OBJECT_NAME . '_sender_' . $mrkv_ua_shipping_sender_data_key), MRKV_UA_SHIPPING_ALLOW_TAGS);
+				}
+
+				echo wp_kses($mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][list]', base64_encode(wp_json_encode(MRKV_OPTION_NOVA_SENDER)), MRKV_OPTION_OBJECT_NAME . '_sender_list'), MRKV_UA_SHIPPING_ALLOW_TAGS);
 			?>
 		</div>
-		<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
-		</div>
+		<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_middle_1'); ?>
 	</div>
-	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_middle_3'); ?>
-	<div class="admin_ua_ship_morkva_settings_line">
-		<?php 
-			$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['address_type']) ? MRKV_SHIPPING_SETTINGS['sender']['address_type'] : 'W';
-			$mrkv_ua_shipping_description = '';
-
-			$mrkv_ua_shipping_address_types = [
-				'W' => __('Sending from a branch', 'mrkv-ua-shipping'),
-				'D' => __('Sending from the address', 'mrkv-ua-shipping'),
-			];
-
-			echo wp_kses( $mrkv_global_option_generator->get_select_simple(__('Address type', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][address_type]', $mrkv_ua_shipping_address_types, $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_address_type' , __('Choose a type', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
-		?>
-		<div class="admin_ua_ship_morkva_settings_line__inner">
-			<div class="admin_ua_ship_morkva_settings_line adresstype-form adresstype-form-W <?php echo ($mrkv_ua_shipping_data == 'W') ? 'mrkv-address-active' : ''; ?>" >
+	<?php $mrkv_ua_shipping_place_open = $mrkv_ua_shipping_connected && (!empty($mrkv_ua_shipping_sender_saved['ref']) || !empty($mrkv_ua_shipping_sender_saved['city']['ref'])); ?>
+	<div class="mrkv-ua-ship-np-step mrkv-ua-ship-np-step--place<?php echo $mrkv_ua_shipping_place_open ? '' : ' mrkv-ua-ship-np-step--locked'; ?>" <?php echo $mrkv_ua_shipping_place_open ? '' : 'inert'; ?>>
+		<h3><img src="<?php echo esc_url(MRKV_UA_SHIPPING_ASSETS_URL . '/images/global/routing-icon.svg'); ?>" alt="Sender address" title="Sender address"><?php echo esc_html__('Sender address', 'mrkv-ua-shipping'); ?></h3>
+		<p><?php echo esc_html__('Specify the sender\'s address from which the goods will be sent', 'mrkv-ua-shipping'); ?></p>
+		<hr class="mrkv-ua-ship__hr">
+		<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_middle_2'); ?>
+		<div class="admin_ua_ship_morkva_settings_row">
+			<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
 				<?php 
-						$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['name']) ? esc_attr(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['name']) : '';
-						$mrkv_ua_shipping_description = __('Enter the first 2-3 letters and wait for the data to load', 'mrkv-ua-shipping');
+					$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['city']['name']) ? MRKV_SHIPPING_SETTINGS['sender']['city']['name'] : '';
+					$mrkv_ua_shipping_description = __('Enter the first 2-3 letters and wait for the data to load', 'mrkv-ua-shipping');
 
-						echo wp_kses( $mrkv_global_option_generator->get_input_text(__('Warehouse', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][warehouse][name]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_warehouse_name' , '', __('Enter the warehouse...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
-						$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['warehouse']['ref'] : '';
-						echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][warehouse][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_warehouse_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
-						$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['number']) ? MRKV_SHIPPING_SETTINGS['sender']['warehouse']['number'] : '';
-						echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][warehouse][number]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_warehouse_number'), MRKV_UA_SHIPPING_ALLOW_TAGS);
-					?>
+					echo wp_kses( $mrkv_global_option_generator->get_input_text(__('City', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][city][name]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_city_name' , '', __('Enter the city...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
+					$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['city']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['city']['ref'] : '';
+					echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][city][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_city_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+				?>
 			</div>
-			<div class="admin_ua_ship_morkva_settings_line adresstype-form adresstype-form-D <?php echo ($mrkv_ua_shipping_data == 'D') ? 'mrkv-address-active' : ''; ?>">
-				<?php 
-							$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['name']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['name'] : '';
-							echo wp_kses( $mrkv_global_option_generator->get_input_text(__('Street', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][street][name]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_street_name' , '', __('Enter the street...', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
-							$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['ref'] : '';
-							echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][street][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_street_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
-						?>
-						<p class="mrkv-ua-ship-description"><?php echo esc_html__('Enter the first 2-3 letters and wait for the data to load', 'mrkv-ua-shipping'); ?></p>
-						<div class="admin_ua_ship_morkva_settings_row">
-							<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
-								<?php 
-									$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['house']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['house'] : '';
-									echo wp_kses( $mrkv_global_option_generator->get_input_text('', MRKV_OPTION_OBJECT_NAME . '[sender][street][house]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_street_house' , '', __('Enter the house...', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
-								?>
-							</div>
-							<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
-								<?php
-									$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['flat']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['flat'] : '';
-									echo wp_kses( $mrkv_global_option_generator->get_input_text('', MRKV_OPTION_OBJECT_NAME . '[sender][street][flat]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_street_flat' , '', __('Apartment / Office', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
-								?>
-							</div>
-						</div>
-						<?php 
-							$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['address']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['address']['ref'] : '';
-							echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][address][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_address_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
-						?>
+			<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
 			</div>
 		</div>
+		<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_middle_3'); ?>
+		<div class="admin_ua_ship_morkva_settings_line">
+			<?php 
+				$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['address_type']) ? MRKV_SHIPPING_SETTINGS['sender']['address_type'] : 'W';
+				$mrkv_ua_shipping_description = '';
+
+				$mrkv_ua_shipping_address_types = [
+					'W' => __('Sending from a branch', 'mrkv-ua-shipping'),
+					'D' => __('Sending from the address', 'mrkv-ua-shipping'),
+				];
+
+				echo wp_kses( $mrkv_global_option_generator->get_select_simple(__('Address type', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][address_type]', $mrkv_ua_shipping_address_types, $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_address_type' , __('Choose a type', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
+			?>
+			<div class="admin_ua_ship_morkva_settings_line__inner">
+				<div class="admin_ua_ship_morkva_settings_line adresstype-form adresstype-form-W <?php echo ($mrkv_ua_shipping_data == 'W') ? 'mrkv-address-active' : ''; ?>" >
+					<?php 
+							$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['name']) ? esc_attr(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['name']) : '';
+							$mrkv_ua_shipping_description = __('Enter the first 2-3 letters and wait for the data to load', 'mrkv-ua-shipping');
+
+							echo wp_kses( $mrkv_global_option_generator->get_input_text(__('Warehouse', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][warehouse][name]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_warehouse_name' , '', __('Enter the warehouse...', 'mrkv-ua-shipping'), $mrkv_ua_shipping_description), MRKV_UA_SHIPPING_ALLOW_TAGS);
+							$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['warehouse']['ref'] : '';
+							echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][warehouse][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_warehouse_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+							$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['warehouse']['number']) ? MRKV_SHIPPING_SETTINGS['sender']['warehouse']['number'] : '';
+							echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][warehouse][number]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_warehouse_number'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+						?>
+				</div>
+				<div class="admin_ua_ship_morkva_settings_line adresstype-form adresstype-form-D <?php echo ($mrkv_ua_shipping_data == 'D') ? 'mrkv-address-active' : ''; ?>">
+					<?php 
+								$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['name']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['name'] : '';
+								echo wp_kses( $mrkv_global_option_generator->get_input_text(__('Street', 'mrkv-ua-shipping'), MRKV_OPTION_OBJECT_NAME . '[sender][street][name]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_street_name' , '', __('Enter the street...', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
+								$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['ref'] : '';
+								echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][street][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_street_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+							?>
+							<p class="mrkv-ua-ship-description"><?php echo esc_html__('Enter the first 2-3 letters and wait for the data to load', 'mrkv-ua-shipping'); ?></p>
+							<div class="admin_ua_ship_morkva_settings_row">
+								<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
+									<?php 
+										$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['house']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['house'] : '';
+										echo wp_kses( $mrkv_global_option_generator->get_input_text('', MRKV_OPTION_OBJECT_NAME . '[sender][street][house]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_street_house' , '', __('Enter the house...', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
+									?>
+								</div>
+								<div class="admin_ua_ship_morkva_settings_line col-mrkv-5">
+									<?php
+										$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['street']['flat']) ? MRKV_SHIPPING_SETTINGS['sender']['street']['flat'] : '';
+										echo wp_kses( $mrkv_global_option_generator->get_input_text('', MRKV_OPTION_OBJECT_NAME . '[sender][street][flat]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME. '_sender_street_flat' , '', __('Apartment / Office', 'mrkv-ua-shipping')), MRKV_UA_SHIPPING_ALLOW_TAGS);
+									?>
+								</div>
+							</div>
+							<?php 
+								$mrkv_ua_shipping_data = isset(MRKV_SHIPPING_SETTINGS['sender']['address']['ref']) ? MRKV_SHIPPING_SETTINGS['sender']['address']['ref'] : '';
+								echo wp_kses( $mrkv_global_option_generator->get_input_hidden(MRKV_OPTION_OBJECT_NAME . '[sender][address][ref]', $mrkv_ua_shipping_data, MRKV_OPTION_OBJECT_NAME . '_sender_address_ref'), MRKV_UA_SHIPPING_ALLOW_TAGS);
+							?>
+				</div>
+			</div>
+		</div>
+		<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_last'); ?>
+		<p class="mrkv-ua-ship-description mrkv-ua-ship-np-courier-note"><?php echo esc_html__('When you send from an address, Nova Poshta creates a courier pickup request automatically, unless the separate "Courier call" service is connected through your manager', 'mrkv-ua-shipping'); ?></p>
 	</div>
-	<?php do_action('mrkv_ua_shipping_settings_page_row', 'nova-poshta', 'sender_last'); ?>
+	<div class="mrkv-ua-ship-np-sender-notice hide_element" role="alert"></div>
 </section>
 <section id="default_settings" class="mrkv_up_ship_shipping_tab_block">
 	<h2><img src="<?php echo esc_url(MRKV_UA_SHIPPING_ASSETS_URL . '/images/global/box-icon.svg'); ?>" alt="Default values" title="Default values"><?php echo esc_html__('Default values', 'mrkv-ua-shipping'); ?></h2>
