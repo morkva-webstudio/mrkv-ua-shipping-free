@@ -80,45 +80,70 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_UKR'))
 
 		public function get_ukr_poshta_warehouse()
 		{
-			if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'mrkv_ua_ship_nonce')) {
-		        wp_send_json_error(__('Invalid nonce.', 'mrkv-ua-shipping'), 403);
-		        wp_die();
-		    }
+			if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mrkv_ua_ship_nonce')) {
+				wp_send_json_error(__('Invalid nonce.', 'mrkv-ua-shipping'), 403);
+				wp_die();
+			}
 
 			$mrkv_object_ukr_poshta = new MRKV_UA_SHIPPING_API_UKR_POSHTA(get_option('ukr-poshta_m_ua_settings'));
 
-			$city_ref = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
+			$city_ref       = isset($_POST['ref']) ? sanitize_text_field(wp_unslash($_POST['ref'])) : '';
+			$warehouse_type = isset($_POST['type']) ? sanitize_text_field(wp_unslash($_POST['type'])) : '';
+			$is_poshtamat   = ($warehouse_type === 'poshtamat');
+			$exclude_poshtamat = false;
 
-			# Send request
-	        $obj = $mrkv_object_ukr_poshta->send_post_request('address-classifier-ws/get_postoffices_by_postcode_cityid_cityvpzid?city_id=' . $city_ref, 'GET');
+			if (WC()->session) {
+				$chosen_shipping_methods = WC()->session->get('chosen_shipping_methods');
+				if (!empty($chosen_shipping_methods) && is_array($chosen_shipping_methods)) {
+					$chosen_method = reset($chosen_shipping_methods);
+					$instance_id = 0;
 
-	        if(isset($obj['Entries']['Entry']) && is_array($obj['Entries']['Entry']) && !empty($obj['Entries']['Entry']))
-       		{
-       			$warehouse = array();
+					if (strpos($chosen_method, ':') !== false) {
+						$method_parts = explode(':', $chosen_method);
+						$instance_id  = absint(end($method_parts));
+					} elseif (strpos($chosen_method, '_') !== false) {
+						$last_underscore = strrpos($chosen_method, '_');
+						$instance_id     = absint(substr($chosen_method, $last_underscore + 1));
+					}
 
-       			$warehouse[] = array(
-        			'value' => '',
-        			'label' => __('Choose the warehouse', 'mrkv-ua-shipping'),
-        		);
+					if ($instance_id > 0) {
+						$shipping_method = WC_Shipping_Zones::get_shipping_method($instance_id);
 
-       			foreach($obj['Entries']['Entry'] as $entry)
-       			{
-       				$warehouse[] = array(
-	        			'value' => $entry['POSTCODE'],
-	        			'label' => $entry['POSTOFFICE_UA'] . ', ' . $entry['STREET_UA_VPZ'],
-						'type' => $entry['TYPE_ID'],
-	        		);
-       			}
+						if ($shipping_method) {
+							$exclude_poshtamat_val = $shipping_method->get_option('exclude_poshtamat', 'yes');
+							$exclude_poshtamat     = ($exclude_poshtamat_val === 'yes');
+						}
+					}
+				}
+			}
 
-       			# Return object
-	        	echo wp_json_encode($warehouse);
-       		}
-       		else
-       		{
-       			echo wp_json_encode(array());
-       		}
+			$obj = $mrkv_object_ukr_poshta->send_post_request('address-classifier-ws/get_postoffices_by_postcode_cityid_cityvpzid?city_id=' . $city_ref, 'GET');
 
-       		wp_die();
+			if (isset($obj['Entries']['Entry']) && is_array($obj['Entries']['Entry']) && !empty($obj['Entries']['Entry'])) {
+				$warehouse = array();
+
+				$warehouse[] = array(
+					'value' => '',
+					'label' => $is_poshtamat ? __('Choose the poshtomat', 'mrkv-ua-shipping') : __('Choose the warehouse', 'mrkv-ua-shipping'),
+				);
+
+				foreach ($obj['Entries']['Entry'] as $entry) {
+					if (($is_poshtamat && $entry['TYPE_ID'] != '56') || (!$is_poshtamat && $exclude_poshtamat && $entry['TYPE_ID'] == '56')) {
+						continue;
+					}
+
+					$warehouse[] = array(
+						'value' => $entry['POSTCODE'],
+						'label' => $entry['POSTOFFICE_UA'] . ', ' . $entry['STREET_UA_VPZ'],
+						'type'  => $entry['TYPE_ID'],
+					);
+				}
+				echo wp_json_encode($warehouse);
+			} else {
+				echo wp_json_encode(array());
+			}
+
+			wp_die();
 		}
 
 		public function get_ukr_poshta_street()

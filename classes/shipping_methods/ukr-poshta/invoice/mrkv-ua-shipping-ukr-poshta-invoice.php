@@ -370,7 +370,8 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 				$region = $this->order->get_billing_state() ? $this->order->get_billing_state() : $this->order->get_shipping_state();
 				$city = $this->order->get_billing_city() ? $this->order->get_billing_city() : $this->order->get_shipping_city();
 				$street = $this->order->get_billing_address_1() ? $this->order->get_billing_address_1() : $this->order->get_shipping_address_1();
-				$apartment_number = $this->order->get_billing_address_2() ? $this->order->get_billing_address_2() : $this->order->get_shipping_address_2();
+				$house_number = $this->order->get_billing_address_2() ? $this->order->get_billing_address_2() : $this->order->get_shipping_address_2();
+				$apartmentNumber = $this->order->get_meta($current_shipping_method . '_address_flat');
 
 				# Send request
 				$obj = $this->shipping_api->send_post_request_curl('ecom/0.0.1/addresses', 'POST', array(
@@ -379,7 +380,8 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 					"region" => $region,
 					"city" => $city,
 					"street" => $street,
-					"apartmentNumber" => $apartment_number,
+					"houseNumber" => $house_number,
+					"apartmentNumber" => $apartmentNumber,
 				));
 			}
 			

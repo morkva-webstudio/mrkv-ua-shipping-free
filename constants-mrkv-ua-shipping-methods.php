@@ -414,6 +414,80 @@ define('MRKV_UA_SHIPPING_LIST', array(
 					)
 				)
 			),
+			'mrkv_ua_shipping_ukr-poshta_poshtamat' => array(
+				'class' => 'MRKV_UA_SHIPPING_UKR_POSHTA_POSHTAMAT',
+				'slug' => 'mrkv_ua_shipping_ukr-poshta_poshtamat',
+				'filename' => 'mrkv-ua-shipping-method-ukr-poshta-poshtamat',
+				'validation_latin' => true,
+				'checkout_fields' => array(
+					'_patronymic' => array(
+						'type' => 'text',
+						'required' => false,
+						'label' => __('Patronymic', 'mrkv-ua-shipping'),
+						'placeholder' => __('Enter the patronymic', 'mrkv-ua-shipping'),
+						'replace' => '_patronymic',
+						'order_edit' => true,
+						// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
+						'exclude' => true,
+						'autocomplete' => 'new-password',
+						'cod_validation' => true
+					),
+					'_patronymic_enabled' => array(
+						'type' => 'hidden',
+						'autocomplete' => 'new-password',
+					),
+					'_city' => array(
+						'type' => 'select',
+						'autocomplete' => 'new-password',
+						'options' => array('' => __('Choose the city', 'mrkv-ua-shipping')),
+						'required' => true,
+						'label' => __('City (settlement)', 'mrkv-ua-shipping'),
+						'replace' => '_city',
+						'custom_attributes' => array(
+						    'autocomplete' => 'off',
+						    'aria-autocomplete' => 'none',
+						    'data-lpignore' => 'true',
+						    'data-form-type' => 'other',
+						    'readonly' => 'readonly',
+						)
+					),
+					'_city_ref' => array(
+						'type' => 'hidden',
+						'autocomplete' => 'new-password',
+						'replace' => '_city_ref'
+					),
+					'_area_name' => array(
+						'type' => 'hidden',
+						'autocomplete' => 'new-password',
+						'replace' => '_state'
+					),
+					'_warehouse' => array(
+						'type' => 'select',
+						'autocomplete' => 'new-password',
+						'options' => array('' => __('Choose the poshtomat', 'mrkv-ua-shipping')),
+						'required' => true,
+						'label' => __('Poshtomat', 'mrkv-ua-shipping'),
+						'replace' => '_address_1'
+					),
+					'_warehouse_ref' => array(
+						'type' => 'hidden',
+						'autocomplete' => 'new-password',
+						'replace' => '_postcode',
+						'required' => true,
+						'label' => __('Poshtomat', 'mrkv-ua-shipping'),
+					),
+					'_warehouse_type' => array(
+						'type' => 'hidden',
+						'autocomplete' => 'off',
+						'replace' => '_warehouse_type'
+					),
+					'_address_ref' => array(
+						'type' => 'hidden',
+						'autocomplete' => 'new-password',
+						'replace' => '_address_ref'
+					)
+				)
+			),
 			'mrkv_ua_shipping_ukr-poshta_address' => array(
 				'class' => 'MRKV_UA_SHIPPING_UKR_POSHTA_ADDRESS',
 				'slug' => 'mrkv_ua_shipping_ukr-poshta_address',

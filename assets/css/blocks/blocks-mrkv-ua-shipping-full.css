@@ -85,3 +85,6 @@
 .wp-block-woocommerce-cart .wc-block-components-totals-shipping .wc-block-components-totals-item__value{
     display:none;
 }
+.wc-block-components-select-input-mrkv-ua-shipping-mrkv_ua_shipping_ukr-poshta_poshtamat_warehouse > .wc-blocks-components-select{
+    margin-top: -4px;
+}

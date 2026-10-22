@@ -3,7 +3,7 @@ Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.15.0
+Stable tag: 1.15.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,11 @@ https://youtu.be/47-VrH_QJAE
 
 
 == Changelog ==
+
+= 1.15.1 =
+* [new] додали спосіб доставки УП Поштамат
+* [new] додали вилучення поштаматів з відділень УП
+* [fix] виправили налаштування відправника
 
 = 1.15.0 =
 * [new] об'єднали вкладки «Базові» та «Відправник» Нової Пошти: API ключ → тип відправника (фізична / юридична особа) → контактна особа → місце відправки

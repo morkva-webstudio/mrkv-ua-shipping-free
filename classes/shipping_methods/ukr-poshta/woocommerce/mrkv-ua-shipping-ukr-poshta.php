@@ -112,6 +112,14 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA'))
                     'placeholder' => __('FREE to UkrPoshta Warehouse', 'mrkv-ua-shipping'),
                     'description' => '',
                 ),
+                'exclude_poshtamat' => array(
+                    'title'       => __('Exclude postomat offices', 'mrkv-ua-shipping'),
+                    'label'       => __('Exclude post offices with "poshtamat" type', 'mrkv-ua-shipping'),
+                    'type'        => 'checkbox',
+                    'default'     => 'yes',
+                    'description' => __('Post office type "poshtamat" does not allow COD or payment by recipient', 'mrkv-ua-shipping'),
+                    'desc_tip'    => true,
+                ),
             );
         }
 
