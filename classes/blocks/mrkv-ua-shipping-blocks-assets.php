@@ -19,6 +19,27 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
             add_action( 'enqueue_block_editor_assets', [ $this, 'mrkv_enqueue_admin_checkout_assets' ] );
         }
 
+        /**
+         * "Show only branches" is on in some Nova Poshta warehouse method: its field lists no poshtomats
+         */
+        private function is_poshtomat_excluded_in_any_instance() {
+            $zones = \WC_Shipping_Zones::get_zones();
+            $default_zone = new \WC_Shipping_Zone( 0 );
+            $zones[] = $default_zone->get_data();
+
+            foreach ( $zones as $zone_data ) {
+                $zone = new \WC_Shipping_Zone( $zone_data['id'] ?? 0 );
+
+                foreach ( $zone->get_shipping_methods( true ) as $method ) {
+                    if ( $method->id === 'mrkv_ua_shipping_nova-poshta' && $method->get_option( 'exclude_poshtomat', 'no' ) === 'yes' ) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private static function is_cod_enabled() {
             if ( ! class_exists( 'WooCommerce' ) || ! WC()->payment_gateways ) {
                 return false;
@@ -168,6 +189,10 @@ if (!class_exists('MRKV_UA_SHIPPING_BLOCKS_ASSETS'))
                 foreach($providers_locations as $provider){
                     $providers_locations[ $provider ] = 'order';
                 }
+            }
+
+            if ( $this->is_poshtomat_excluded_in_any_instance() && isset( $mrkv_ua_shipping_method_list['nova-poshta']['method']['mrkv_ua_shipping_nova-poshta']['checkout_fields']['_warehouse'] ) ) {
+                $mrkv_ua_shipping_method_list['nova-poshta']['method']['mrkv_ua_shipping_nova-poshta']['checkout_fields']['_warehouse']['label'] = __( 'Warehouse', 'mrkv-ua-shipping' );
             }
 
             wp_localize_script( 'mrkv-ua-shipping-checkout-blocks-extension', 'mrkvShippingConfig', array(

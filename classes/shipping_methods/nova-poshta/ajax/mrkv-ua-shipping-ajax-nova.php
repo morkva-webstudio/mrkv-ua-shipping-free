@@ -10,11 +10,26 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 	 */
 	class MRKV_UA_SHIPPING_AJAX_NOVA
 	{
+		# Nova Poshta warehouse types (getWarehouseTypes)
+		const POSHTOMAT_TYPE = 'f9316480-5f2d-425d-bc2c-ac7cd29decf0';
+		const BRANCH_TYPES = array('841339c7-591a-42e2-8233-7a0a00f0ed6f', '9a68df70-0267-42a8-bb5c-37f427e36ee4');
+
+		# Every warehouse takes a parcel up to this weight (the lowest limit Nova Poshta has), so no filtering below it
+		const WEIGHT_FILTER_FROM_KG = 5;
+		# Poshtomat limit: TotalMaxWeightAllowed of practically every poshtomat
+		const POSHTOMAT_MAX_KG = 20;
+
+		# The city's branch list is refreshed once a day (Nova Poshta's advice), a stale copy is kept a week
+		const BRANCHES_FRESH = DAY_IN_SECONDS;
+		const BRANCHES_KEEP = 7 * DAY_IN_SECONDS;
+
 		/**
 		 * Constructor for plugin shipping methods ajax nova poshta
 		 * */
 		function __construct()
 		{
+			add_action( 'mrkv_ua_shipping_np_refresh_city_branches', array($this, 'refresh_city_branches') );
+
 			add_action( 'wp_ajax_mrkv_ua_ship_nova_poshta_area', array($this, 'get_nova_poshta_area') );
 			add_action( 'wp_ajax_nopriv_mrkv_ua_ship_nova_poshta_area', array($this, 'get_nova_poshta_area') );
 
@@ -197,13 +212,10 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 			if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
 				if (!isset($obj['data']) || !isset($obj['data'][0]['Addresses'][0])) {
-					$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
-						'timeout' => 10,
-						'body' => [
-							'query_type' => 'city',
-							'query_text' => $key_search,
-						]
-					]);
+					$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), $this->proxy_request_args([
+						'query_type' => 'city',
+						'query_text' => $key_search,
+					]));
 
 					if (!is_wp_error($response)) {
 						$city_array = json_decode(wp_remote_retrieve_body($response), true);
@@ -275,13 +287,43 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				$cart_weight = max($actual_weight_kg, $volume_weight);
 			}
 
-			$label = ($warehouse_type && $warehouse_type != 'none') ? __('Choose the poshtomat', 'mrkv-ua-shipping') : 
+			$is_poshtomat_field = $warehouse_type && $warehouse_type != 'none';
+			$label = $is_poshtomat_field ? __('Choose the poshtomat', 'mrkv-ua-shipping') : 
 						__('Choose the warehouse', 'mrkv-ua-shipping');
 
 			$placeholder_item = array('value' => '', 'label' => $label, 'number' => '', 'zipcode' => '');
 
+			# A parcel over the poshtomat limit fits no poshtomat: say so instead of listing them
+			if ($is_poshtomat_field && $cart_weight > self::POSHTOMAT_MAX_KG) {
+				/* translators: 1: order weight, 2: poshtomat weight limit, both in kg */
+				$placeholder_item['label'] = sprintf(__('Order weight %1$s kg exceeds the poshtomat limit of %2$s kg, choose another delivery method', 'mrkv-ua-shipping'), round($cart_weight, 2), self::POSHTOMAT_MAX_KG);
+				echo wp_json_encode($page === 1 ? array($placeholder_item) : array());
+				wp_die();
+			}
+
+			# "Show only branches" of the chosen method, or a parcel too heavy for a poshtomat
+			$branches_only = !$is_poshtomat_field && ($warehouse_type == 'none' || $cart_weight > self::POSHTOMAT_MAX_KG || $this->chosen_method_excludes_poshtomat());
+			$filter_weight = $cart_weight > self::WEIGHT_FILTER_FROM_KG ? $cart_weight : 0;
+
 			$settings_method = get_option('nova-poshta_m_ua_settings');
 			$mrkv_object_nova_poshta = new MRKV_UA_SHIPPING_API_NOVA_POSHTA($settings_method);
+
+			# Nova Poshta filters neither by weight nor "all types but one": such a list is built here
+			# from the city's branches (and the poshtomats after them), in full pages of $limit
+			$filtered_failed = false;
+			if (!$is_poshtomat_field && ($branches_only || $filter_weight)) {
+				$areas = $this->get_filtered_warehouse_page($mrkv_object_nova_poshta, $city_ref, $key_search, $page, $limit, $filter_weight, $branches_only);
+
+				if (null !== $areas) {
+					if ($page === 1 && !empty($areas)) {
+						array_unshift($areas, $placeholder_item);
+					}
+					echo wp_json_encode($areas);
+					wp_die();
+				}
+				# Nova Poshta failed: straight to the proxy below, it gets the same filters
+				$filtered_failed = true;
+			}
 
 			$mrkv_ua_shipping_args = array(
 				'apiKey' => $mrkv_object_nova_poshta->get_api_key(),
@@ -300,19 +342,14 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 				unset($mrkv_ua_shipping_args['apiKey']);
 			}
 
-			if ($warehouse_type == 'none') {
-				$mrkv_ua_shipping_args['methodProperties']['POSTerminal'] = '1';
-			} elseif ($warehouse_type) {
+			if ($is_poshtomat_field) {
 				$mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] = $warehouse_type;
-			}
-
-			if ($cart_weight > 30) {
-				$mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] = '9a68df70-0267-42a8-bb5c-37f427e36ee4';
 			}
 
 			# Only the list opened without a search text is cached: every shopper of the city sees it,
 			# while a typed text rarely repeats and would only fill the cache
-			$use_cache = '' === trim($key_search);
+			# (not the proxy's filtered answer: it would land under the key of the unfiltered list)
+			$use_cache = '' === trim($key_search) && !$filtered_failed;
 			$cache_properties = $mrkv_ua_shipping_args['methodProperties'];
 			unset($cache_properties['FindByString']);
 			$transient_key = 'mrkv_np_wh_' . md5(wp_json_encode($cache_properties));
@@ -321,7 +358,7 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 			if (false === $areas) {
 				# While the Nova Poshta API is known to be down go straight to the proxy instead of waiting for it again.
-				$api_skipped = MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down();
+				$api_skipped = $filtered_failed || MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down();
 				$obj = $api_skipped ? array() : $mrkv_object_nova_poshta->send_post_request($mrkv_ua_shipping_args, MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
 
 				if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
@@ -341,18 +378,23 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 				if ($mrkv_object_nova_poshta->active_api !== true || $failed) {
 					if (!isset($obj['data']) || !isset($obj['data'][0])) {
-						$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), [
-							'timeout' => 10,
-							'body' => [
-								'query_type' => 'warehouse_poshtomat',
-								'city_ref' => $city_ref,
-								# the proxy filters and paginates like getWarehouses
-								'page' => $page,
-								'limit' => $limit,
-								'find' => $key_search,
-								'type' => $mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] ?? '',
-							]
-						]);
+						# the proxy filters and paginates like getWarehouses
+						$proxy_query = [
+							'query_type' => 'warehouse_poshtomat',
+							'city_ref' => $city_ref,
+							'page' => $page,
+							'limit' => $limit,
+							'find' => $key_search,
+							'type' => $mrkv_ua_shipping_args['methodProperties']['TypeOfWarehouseRef'] ?? '',
+						];
+						# Filters getWarehouses does not have: a proxy that does not know them ignores them
+						if ($filter_weight) {
+							$proxy_query['weight'] = round($filter_weight, 2);
+						}
+						if ($branches_only) {
+							$proxy_query['exclude_type'] = self::POSHTOMAT_TYPE;
+						}
+						$response = wp_remote_get(apply_filters('mrkv_ua_shipping_np_proxy_url', 'https://np.morkva.co.ua/api.php'), $this->proxy_request_args($proxy_query));
 
 						if (!is_wp_error($response)) {
 							# Already filtered and cut to the page by the proxy
@@ -392,6 +434,352 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 
 			echo wp_json_encode($areas);
 			wp_die();
+		}
+
+		/**
+		 * One page of the warehouse field when Nova Poshta cannot filter it: the city's branches that
+		 * take the parcel, then (unless $branches_only) the poshtomats, cut into pages of $limit.
+		 *
+		 * @return array|null Page rows, null when Nova Poshta failed
+		 */
+		private function get_filtered_warehouse_page($api, $city_ref, $search, $page, $limit, $weight, $branches_only)
+		{
+			$branches = $this->get_city_branches($api, $city_ref);
+			if (null === $branches) {
+				return null;
+			}
+
+			$fitting = array();
+			foreach ($branches as $branch) {
+				if (self::warehouse_fits($branch['total'], $branch['place'], $weight, $weight) && ('' === trim($search) || false !== mb_stripos($branch['label'], trim($search)))) {
+					$fitting[] = array('value' => $branch['value'], 'label' => $branch['label'], 'number' => $branch['number'], 'zipcode' => $branch['zipcode']);
+				}
+			}
+
+			$offset = ($page - 1) * $limit;
+			$rows = array_slice($fitting, $offset, $limit);
+
+			if ($branches_only || count($rows) >= $limit) {
+				return $rows;
+			}
+
+			# The poshtomats follow the branches: rows [$from, $from + $need) of their list, at most two of its pages
+			$from = max(0, $offset - count($fitting));
+			$need = $limit - count($rows);
+			$first_page = intdiv($from, $limit) + 1;
+			$last_page = intdiv($from + $need - 1, $limit) + 1;
+			$poshtomats = array();
+
+			for ($p = $first_page; $p <= $last_page; $p++) {
+				$page_rows = $this->get_poshtomat_page($api, $city_ref, $search, $p, $limit);
+				if (null === $page_rows) {
+					return null;
+				}
+				foreach ($page_rows as $row) {
+					if (self::warehouse_fits($row['total'], $row['place'], $weight, $weight)) {
+						unset($row['total'], $row['place']);
+						$poshtomats[] = $row;
+					}
+				}
+				if (count($page_rows) < $limit) {
+					break;
+				}
+			}
+
+			return array_merge($rows, array_slice($poshtomats, $from - ($first_page - 1) * $limit, $need));
+		}
+
+		/**
+		 * One page of the city's poshtomats with their weight limits
+		 *
+		 * @return array|null
+		 */
+		private function get_poshtomat_page($api, $city_ref, $search, $page, $limit)
+		{
+			# Own cache key: the poshtomat field caches the same request without the weight limits
+			$use_cache = '' === trim($search);
+			$transient_key = 'mrkv_np_pm_' . md5($city_ref . '|' . $page . '|' . $limit);
+
+			$rows = $use_cache ? get_transient($transient_key) : false;
+			if (is_array($rows)) {
+				return $rows;
+			}
+
+			$data = $this->request_warehouses($api, array(
+				'CityRef' => $city_ref,
+				'Limit' => (string) $limit,
+				'Page' => (string) $page,
+				'FindByString' => '%' . $search . '%',
+				'TypeOfWarehouseRef' => self::POSHTOMAT_TYPE,
+			));
+			if (null === $data) {
+				return null;
+			}
+
+			$rows = array_map(array($this, 'warehouse_row'), $data);
+			if ($use_cache && !empty($rows)) {
+				set_transient($transient_key, $rows, apply_filters('mrkv_ua_shipping_np_warehouses_cache_ttl', 6 * HOUR_IN_SECONDS));
+			}
+
+			return $rows;
+		}
+
+		/**
+		 * The city's branches (every type but poshtomats) with their weight limits, sorted like Nova Poshta does.
+		 * A copy older than a day is still answered while a cron event refreshes it.
+		 *
+		 * @return array|null
+		 */
+		private function get_city_branches($api, $city_ref)
+		{
+			$cached = get_transient('mrkv_np_br_' . md5($city_ref));
+
+			if (is_array($cached) && isset($cached['rows'], $cached['time'])) {
+				if (time() - $cached['time'] > self::BRANCHES_FRESH && !wp_next_scheduled('mrkv_ua_shipping_np_refresh_city_branches', array($city_ref))) {
+					wp_schedule_single_event(time(), 'mrkv_ua_shipping_np_refresh_city_branches', array($city_ref));
+				}
+				return $cached['rows'];
+			}
+
+			return $this->refresh_city_branches($city_ref, $api);
+		}
+
+		/**
+		 * Load the city's branch list from Nova Poshta into the cache (also the cron event of get_city_branches)
+		 *
+		 * @return array|null
+		 */
+		public function refresh_city_branches($city_ref, $api = null)
+		{
+			if (!$api) {
+				$api = new MRKV_UA_SHIPPING_API_NOVA_POSHTA(get_option('nova-poshta_m_ua_settings'));
+			}
+
+			# First page of each type, then all the remaining pages at once: Kyiv's ~2 MB come in two rounds
+			$page_size = 200;
+			$first = array();
+			foreach (self::BRANCH_TYPES as $type) {
+				$first[$type] = array('CityRef' => $city_ref, 'TypeOfWarehouseRef' => $type, 'Limit' => (string) $page_size, 'Page' => '1');
+			}
+			$answers = $this->request_warehouses_multi($api, $first);
+			if (null === $answers) {
+				return null;
+			}
+
+			$rest = array();
+			foreach ($answers as $type => $answer) {
+				$total = isset($answer['info']['totalCount']) ? (int) $answer['info']['totalCount'] : 0;
+				# Without a total keep asking while the pages are full
+				$pages = $total ? (int) ceil($total / $page_size) : (count($answer['data']) < $page_size ? 1 : 2);
+				for ($page = 2; $page <= $pages; $page++) {
+					$rest[$type . '|' . $page] = array('CityRef' => $city_ref, 'TypeOfWarehouseRef' => $type, 'Limit' => (string) $page_size, 'Page' => (string) $page);
+				}
+			}
+			while ($rest) {
+				$more = $this->request_warehouses_multi($api, $rest);
+				if (null === $more) {
+					return null;
+				}
+				$answers = array_merge($answers, $more);
+				$next = array();
+				foreach ($more as $key => $answer) {
+					list($type, $page) = explode('|', $key);
+					if (!isset($answer['info']['totalCount']) && count($answer['data']) >= $page_size) {
+						$next[$type . '|' . ($page + 1)] = array('CityRef' => $city_ref, 'TypeOfWarehouseRef' => $type, 'Limit' => (string) $page_size, 'Page' => (string) ($page + 1));
+					}
+				}
+				$rest = $next;
+			}
+
+			$rows = array();
+			foreach ($answers as $answer) {
+				$rows = array_merge($rows, array_map(array($this, 'warehouse_row'), $answer['data']));
+			}
+
+			usort($rows, function ($a, $b) {
+				return (int) $a['number'] <=> (int) $b['number'];
+			});
+
+			set_transient('mrkv_np_br_' . md5($city_ref), array('time' => time(), 'rows' => $rows), self::BRANCHES_KEEP);
+
+			return $rows;
+		}
+
+		/**
+		 * getWarehouses with the key when it works, keyless otherwise
+		 *
+		 * @return array|null Rows, null on failure
+		 */
+		private function request_warehouses($api, $properties, $timeout = null)
+		{
+			$answer = $this->request_warehouses_answer($api, $properties, $timeout);
+
+			return null === $answer ? null : $answer['data'];
+		}
+
+		/**
+		 * getWarehouses answer (data + info), retried once when Nova Poshta asks to slow down
+		 *
+		 * @return array|null
+		 */
+		private function request_warehouses_answer($api, $properties, $timeout = null)
+		{
+			if (MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down()) {
+				return null;
+			}
+
+			$args = $this->warehouses_args($api, $properties);
+			$obj = $api->send_post_request($args, $timeout ?: MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
+
+			if (is_array($obj) && isset($obj['success']) && !$obj['success'] && false !== stripos(implode(' ', (array) ($obj['errors'] ?? array())), 'many requests')) {
+				usleep(400000);
+				$obj = $api->send_post_request($args, $timeout ?: MRKV_UA_SHIPPING_API_NOVA_POSHTA::LOOKUP_TIMEOUT);
+			}
+
+			return self::warehouses_answer($obj);
+		}
+
+		/**
+		 * Several getWarehouses at once: in parallel when WordPress' Requests library is there, one by one otherwise.
+		 * A request that failed in parallel is tried once more on its own.
+		 *
+		 * @return array|null Answers under the keys of $properties_list, null when one of them failed
+		 */
+		private function request_warehouses_multi($api, $properties_list)
+		{
+			$timeout = 15;
+			$answers = array();
+			$requests_class = class_exists('\WpOrg\Requests\Requests') ? '\WpOrg\Requests\Requests' : (class_exists('\Requests') ? '\Requests' : '');
+
+			if ($requests_class && count($properties_list) > 1 && !MRKV_UA_SHIPPING_API_NOVA_POSHTA::is_api_down()) {
+				$requests = array();
+				foreach ($properties_list as $key => $properties) {
+					$requests[$key] = array(
+						'url' => 'https://api.novaposhta.ua/v2.0/json/',
+						'type' => 'POST',
+						'headers' => array('Content-Type' => 'application/json'),
+						'data' => wp_json_encode($this->warehouses_args($api, $properties)),
+					);
+				}
+
+				try {
+					$responses = $requests_class::request_multiple($requests, array('timeout' => $timeout, 'connect_timeout' => 5));
+				} catch (\Exception $e) {
+					$responses = array();
+				}
+
+				foreach ($responses as $key => $response) {
+					if (is_object($response) && !empty($response->success)) {
+						$answer = self::warehouses_answer(json_decode($response->body, true));
+						if (null !== $answer) {
+							$answers[$key] = $answer;
+						}
+					}
+				}
+			}
+
+			foreach ($properties_list as $key => $properties) {
+				if (!isset($answers[$key])) {
+					$answer = $this->request_warehouses_answer($api, $properties, $timeout);
+					if (null === $answer) {
+						return null;
+					}
+					$answers[$key] = $answer;
+				}
+			}
+
+			return $answers;
+		}
+
+		/**
+		 * getWarehouses request with the key when it works, keyless otherwise
+		 */
+		private function warehouses_args($api, $properties)
+		{
+			$args = array(
+				'apiKey' => $api->get_api_key(),
+				'modelName' => 'AddressGeneral',
+				'calledMethod' => 'getWarehouses',
+				'methodProperties' => $properties,
+			);
+
+			if ($api->active_api !== true) {
+				$args['modelName'] = 'Address';
+				unset($args['apiKey']);
+			}
+
+			return $args;
+		}
+
+		/**
+		 * A usable getWarehouses answer, or null
+		 */
+		private static function warehouses_answer($obj)
+		{
+			if (!is_array($obj) || !isset($obj['data']) || !is_array($obj['data']) || (isset($obj['success']) && !$obj['success'])) {
+				return null;
+			}
+
+			return $obj;
+		}
+
+		/**
+		 * Warehouse field row with the weight limits
+		 */
+		private function warehouse_row($warehouse)
+		{
+			return array(
+				'value' => $warehouse['Ref'],
+				'label' => $warehouse['Description'],
+				'number' => $warehouse['Number'],
+				'zipcode' => $warehouse['PostalCodeUA'] ?? '',
+				'total' => (float) ($warehouse['TotalMaxWeightAllowed'] ?? 0),
+				'place' => (float) ($warehouse['PlaceMaxWeightAllowed'] ?? 0),
+			);
+		}
+
+		/**
+		 * Nova Poshta's rule: a warehouse takes the parcel when both limits allow it, a limit of 0 means none
+		 */
+		public static function warehouse_fits($total_limit, $place_limit, $total_weight, $place_weight)
+		{
+			return ((float) $total_limit == 0 || (float) $total_limit >= $total_weight)
+				&& ((float) $place_limit == 0 || (float) $place_limit >= $place_weight);
+		}
+
+		/**
+		 * "Show only branches" of the Nova Poshta warehouse method the customer has chosen
+		 */
+		private function chosen_method_excludes_poshtomat()
+		{
+			if (!function_exists('WC') || !isset(WC()->session) || !WC()->session) {
+				return false;
+			}
+
+			foreach ((array) WC()->session->get('chosen_shipping_methods') as $chosen_method) {
+				$parts = explode(':', (string) $chosen_method);
+				if ($parts[0] === 'mrkv_ua_shipping_nova-poshta' && isset($parts[1])) {
+					$settings = get_option('woocommerce_mrkv_ua_shipping_nova-poshta_' . absint($parts[1]) . '_settings');
+					return isset($settings['exclude_poshtomat']) && $settings['exclude_poshtomat'] === 'yes';
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * Arguments of a request to the np.morkva.co.ua proxy: tells it which plugin and version asks
+		 */
+		private function proxy_request_args($query)
+		{
+			$version = defined('MRKV_UA_SHIPPING_PLUGIN_VERSION') ? MRKV_UA_SHIPPING_PLUGIN_VERSION : '';
+			$edition = defined('MRKV_UA_SHIPPING_EDITION') ? MRKV_UA_SHIPPING_EDITION : '';
+
+			return array(
+				'timeout' => 10,
+				'headers' => array('X-Mrkv-Client' => 'mrkv-ua-shipping/' . $version . ' (' . $edition . ')'),
+				'body' => $query,
+			);
 		}
 
 		/**
