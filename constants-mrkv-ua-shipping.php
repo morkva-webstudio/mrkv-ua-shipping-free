@@ -20,6 +20,8 @@ define('MRKV_UA_SHIPPING_IMG_URL', plugin_dir_url(__FILE__) . 'assets/images');
 define('MRKV_UA_SHIPPING_NAME', $mrkv_ua_shipping_plug_data['Name']);
 define('MRKV_UA_SHIPPING_PLUGIN_VERSION', $mrkv_ua_shipping_plug_data['Version']);
 define('MRKV_UA_SHIPPING_PLUGIN_TEXT_DOMAIN', 'mrkv-ua-shipping');
+# Edition the np.morkva.co.ua proxy is told about (free and pro share the other constants)
+define('MRKV_UA_SHIPPING_EDITION', 'free');
 
 # Allow tags 
 define( 'MRKV_UA_SHIPPING_ALLOW_TAGS', array(

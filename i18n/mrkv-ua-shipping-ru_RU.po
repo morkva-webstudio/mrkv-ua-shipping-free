@@ -3174,3 +3174,17 @@ msgstr "Житомир"
 #: classes/shipping_methods/ukr-poshta/checkout/mrkv-ua-shipping-checkout.php:23
 msgid "Zhytomyr, Zhytomyr district"
 msgstr "Житомир, Житомирський район"
+
+#: classes/shipping_methods/nova-poshta/woocommerce/mrkv-ua-shipping-nova-poshta.php
+msgid "Show only branches"
+msgstr "Показувати лише відділення"
+
+#: classes/shipping_methods/nova-poshta/woocommerce/mrkv-ua-shipping-nova-poshta.php
+msgid "If selected, the poshtomat will be excluded from the list"
+msgstr "Якщо вибрано, поштомати не показуватимуться у списку"
+
+#. translators: 1: order weight, 2: poshtomat weight limit, both in kg
+#: classes/shipping_methods/nova-poshta/ajax/mrkv-ua-shipping-ajax-nova.php
+#, php-format
+msgid "Order weight %1$s kg exceeds the poshtomat limit of %2$s kg, choose another delivery method"
+msgstr "Вага замовлення %1$s кг перевищує ліміт поштомата %2$s кг, оберіть інший спосіб доставки"

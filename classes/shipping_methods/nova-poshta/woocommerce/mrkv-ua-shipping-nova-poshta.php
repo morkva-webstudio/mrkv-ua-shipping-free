@@ -93,6 +93,13 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA'))
                     'description' => '',
                     'default' => 0.00
                 ),
+                'exclude_poshtomat' => array(
+                    'title' => __('Show only branches', 'mrkv-ua-shipping'),
+                    'label' => __('If selected, the poshtomat will be excluded from the list', 'mrkv-ua-shipping'),
+                    'type' => 'checkbox',
+                    'default' => 'no',
+                    'description' => '',
+                ),
                 'free_shipping_text' => array(
                     'title' => __('Text with free delivery', 'mrkv-ua-shipping'),
                     'type' => 'text',

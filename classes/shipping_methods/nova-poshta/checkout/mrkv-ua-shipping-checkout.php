@@ -5,6 +5,17 @@ $mrkv_ua_shipping_nova_poshtomat_middlename_exclude = 'no';
 $mrkv_ua_shipping_nova_poshtomat_middlename_required = 'no';
 $mrkv_ua_shipping_nova_warehouse_text = '';
 
+# "Show only branches": the field lists no poshtomats (the warehouse AJAX reads the chosen method), so it is just "Warehouse"
+if(isset($this->active_shipping['nova-poshta']['methods']['mrkv_ua_shipping_nova-poshta']['instance_id']))
+{
+	$mrkv_ua_shipping_shipping_settings = get_option('woocommerce_mrkv_ua_shipping_nova-poshta_' . $this->active_shipping['nova-poshta']['methods']['mrkv_ua_shipping_nova-poshta']['instance_id'] . '_settings');
+
+	if(isset($mrkv_ua_shipping_shipping_settings['exclude_poshtomat']) && $mrkv_ua_shipping_shipping_settings['exclude_poshtomat'] == 'yes')
+	{
+		$mrkv_ua_shipping_nova_warehouse_text = __('Warehouse', 'mrkv-ua-shipping');
+	}
+}
+
 if(isset($this->active_shipping['nova-poshta']['methods']['mrkv_ua_shipping_nova-poshta_address']))
 {
 	if(isset($this->active_shipping['nova-poshta']['settings']))
