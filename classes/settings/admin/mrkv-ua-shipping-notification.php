@@ -19,6 +19,17 @@ if (!class_exists('MRKV_UA_SHIPPING_NOTIFICATION'))
 			add_action('admin_notices', array($this, 'mrkv_show_api_error_notice'));
 			add_action('admin_notices', array($this, 'mrkv_show_shipping_zone_notice'));
 			add_action('wp_ajax_mrkv_ua_ship_dismiss_zone_notice', array($this, 'mrkv_dismiss_shipping_zone_notice'));
+
+			# A plugin method may have left the zones or the carriers changed: check the zones again
+			add_action('woocommerce_shipping_zone_method_deleted', array($this, 'mrkv_reset_shipping_zone_check'));
+			add_action('woocommerce_delete_shipping_zone_method', array($this, 'mrkv_reset_shipping_zone_check'));
+			add_action('woocommerce_shipping_zone_method_status_toggled', array($this, 'mrkv_reset_shipping_zone_check'));
+			add_action('update_option_m_ua_active_plugins', array($this, 'mrkv_reset_shipping_zone_check'));
+		}
+
+		public function mrkv_reset_shipping_zone_check()
+		{
+			delete_option('mrkv_ua_ship_zone_ok');
 		}
 
 		private function mrkv_get_enabled_method_ids()
@@ -44,7 +55,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOTIFICATION'))
 
 		public function mrkv_show_shipping_zone_notice()
 		{
-			if(!current_user_can('manage_woocommerce') || get_user_meta(get_current_user_id(), 'mrkv_ua_ship_zone_notice_dismissed', true))
+			if(get_option('mrkv_ua_ship_zone_ok') || !current_user_can('manage_woocommerce') || get_user_meta(get_current_user_id(), 'mrkv_ua_ship_zone_notice_dismissed', true))
 			{
 				return;
 			}
@@ -63,6 +74,8 @@ if (!class_exists('MRKV_UA_SHIPPING_NOTIFICATION'))
 
 			if($methods_in_zones > 0)
 			{
+				# Remember it: no query on the next admin pages until the zones or the carriers change
+				update_option('mrkv_ua_ship_zone_ok', 1, true);
 				return;
 			}
 			?>
