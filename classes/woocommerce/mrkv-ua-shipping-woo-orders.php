@@ -83,11 +83,24 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDERS'))
 
 			echo esc_html($mrkv_ua_ship_invoice);
 
+			$api_class = MRKV_UA_SHIPPING_LIST[$key]['api_class'];
+
+			# Nothing to track without an invoice, and not every carrier tracks statuses (Nova Global)
+			if(!$mrkv_ua_ship_invoice || !method_exists($api_class, 'get_status_documents'))
+			{
+				return;
+			}
+
 			$shipping_settings = get_option($key . '_m_ua_settings');
 
 			if($key == 'ukr-poshta')
 			{
 				$mrkv_ua_ship_invoice = $order->get_meta('mrkv_ua_ship_invoice_ref');
+
+				if(!$mrkv_ua_ship_invoice)
+				{
+					return;
+				}
 			}
 			else
 			{
@@ -96,7 +109,6 @@ if (!class_exists('MRKV_UA_SHIPPING_WOO_ORDERS'))
 				$mrkv_ua_ship_invoice = array($invoices_object);
 			}
 
-			$api_class = MRKV_UA_SHIPPING_LIST[$key]['api_class'];
 			$mrkv_global_shipping_object = new $api_class($shipping_settings);
 			$invoices_result = $mrkv_global_shipping_object->get_status_documents($mrkv_ua_ship_invoice);
 
