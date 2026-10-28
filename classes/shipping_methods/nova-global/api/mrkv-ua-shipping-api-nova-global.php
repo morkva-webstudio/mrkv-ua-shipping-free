@@ -120,6 +120,11 @@ if (!class_exists('MRKV_UA_SHIPPING_API_NOVA_GLOBAL'))
 			}
 	    }
 
+		public function get_status_documents($data)
+	    {
+	    	return array();
+	    }
+
 		/**
 	     * Get Debug enabled
 	     * @return boolean Debug
