@@ -85,12 +85,12 @@ msgid "100*100 mm for printing on A5 size"
 msgstr "100*100 мм для друку A5"
 
 #. Description of the plugin
-msgid ""
-"2-in-1: Nova Poshta and Ukrposhta delivery services. Create shipping methods "
-"and shipments easily"
-msgstr ""
-"2 в 1: Нова Пошта та Укрпошта в одному плагіні. Способи доставки, створення "
-"ТТН та робота з відправленнями"
+msgid "Nova Poshta, Ukrposhta, Rozetka Delivery and Nova Global for WooCommerce: branches, parcel lockers, address and international delivery, shipping labels (TTN) right from orders."
+msgstr "Нова Пошта, Укрпошта, Rozetka Delivery та Nova Global для WooCommerce: відділення, поштомати, адресна й міжнародна доставка, ТТН прямо із замовлень."
+
+#. Name of the plugin
+msgid "morkva UA Shipping – Nova Poshta, Ukrposhta, Rozetka, Nova Global"
+msgstr "morkva UA Shipping – Нова Пошта, Укрпошта, Rozetka, Nova Global"
 
 #: templates/settings/methods/shipping_fields/mrkv-ua-shipping-ukr-poshta.php:700
 msgid "A shipment will be created after the order is placed"

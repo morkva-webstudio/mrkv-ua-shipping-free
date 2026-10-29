@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: morkva UA Shipping
+ * Plugin Name: morkva UA Shipping – Nova Poshta, Ukrposhta, Rozetka, Nova Global
  * Plugin URI: https://morkva.co.ua/product-category/plugins/
- * Description: 2-in-1: Nova Poshta and Ukrposhta delivery services. Create shipping methods and shipments easily
+ * Description: Nova Poshta, Ukrposhta, Rozetka Delivery and Nova Global for WooCommerce: branches, parcel lockers, address and international delivery, shipping labels (TTN) right from orders.
  * Version: 1.15.3
  * Author: morkva
  * Text Domain: mrkv-ua-shipping
@@ -10,7 +10,7 @@
  * Tested up to: 7.1
  * Requires at least: 5.0
  * WC requires at least: 3.8
- * WC tested up to: 10.0
+ * WC tested up to: 11.1
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */

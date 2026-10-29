@@ -1,188 +1,203 @@
-=== morkva UA Shipping ===
+=== morkva UA Shipping – Nova Poshta, Ukrposhta, Rozetka, Nova Global ===
 Contributors: bandido, dpmine
-Tags: Nova Poshta, Нова Пошта, Укрпошта
+Tags: Nova Poshta, Нова Пошта, Укрпошта, доставка, Rozetka Delivery
 Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.15.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-
-Нова Пошта по Україні та закордон, Укрпошта по Україні та закордон, Rozetka Delivery. Підтримує WooCommerce Checkout Blocks. Зручне створення ТТН.
+Nova Poshta, Ukrposhta, Rozetka and Nova Global in one plugin. Shipping labels (TTN) right from orders, block checkout, no third-party sign-up.
 
 == Description ==
 
-* Єдиний плагін для доставок по Україні: Нова Пошта, Укрпошта, Rozetka Delivery
-* Міжнародна доставка з України: Нова Пошта, Укрпошта, Nova Global
-* **NEW** Підтримка WooCommerce Checkout Blocks (блочний чекаут)
-* Підтримка HPOS
-* Підтримка зон доставки WooCommerce
-* Підтримка PHP 8.0+
-* Підтримка WPML та Polylang
-* Сумісність з плагінами morkva Plata by Mono, morkva LiqPay, morkva Dilovod, morkva KeyCRM, Turbo SMS
-* Підтримує стандартний спосіб доставки Самовивіз (приховує зайві поля автоматично)
+**morkva UA Shipping is WooCommerce shipping for stores in Ukraine.** Nova Poshta, Ukrposhta, Rozetka Delivery and Nova Global in one plugin: the customer picks a branch, a parcel locker or an address at checkout, and you create the shipping label (TTN) right from the order, without copying data into the carrier's account.
 
-[База знань](https://docs.morkva.co.ua/uk/plugins)
-[Про-версія](https://morkva.co.ua/shop/morkva-ua-shipping/)
+= 👉 Why stores choose morkva UA Shipping =
 
-== 👉 Функціонал ==
+* **4 carriers in one plugin.** No need to install a separate plugin for each carrier and make them work together.
+* **Works with the WooCommerce block checkout** (Checkout Blocks) and the classic checkout, and supports HPOS.
+* **No sign-up on third-party platforms.** The plugin talks to the carriers' APIs directly with your own keys. Rozetka Delivery needs no API keys at all.
+* **Checkout keeps working when the Nova Poshta API is down.** City and branch search switches to the morkva backup directory.
+* **Shipping labels in the free version.** Create, print, delete, bulk actions, automatic status updates.
+* **Support in Ukrainian.** Rated 4.9 from 29 reviews: users like our service.
+* Compatible with WPML, Polylang, PHP 7.4–8.x, morkva plugins (Plata by Mono, LiqPay, Dilovod, KeyCRM, Checkbox) and TurboSMS.
 
-**Способи доставки Нова Пошта**
+[Documentation](https://docs.morkva.co.ua/uk/plugins) · [Pro version](https://morkva.co.ua/shop/morkva-ua-shipping/)
 
-* Доставка на відділення, як окремий спосіб
-* Доставка в поштомат, як окремий спосіб
-* Доставка на адресу, як окремий спосіб
-* Міжнародна доставка на відділення NovaPost, як окремий спосіб
-* Розрахунок вартості доставки закордон
-* Фіксована вартість доставки 
-* Розрахунок вартості доставки залежно від розмірів та ваги товарів в замовленні (**Pro-версія**)
-* Вказуйте різні суми до безкоштовної доставки для різних типів доставки
-* Автозаповнення вулиць
-* Вибір місця виводу полів плагіна
-* Доступні способи доставки залежно від ваги відправлення
-* Можливість мати один спосіб доставки на відділення і поштомат
-* Введені дані доставки запамʼятовуються для зареєстрованих покупців
-* Перевірка статусу ТТН і автоматична зміна статусу замовлення
-* Види вантажу: документи, посилки, шини/диски, палети
+= 🛒 What your customers get =
 
-**Способи доставки Укрпошта**
+* Separate shipping methods: Nova Poshta (branch, parcel locker, address, international to a branch or an address), Ukrposhta (branch, parcel locker, address; international — **Pro**), Rozetka Delivery (branch), Nova Global (address)
+* Fast city and branch search, including search by branch number
+* Street autocomplete for address delivery
+* Only branches and parcel lockers that accept a parcel of this weight are shown
+* Delivery details are remembered for registered customers
+* Shipping label number in "My account" → Orders
+* Latin-only name check for international shipments
+* Works with the standard Local pickup method (hides unneeded fields automatically)
 
-* Доставка на відділення, як окремий спосіб
-* Доставка на адресу, як окремий спосіб
-* Міжнародна доставка
-* Розрахунок вартості доставки закордон
-* Фіксована вартість доставки 
-* Розрахунок вартості доставки залежно від розмірів та ваги товарів в замовленні (**Pro-версія**)
-* Вказуйте різні суми до безкоштовної доставки для різних типів доставки
-* Автозаповнення вулиць
-* Вибір місця виводу полів плагіна
-* Введені дані доставки запамʼятовуються для зареєстрованих покупців
+= 📦 What your store gets =
 
-**Способи доставки Rozetka Delivery**
+**💰 Shipping prices**
 
-* Доставка на відділення, як окремий спосіб
-* Пошук відділень по АРІ
-* Фіксована вартість або безкоштовна доставка
+* Within Ukraine: flat rate or free shipping
+* A separate free shipping threshold for each method
+* Nova Poshta international: price calculated via the Nova Poshta API
+* Nova Global: price by weight (or volumetric weight) from a built-in rate table
+* Price within Ukraine calculated from the weight and dimensions of the products — **Pro**
 
-**Спосіб доставки Nova Global**
+**🚚 Nova Poshta shipping labels**
 
-* Доставка на адресу (стандартні поля WooCommerce)
-* Фіксована вартість або безкоштовна доставка
-* Розрахунок вартості доставки з ваги відправлення або з фіксованих параметрів (хардкод таблиці тарифів, поки не буде прямий розрахунок по АРІ)
+* Create from the order page or right from the orders list
+* Sender: individual, sole proprietor (FOP) or company (TOV) — picked from your Nova Poshta account; several contact persons
+* Warehouse–warehouse, warehouse–door, door–warehouse, parcel lockers
+* Cargo types: parcels, documents, tires/wheels, pallets (tire type and document weight are set on the product)
+* Number of seats, automatic or one global shipment description
+* Change the city and branch after the order is placed
+* Prepayment (if you use morkva payment plugins) is deducted from the declared value automatically — **Pro**
+* Attach shipping labels created manually — **Pro**
+* Shipping label is passed to your CRM (with morkva plugins) — **Pro**
+* Cash on delivery and payment control — **Pro**
+* Nova Poshta international and Nova Global shipping labels — **Pro**
 
-**Створення ТТН Нова Пошта по Україні**
+**✉️ Ukrposhta shipping labels**
 
-* Ручне створення ТТН
-* Автоматичне створення ТТН (**Pro-версія**)
-* Відправка від фізичної особи та юридичної особи
-* Можна вибрати з кількох контактних осіб Відправника
-* Тип доставки склад-склад, двері-склад, склад-двері та в поштомати
-* Швидке створення ТТН зі сторінки замовлень
-* Створення ТТН зі сторінки замовлення
-* Зміна міста та відділення доставки після створення замовлення
-* Опис відправленя генерується автоматично або прописується одне глобальне
-* Післяплата (**Pro-версія**)
-* Передоплата (вартість перероплати відмінусується від оціночної вартості при створенні ТТН)
-* Контроль оплати (**Pro-версія**)
-* Можливість вказати кількість місць відправлення
+* Create from the order page or from the orders list
+* STANDARD or EXPRESS, warehouse–warehouse and warehouse–door
+* Cash on delivery
+* Sender: individual (company — **Pro**)
+* International shipments: HS code, shipment type, CP71, CN22, TFP3 forms — **Pro**
 
-**Створення ТТН Укрпошта по Україні**
+**📍 After shipping**
 
-* Ручне створення ТТН
-* Автоматичне створення ТТН (**Pro-версія**)
-* Відправка від фізичної особи
-* Відправка від юридичної особи (**Pro-версія**)
-* Вибір типу доставки СТАНДАРТ чи ЕКСПРЕС
-* Тип доставки склад-склад, склад-двері
-* Швидке створення ТТН зі сторінки замовлень
-* Створення ТТН зі сторінки замовлення
-* Зміна міста та відділення доставки після створення замовлення
-* Опис відправленя генерується автоматично або прописується одне глобальне
-* Післяплата
+* Print shipping labels and stickers, bulk print and delete (Ukrposhta bulk print — **Pro**)
+* Automatic Nova Poshta status check for a period you choose (30 days by default; Ukrposhta statuses — **Pro**)
+* Order status changes automatically based on the shipping label status
 
-**Створення міжнародних ТТН Укрпошта** (**Pro-версія**)
+**⚙️ Automation — Pro**
 
-* Вибір глобального HS коду або з атрибуту товару
-* Вибір типу відправлення (посилка до 30кг, бандероль до 5кг, дрібний пакет до 2кг, Прайм)
-* Опис міжнародного відправлення
+* Automatic shipping label creation by rules (order status + payment method)
+* Email to the customer with the shipping label number
+* Cash on delivery payment → label with cash on delivery automatically
+* Change who pays for shipping depending on the order total
 
-**Автоматизації Нова Пошта** (**Pro-версія**)
+= ⭐ Free or Pro =
 
-* Автоматичне створення ТТН за правилами (згідно статусу замовлення та способу оплати)
-* Автоматичне відправлення Email з створеним ТТН покупцю
-* Якщо спосіб оплати “Готівка при отриманні (COD)” тоді автоматично обирається “наложка” при створенні накладної
-* Автоматизна зміна платника залежно від суми замовлення (якщо у вас по замовчуванню за доставку платить покупець, але від 2000грн платите ви, плагін змінить платника автоматично при створенні ТТН)
+**Free version** — shipping methods for 4 carriers, manual shipping labels within Ukraine, printing, Nova Poshta statuses.
 
-**Дії з ТТН**
+**Pro** adds: automatic shipping labels, Nova Poshta cash on delivery and payment control, automatic prepayment deduction, price calculation within Ukraine by weight and dimensions, Ukrposhta international, Ukrposhta company sender, international labels (Nova Poshta, Ukrposhta, Nova Global), Ukrposhta statuses, email with the label number, attaching manually created labels, passing labels to CRM.
 
-* Друк ТТН та стікерів відправлень по Україні
-* Видалення ТТН
-* Масові дії з ТТН (друк, видалення)
-* Автоматична перевірка статусів ТТН за останні 30 днів
-* Друк форм міжнародних відправлень (CP71, CN22, TFP3) та стікерів (DL, C6, 100x100mm)
+[Pro version pricing →](https://morkva.co.ua/shop/morkva-ua-shipping/)
 
-Замовити [Про-версію](https://morkva.co.ua/shop/morkva-ua-shipping/)
+= 🛠️ For developers =
 
+Hooks: `mrkv_ua_shipping_settings_page_row`, `mrkv_ua_shipping_option_serialize`, `mrkv_ua_shipping_ttn_create_row`, `mrkv_ua_shipping_popup_settings`, `mrkv_ua_shipping_invoice_settings`, `mrkv_invoice_statuses_args`, `mrkv_ua_shipping_np_proxy_url`.
 
-== Як почати роботу ==
-1. Активуйте плагін (якщо у вас був встановлений плагін Shipping for Nova Poshta або Woo Ukrposhta - деактивуйте їх)
-2. В налаштуваннях плагіна активуйте потрібні служби доставки
-3. Н налаштуваннях кожного з плагінів введеть ключі АРІ
-4. В налаштуваннях WooCommerce - Доставка додайте способи доставки в зону доставки Україна
-5. Перевірте чи відображається спосіб доставки і поля НП в чекауті. При виникненні запитань - пишіть в підтримку support@morkva.co.ua
+= 🔗 External services =
+
+The plugin connects to third-party services only to deliver orders. All requests are sent from your site's server, not from the customer's browser.
+
+* **Nova Poshta API** (api.novaposhta.ua) — city, branch and street search at checkout; creating, deleting and tracking shipping labels. Sent: your API key, the search text and, when a label is created, sender and recipient details (name, phone, address or branch), weight and value. Labels and stickers are printed via my.novaposhta.ua. [Terms of use](https://novaposhta.ua/more/offer), [privacy policy](https://novaposhta.ua/more/privacy-policy).
+* **Nova Post API** (api.novapost.com, api.novaposhta.international) — Nova Poshta international and Nova Global: branches abroad, price calculation, statuses. Sent: your API key, the destination country and branch, cart weight and dimensions. [Privacy policy](https://novapost.com/en-pl/more/privacy-policy).
+* **Ukrposhta API** (www.ukrposhta.ua) — city, branch and street search; creating and printing shipping labels. Sent: your API keys, the search text and shipment details. [Privacy policy](https://www.ukrposhta.ua/ua/polityka-konfidentsiinosti).
+* **Rozetka Delivery API** (rz-delivery.rozetka.ua) — city and branch search. Sent: the search text. [Privacy policy](https://rozetka.com.ua/pages/privacy/).
+* **morkva backup directory** (np.morkva.co.ua) — only when the Nova Poshta API key is missing or inactive, or the Nova Poshta API does not respond. Sent: the city or branch search text, the Nova Poshta city ID, filters, the plugin version and your site address. Your API keys and customer data are not sent. Request logs are kept for 90 days. [Privacy policy](https://morkva.co.ua/privacy-policy).
+
+== Installation ==
+
+1. Install and activate the plugin. If you used another Nova Poshta or Ukrposhta shipping plugin, deactivate it.
+2. In the plugin settings, turn on the carriers you need.
+3. Enter the API keys for each carrier (Rozetka Delivery needs none).
+4. In WooCommerce → Settings → Shipping, add the shipping methods to your Ukraine shipping zone.
+5. Check that the shipping methods and fields appear at checkout. Questions — support@morkva.co.ua
 
 https://youtu.be/GNPhDFcuM-Q
 
-== Відеоогляд Pro-версії ==
+Pro version overview:
+
 https://youtu.be/47-VrH_QJAE
 
-== FAQ ==
+== Frequently Asked Questions ==
 
-= Де отримати ключ АРІ Нова Пошта? =
+= Where do I get the API keys? =
 
-Ключ АРІ можна отримати в особистому кабінеті НП, Налаштування - Безпека - АРІ.
+Nova Poshta: in your Nova Poshta account, Settings → Security → API. Ukrposhta: sign a contract with Ukrposhta (it can be done online); after that Ukrposhta issues three keys (PRODUCTION BEARER eCom, BEARER StatusTracking, COUNTERPARTY TOKEN), see [Ukrposhta for business](https://ukrposhta.ua/ukrposhta-dlya-biznesu.html). Rozetka Delivery works without API keys.
 
-= Чи працює плагін з checkout blocks? =
+= How is the shipping price calculated? =
 
-Так, починаючи з версії 1.11 ми додали таку можливість. Протестували на основних темах: Flatsome, Woodmart, Hello Elementor, Blocksy, Storefront, але повинно працювати на будь яких темах.
+Within Ukraine: a flat rate or free shipping above an order total (the threshold is set for each method separately). Nova Poshta international: calculated via the Nova Poshta API. Nova Global: from a built-in rate table by weight. Calculation within Ukraine by product weight and dimensions is available in Pro.
 
-= Чи потрібні особливі налаштування для роботи з checkout blocks? =
+= Where do weight and dimensions come from if the product has none? =
 
-Нічого особливого не потрібно, лише в Глобальних налаштуваннях плагіна UA Shipping оберіть як саме відображати додаткові поля.
+For a shipping label the plugin uses, in this order: the value you enter in the label form; the total weight of the order's products; the default weight from the carrier settings (Nova Poshta: 0.5 kg if not set). Nova Poshta dimensions work the same way (form → product dimensions → defaults, 10 cm if not set). The plugin does not change weight or dimensions in your products.
 
-= Чи працює плагін з “наложкою”? =
+= Does it work with the block checkout? =
 
-Плагін розпізнає стандартний спосіб оплати “Готівка при отриманні” як оплату при отриманні (“наложку”) але створення накладної з післяплатою доступне лише у Про-версії: https://morkva.co.ua/shop/morkva-ua-shipping/
+Yes, since version 1.11. Tested with Flatsome, Woodmart, Hello Elementor, Blocksy and Storefront, and it should work with any theme. No special setup is needed: in the plugin's Global settings, choose how to display the extra fields.
 
-= Чи можна створювати ТТН автоматично? =
+= What happens if the Nova Poshta API is down? =
 
-Така можливість доступна лише у Про-версії: https://morkva.co.ua/shop/morkva-ua-shipping/
+City and branch search at checkout switches to the morkva backup directory, so customers can still place orders.
 
+= How do I show branches without parcel lockers? Why are closed branches shown? =
+
+In the "Branch" shipping method settings you can remove parcel lockers from the list (and offer them as a separate "Parcel locker" method). The branch list comes from the Nova Poshta API, so a branch that Nova Poshta has not yet removed from its directory is shown too. Only branches that accept a parcel of this weight are shown.
+
+= Does the order status change automatically? =
+
+Yes, based on the shipping label status. You choose how many days back the statuses are checked (30 days by default).
+
+= Can the customer see the shipping label number? =
+
+Yes, in "My account" → Orders. An email with the label number is available in Pro.
+
+= Does it work with cash on delivery? =
+
+The plugin recognizes the standard "Cash on delivery" payment method as cash on delivery. Nova Poshta labels with cash on delivery are available in [Pro](https://morkva.co.ua/shop/morkva-ua-shipping/). Ukrposhta cash on delivery works in the free version.
+
+= Can shipping labels be created automatically? =
+
+Yes, in [Pro](https://morkva.co.ua/shop/morkva-ua-shipping/): by rules based on the order status and payment method.
+
+= Is the "Patronymic" field required? =
+
+You turn the field on in the carrier's checkout settings, where you can also make it required and choose its position. For Ukrposhta branch delivery with cash on delivery the field is always shown, as Ukrposhta requires it.
+
+= Are cities and branches available in English? Does it work with WPML and Polylang? =
+
+City and branch names within Ukraine (Nova Poshta, Ukrposhta) are shown in Ukrainian, as the carriers provide them. Nova Poshta international and Nova Global show English or Ukrainian depending on the site language. The plugin interface can be translated with Loco Translate, Polylang or WPML.
+
+= Does it support HPOS? =
+
+Yes.
+
+= Can I ship as a sole proprietor (FOP) or a company (TOV)? =
+
+Yes, for Nova Poshta: pick the sender counterparty from the list in your Nova Poshta account.
 
 == Screenshots ==
 
-1. Активація потрібних служб доставки
-2. Налаштування ключа АРІ Нова Пошта
-3. Налаштування відправника Нова Пошта
-4. Налаштування значень за замовчуванням
-5. Налаштування відправки Email з ТТН Нової Пошти
-6. Налаштування автоматизації (Лише Про версія)
-7. Налаштування розміщення полів в чекауті
-8. Debug Log Нова Пошта
-9. Налаштування способів доставки WooCommerce
-10. Налаштування способу доставки
-11. Налаштування Укрпошти по Україні
-12. Налаштування відправника міжнародної доставки Укрпошта (Лише Про версія)
-
+1. Turning on the carriers you need
+2. Nova Poshta API key settings
+3. Nova Poshta sender settings
+4. Default values settings
+5. Settings for the email with the Nova Poshta shipping label
+6. Automation settings (Pro only)
+7. Checkout field placement
+8. Nova Poshta debug log
+9. WooCommerce shipping methods
+10. Shipping method settings
+11. Ukrposhta settings within Ukraine
+12. Ukrposhta international sender settings (Pro only)
 
 == Changelog ==
 
 = 1.15.3 =
-* [fix] випрвили перевірку статусу Нова Глобал 
+* [fix] виправили перевірку статусу Нова Глобал 
 
 = 1.15.2 =
 * [new] повернули фільтр по вазі при пошуку відділень/поштоматів Нової Пошти
-* [new] оптимізували викликів БД у плагіні
+* [new] оптимізували виклики БД у плагіні
 
 = 1.15.1 =
 * [new] додали спосіб доставки УП Поштамат
@@ -197,7 +212,7 @@ https://youtu.be/47-VrH_QJAE
 * [fix] списки відправників кешуються, сторінка налаштувань не звертається до API Нової Пошти при кожному відкритті
 
 = 1.14.3 =
-* [fix] виправили вивід назви бескоштовної доставки
+* [fix] виправили вивід назви безкоштовної доставки
 
 = 1.14.2 =
 * [new] додали маскування API у логах
@@ -248,10 +263,10 @@ https://youtu.be/47-VrH_QJAE
 
 = 1.12.0 =
 * [new] додали перевірку спеціальних символів при пошуку відділень та міст
-* [new] змінили посилання на відео АРІ ключа НП
+* [new] змінили посилання на відео API ключа НП
 * [new] додали запис ref відділення Rozetka
 * [fix] виправили розрахунок вартості доставки
-* [fix] виправили завантаження стилів selec2 для блочного чекаута
+* [fix] виправили завантаження стилів select2 для блочного чекаута
 
 = 1.11.5 =
 * [new] додали активацію служби доставки при першому збереженні апі в налаштуваннях
@@ -434,7 +449,7 @@ https://youtu.be/47-VrH_QJAE
 * [new] додали валідацію імені та прізвища на латинські літери
 
 = 1.4.0 =
-* [dev] НП: змінили підхід роботи select2 поля: збільшили затримку перед відправленням запиту до АРІ на пошук міста (виправляє помилку 429 too many requests)
+* [dev] НП: змінили підхід роботи select2 поля: збільшили затримку перед відправленням запиту до API на пошук міста (виправляє помилку 429 too many requests)
 
 = 1.3.1 =
 * [fix] виправили помилку По-батькові
