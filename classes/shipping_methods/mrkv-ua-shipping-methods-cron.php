@@ -99,28 +99,21 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 
 		private function mrkv_ua_shipping_check_ttn_run()
 		{
-			$log_file_date = dirname(__FILE__) . '/cron-log/cron-mrkv-ttn-status.log';
-			$log_file_offset = dirname(__FILE__) . '/cron-log/cron-mrkv-ttn-status-offset.log';
+			$state_key_date = 'mrkv_ua_shipping_cron_nova_poshta_last_check';
+			$state_key_offset = 'mrkv_ua_shipping_cron_nova_poshta_offset';
 
-			if (!file_exists($log_file_date)) {
-		        file_put_contents($log_file_date, '');
-		    }
-		    if (!file_exists($log_file_offset)) {
-		        file_put_contents($log_file_offset, '');
-		    }
-
-		    $last_check_raw_date = trim(file_get_contents($log_file_date));
-		    $last_check_raw_offset = trim(file_get_contents($log_file_offset));
+		    $last_check_raw_date = trim((string) get_option($state_key_date, ''));
+		    $last_check_raw_offset = trim((string) get_option($state_key_offset, ''));
 
 		    if(!empty($last_check_raw_offset))
 		    {
-		    	$this->mrkv_ua_shipping_run_status_ttn_check($last_check_raw_offset, $log_file_date, $log_file_offset);
+		    	$this->mrkv_ua_shipping_run_status_ttn_check($last_check_raw_offset, $state_key_date, $state_key_offset);
 		    }
 		    else
 		    {
 		    	if (empty($last_check_raw_date)) 
 			    {
-			    	$this->mrkv_ua_shipping_run_status_ttn_check(0, $log_file_date, $log_file_offset);
+			    	$this->mrkv_ua_shipping_run_status_ttn_check(0, $state_key_date, $state_key_offset);
 			        return;
 			    }
 
@@ -139,7 +132,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 
 			    if ($diff_in_minutes >= $period_between) 
 			    {
-			     	$this->mrkv_ua_shipping_run_status_ttn_check(0, $log_file_date, $log_file_offset);
+			     	$this->mrkv_ua_shipping_run_status_ttn_check(0, $state_key_date, $state_key_offset);
 			     	return;
 			    }
 		    }
@@ -147,7 +140,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 		    return;
 		}
 
-		private function mrkv_ua_shipping_run_status_ttn_check($offset, $log_file_date, $log_file_offset)
+		private function mrkv_ua_shipping_run_status_ttn_check($offset, $state_key_date, $state_key_offset)
 		{
 			$settings = get_option('nova-poshta_m_ua_settings');
 			
@@ -184,8 +177,8 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 
 			if($offset >= $max_ttn)
 			{
-				file_put_contents($log_file_offset, '');
-				file_put_contents($log_file_date, current_time('mysql'));
+				update_option($state_key_offset, '', false);
+				update_option($state_key_date, current_time('mysql'), false);
 				return;
 			}
 
@@ -269,16 +262,15 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_CRON'))
 			}
 
 			$offset += $post_per_page;
-			file_put_contents($log_file_offset, '');
-			file_put_contents($log_file_offset, $offset);
+			update_option($state_key_offset, $offset, false);
 
 			$message .= "Orders: " . wp_json_encode( $orders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\r\n";
 
 			if(is_array($orders) && empty($orders))
 			{
 				do_action('mrkv_ua_shipping_log_cron', $message);
-				file_put_contents($log_file_offset, '');
-				file_put_contents($log_file_date, current_time('mysql'));
+				update_option($state_key_offset, '', false);
+				update_option($state_key_date, current_time('mysql'), false);
 				return;
 			}				
 		
