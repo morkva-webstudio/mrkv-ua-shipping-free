@@ -159,7 +159,8 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 
 				if(($current_shipping_method != 'mrkv_ua_shipping_nova-poshta_address'))
 				{
-					$recipient_address = $this->order->get_meta(MRKV_UA_SHIPPING_LIST[$key_ship]['method'][$current_shipping_method]['checkout_fields']['_warehouse_ref']['old_slug']);
+					$ref_old_slug = $this->get_recipient_ref_old_slug(MRKV_UA_SHIPPING_LIST[$key_ship]['method'][$current_shipping_method]['checkout_fields'], $current_shipping_method);
+					$recipient_address = $ref_old_slug ? $this->order->get_meta($ref_old_slug) : '';
 				}
 				else
 				{
@@ -479,6 +480,17 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 			}
 			
 			return 'Warehouse';
+		}
+
+		/**
+		 * Meta key of the recipient warehouse ref saved by the old plugin versions.
+		 * Poshtomat keeps its ref in the '_ref' field, warehouse — in '_warehouse_ref'.
+		 * */
+		private function get_recipient_ref_old_slug($checkout_fields, $current_shipping_method)
+		{
+			$ref_field_key = ($current_shipping_method == 'mrkv_ua_shipping_nova-poshta_poshtamat') ? '_ref' : '_warehouse_ref';
+
+			return isset($checkout_fields[$ref_field_key]['old_slug']) ? $checkout_fields[$ref_field_key]['old_slug'] : '';
 		}
 
 		private function get_service_recipien_type($current_shipping_method)
