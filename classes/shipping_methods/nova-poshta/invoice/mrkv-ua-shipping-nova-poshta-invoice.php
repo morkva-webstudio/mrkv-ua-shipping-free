@@ -293,13 +293,6 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 				unset($mrkv_ua_shipping_args['OptionsSeat']);
 			}
 
-
-
-			if($mrkv_ua_shipping_args["Cost"] < 200)
-			{
-				$mrkv_ua_shipping_args["Cost"] = 200;
-			}
-
 			$invoice_arg = array(
 				"apiKey" => $this->shipping_api->get_api_key(),
 				"modelName" => "InternetDocument",
