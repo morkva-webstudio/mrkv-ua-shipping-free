@@ -3,7 +3,7 @@ Contributors: bandido, dpmine
 Tags: Nova Poshta, Нова Пошта, Укрпошта, доставка, Rozetka Delivery
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.15.6
+Stable tag: 1.15.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -191,6 +191,10 @@ Yes, for Nova Poshta: pick the sender counterparty from the list in your Nova Po
 12. Ukrposhta international sender settings (Pro only)
 
 == Changelog ==
+
+= 1.15.7 =
+* [new] додали інофрмацію про підтримку woo checkout block
+* WooCommerce 11.3 tested
 
 = 1.15.6 =
 * [new] прибрали обмеження оціночної вартості НП
