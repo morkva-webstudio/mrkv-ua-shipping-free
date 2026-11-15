@@ -353,8 +353,8 @@ jQuery(window).on('load', function () {
                     var $whSelect = jQuery('#' + targetWhSelectId);
                     
                     dispatchReactEvent(targetWhSelectId, '');
-                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPsh ? '_poshtamat_ref' : '_warehouse_ref'), '');
-                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPsh ? '_poshtamat_number' : '_warehouse_number'), '');
+                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPsh ? '_ref' : '_warehouse_ref'), '');
+                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPsh ? '_number' : '_warehouse_number'), '');
                     
                     if ($whSelect.data('select2')) {
                         var emptyOptionText = $whSelect.find('option[value=""]').text() || '';
@@ -467,8 +467,8 @@ jQuery(window).on('load', function () {
                 
                 if (current_option && current_option.id) {
                     dispatchReactEvent(id, current_option.id);
-                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPoshtamat ? '_poshtamat_ref' : '_warehouse_ref'), current_option.ref || '');
-                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPoshtamat ? '_poshtamat_number' : '_warehouse_number'), current_option.number || '');
+                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPoshtamat ? '_ref' : '_warehouse_ref'), current_option.ref || '');
+                    dispatchReactEvent(prefix + '-mrkv-ua-shipping-' + methodKey + (isPoshtamat ? '_number' : '_warehouse_number'), current_option.number || '');
                 }
             });
         });
