@@ -248,8 +248,16 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 			            		$order_total_for_min = $order->get_subtotal();
 			            	}
 
-			            	if(isset($shipping_settings['enable_minimum_cost']) && $shipping_settings['enable_minimum_cost'] == 'yes' 
-			            		&& isset($shipping_settings['minimum_cost_total']) && $shipping_settings['minimum_cost_total'] <= $order_total_for_min)
+			            	$free_shipping_reached = isset($shipping_settings['enable_minimum_cost']) && $shipping_settings['enable_minimum_cost'] == 'yes' 
+			            		&& isset($shipping_settings['minimum_cost_total']) && $shipping_settings['minimum_cost_total'] <= $order_total_for_min;
+
+			            	if($key == 'nova-poshta')
+			            	{
+			            		# Nova Poshta: same threshold as at checkout and in the invoice (without shipping)
+			            		$free_shipping_reached = MRKV_UA_SHIPPING_FREE_SHIPPING::is_reached($order, $current_shipping, $shipping_settings, $shipping_settings_global);
+			            	}
+
+			            	if($free_shipping_reached)
 						    {
 						        $payer_delivery = 'Sender';
 						    }

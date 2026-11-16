@@ -192,6 +192,9 @@ Yes, for Nova Poshta: pick the sender counterparty from the list in your Nova Po
 
 == Changelog ==
 
+= 1.15.8 =
+* [fix] Нова пошта: поріг безкоштовної доставки в ТТН рахується так само, як на чекауті (без вартості доставки, сума рівно в поріг — безкоштовно)
+
 = 1.15.7 =
 * [new] додали інофрмацію про підтримку woo checkout block
 * WooCommerce 11.3 tested
