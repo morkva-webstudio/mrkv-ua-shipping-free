@@ -192,6 +192,9 @@ Yes, for Nova Poshta: pick the sender counterparty from the list in your Nova Po
 
 == Changelog ==
 
+= 1.15.8 =
+* [fix] виправили тестовий режим Укрпошти: запити йдуть на sandbox
+
 = 1.15.7 =
 * [new] додали інофрмацію про підтримку woo checkout block
 * WooCommerce 11.3 tested
