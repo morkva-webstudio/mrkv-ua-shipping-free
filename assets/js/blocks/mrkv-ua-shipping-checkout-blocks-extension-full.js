@@ -1,3 +1,14 @@
+// A cached error of a core address field is put back only while the field is still empty (Trello 261116-1)
+function mrkvCoreFieldFilled(fieldKey) {
+    const m = fieldKey.match(/^(billing|shipping)[-_](address[-_][12]|city|state|postcode)$/);
+    if (!m) return false;
+    const cart = window.wp && window.wp.data && window.wp.data.select('wc/store/cart');
+    const customer = cart && cart.getCustomerData ? cart.getCustomerData() : null;
+    if (!customer) return false;
+    const address = customer[m[1] + 'Address'] || customer[m[1] + '_address'] || {};
+    return String(address[m[2].replace('-', '_')] || '').trim() !== '';
+}
+
 window.addEventListener('load', function () {
     if (typeof wp === 'undefined' || !wp.data || typeof wp.data.select !== 'function') {
         return;
@@ -721,6 +732,8 @@ window.addEventListener('load', function () {
 
             if (coreFields.includes(fieldKey)) {
                 if (currentMethod && (currentMethod.startsWith('mrkv_ua_shipping') || currentMethod.startsWith('local_pickup'))) return;
+                // No shipping in the cart, or the guest has filled the field: the error remembered at page load must not block the order
+                if (!currentMethod || mrkvCoreFieldFilled(fieldKey)) return;
                 filteredErrors[fieldKey] = errorData;
             } else if (fieldKey.includes('mrkv-ua-shipping/')) {
                 const belongsToCurrentMethod = activeMethodFields.some(activeField => fieldKey.includes(activeField));
