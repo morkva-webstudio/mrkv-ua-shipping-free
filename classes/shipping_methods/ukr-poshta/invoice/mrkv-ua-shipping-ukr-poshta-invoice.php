@@ -454,13 +454,12 @@ if (!class_exists('MRKV_UA_SHIPPING_UKR_POSHTA_INVOICE'))
 
 	            	$shipping_instance_settings = get_option('woocommerce_' . $item->get_method_id() . '_' . $mrkv_ua_shipping_instance_id . '_settings');
 
-	            	$order_total_for_min = $this->order->get_total();
+	            	$order_total_for_min = $this->order->get_subtotal() - $this->order->get_discount_total();
 
 	            	if(isset($this->settings_shipping['shipment']['cart_total']) && $this->settings_shipping['shipment']['cart_total'] == 'subtotal')
 	            	{
 	            		$order_total_for_min = $this->order->get_subtotal();
 	            	}
-
 
 	            	if(isset($shipping_instance_settings['enable_minimum_cost']) && $shipping_instance_settings['enable_minimum_cost'] == 'yes' 
 	            		&& isset($shipping_instance_settings['minimum_cost_total']) && $shipping_instance_settings['minimum_cost_total'] < $order_total_for_min)

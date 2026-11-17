@@ -409,7 +409,7 @@ if (!class_exists('MRKV_UA_SHIPPING_NOVA_POSHTA_INVOICE'))
 
 	            	$shipping_instance_settings = get_option('woocommerce_' . $item->get_method_id() . '_' . $mrkv_ua_shipping_instance_id . '_settings');
 
-	            	$order_total_for_min = $this->order->get_total();
+	            	$order_total_for_min = $this->order->get_subtotal() - $this->order->get_discount_total();
 
 	            	if(isset($this->settings_shipping['shipment']['cart_total']) && $this->settings_shipping['shipment']['cart_total'] == 'subtotal')
 	            	{

@@ -239,7 +239,7 @@ if (!class_exists('MRKV_UA_SHIPPING_METHODS_AJAX'))
 
 			            	$shipping_settings = get_option('woocommerce_' . $current_shipping . '_' . $mrkv_ua_shipping_instance_id . '_settings');
 
-			            	$order_total_for_min = $order->get_total();
+			            	$order_total_for_min = $order->get_subtotal() - $order->get_discount_total();
 
 			            	$shipping_settings_global = get_option($key . '_m_ua_settings');
 
