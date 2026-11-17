@@ -15,6 +15,11 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 		 * */
 		private $api_url = 'https://www.ukrposhta.ua/';
 
+		/**
+		 * @var string API URL of the test mode: the test keys of Ukrposhta work only there
+		 * */
+		private $api_url_test = 'https://dev.ukrposhta.ua/';
+
 	    /**
 	     * @var string $responseTime waiting for response from server, sec.
 	     */
@@ -66,7 +71,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 		public function send_post_request($model, $method = 'POST', $params = array(), $add = '', $api_token_type = '') 
 	    {
 	    	# Get required URL
-	        $url = $this->api_url . $model . $add;
+	        $url = $this->get_api_url($api_token_type) . $model . $add;
 
 	        $mrkv_ua_shipping_args = array(
 	        	'timeout' => 30,
@@ -134,7 +139,7 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 		public function send_post_request_curl($model, $method = 'POST', $params = array(), $add = '', $api_token_type = '') 
 		{
 			// Build the full request URL
-			$url = $this->api_url . $model;
+			$url = $this->get_api_url($api_token_type) . $model;
 
 			// Log the request data for debugging purposes
 			$this->debug_log->add_data_request(\wp_json_encode($params));
@@ -266,6 +271,21 @@ if (!class_exists('MRKV_UA_SHIPPING_API_UKR_POSHTA'))
 	    	}
 	    }
 	    
+
+	    /**
+	     * API URL for the keys of the request: the test keys go to the sandbox, the production keys ('main') to www
+	     * @param string Token type
+	     * @return string API URL
+	     * */
+	    private function get_api_url($api_token_type = '')
+	    {
+	    	if(isset($this->settings_method['test_mode']) && $this->settings_method['test_mode'] == 'on' && $api_token_type != 'main')
+	    	{
+	    		return $this->api_url_test;
+	    	}
+
+	    	return $this->api_url;
+	    }
 
 	    /**
 	     * Get PRODUCTION BEARER eCom
