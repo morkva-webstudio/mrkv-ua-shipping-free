@@ -240,6 +240,8 @@ if (!class_exists('MRKV_UA_SHIPPING_RECIPIENT_NOVA_POSHTA'))
 
 	    public function get_recipient_warehouse_ref($warehouse_name, $city_ref)
 	    {
+			$warehouse_name = html_entity_decode( (string) $warehouse_name, ENT_QUOTES, 'UTF-8' );
+			
 	    	$mrkv_ua_shipping_args = array(
 	            "apiKey" => $this->nova_poshta_api->get_api_key(),
 	            "modelName" => "Address",
