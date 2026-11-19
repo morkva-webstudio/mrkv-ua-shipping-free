@@ -750,16 +750,14 @@ if (!class_exists('MRKV_UA_SHIPPING_AJAX_NOVA'))
 		/**
 		 * "Show only branches" of the Nova Poshta warehouse method the customer has chosen
 		 */
-		private function chosen_method_excludes_poshtomat()
-		{
-			if (!function_exists('WC') || !isset(WC()->session) || !WC()->session) {
+		private function chosen_method_excludes_poshtomat() {
+			if (!function_exists('WC') || !WC()->session) {
 				return false;
 			}
 
 			foreach ((array) WC()->session->get('chosen_shipping_methods') as $chosen_method) {
-				$parts = explode(':', (string) $chosen_method);
-				if ($parts[0] === 'mrkv_ua_shipping_nova-poshta' && isset($parts[1])) {
-					$settings = get_option('woocommerce_mrkv_ua_shipping_nova-poshta_' . absint($parts[1]) . '_settings');
+				if (preg_match('/^mrkv_ua_shipping_nova-poshta[_:](\d+)$/', (string) $chosen_method, $matches)) {
+					$settings = get_option('woocommerce_mrkv_ua_shipping_nova-poshta_' . absint($matches[1]) . '_settings');
 					return isset($settings['exclude_poshtomat']) && $settings['exclude_poshtomat'] === 'yes';
 				}
 			}
